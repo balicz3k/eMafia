@@ -1,9 +1,12 @@
-package com.mafia.controller;
+package com.mafia.controllers;
 
-import com.mafia.model.GameRoom;
+import com.mafia.dto.CreateRoomRequest;
+import com.mafia.exceptions.ResourceNotFoundException;
+import com.mafia.models.GameRoom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController @RequestMapping("/api/rooms") public class GameRoomController
@@ -13,9 +16,18 @@ import org.springframework.web.bind.annotation.*;
 
     @GetMapping public List<GameRoom> getAllRooms() { return rooms; }
 
-    @PostMapping public GameRoom createRoom(@RequestBody GameRoom newRoom)
+    @GetMapping("/{roomId}") public ResponseEntity<?> getRoomById(@PathVariable UUID roomId)
     {
-        newRoom.setId(UUID.randomUUID());
+        return rooms.stream()
+            .filter(room -> room.getId().equals(roomId))
+            .findFirst()
+            .map(ResponseEntity::ok)
+            .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+    }
+
+    @PostMapping public GameRoom createRoom(@RequestBody CreateRoomRequest request)
+    {
+        GameRoom newRoom = new GameRoom(request.getName(), request.getMaxPlayers());
         rooms.add(newRoom);
         return newRoom;
     }
