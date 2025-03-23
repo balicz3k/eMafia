@@ -1,0 +1,8 @@
+/* W globalnym CSS */
+body {
+    overflow-y: scroll;
+}
+  
+main {
+    padding-top: 20%;
+}

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import StartView from './views/StartView';
 
 function App() {
     const [backendMessage, setBackendMessage] = useState('');
@@ -19,22 +21,12 @@ function App() {
     }, []);
 
     return (
-        <div className="App">
-            <h1>Mafia Game 🕵️♂️</h1>
-            <div className="connection-status">
-                {loading ? (
-                    <p>Connecting to server...</p>
-                ) : (
-                    <>
-                        <p>{backendMessage}</p>
-                        <button onClick={() => window.location.reload()}>
-                            Refresh Connection
-                        </button>
-                    </>
-                )}
-            </div>
-        </div>
-    );
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<StartView />} />
+          </Routes>
+        </BrowserRouter>
+      );
 }
 
 export default App;

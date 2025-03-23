@@ -1,0 +1,30 @@
+.header {
+    display: flex;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.logo {
+    color: #CC0404;
+    font-family: "DM Sans";
+    font-size: 5vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    padding: 3%;
+}
+
+.navBar {
+    padding: 3%;
+}
+
+.navLink {
+    color: #000;
+    font-family: "DM Sans";
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-decoration: none;
+    margin: 0 3vw;
+}

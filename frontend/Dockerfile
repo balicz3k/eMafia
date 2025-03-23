@@ -1,7 +1,8 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --force  # Wymuś instalację zależności
+COPY public ./public
+RUN npm install --force
 COPY . .
 RUN npm run build
 

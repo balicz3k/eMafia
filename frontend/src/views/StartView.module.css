@@ -1,0 +1,32 @@
+/* frontend/src/views/StartView.module.css */
+body, html {
+  margin: 0;
+  padding: 0;
+  background: transparent; /* Upewnij się, że tło jest przezroczyste */
+}
+
+.mainContainer {
+  position: fixed; /* Ustawia kontener na stałej pozycji */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* Rozciąga kontener na cały ekran */
+  background-image: url("../assets/bg.png");
+  background-size: cover; /* Dopasowuje obraz do rozmiaru kontenera */
+  background-position: center; /* Centruje obraz */
+  background-repeat: no-repeat; /* Zapobiega powtarzaniu tła */
+  overflow: hidden; /* Ukrywa ewentualne przewijanie */
+  z-index: 0;
+}
+  
+.title {
+  width: 648px;
+  height: 280px;
+  flex-shrink: 0;
+  color: #7B0E0E;
+  font-family: "IM FELL English SC";
+  font-size: 250px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
