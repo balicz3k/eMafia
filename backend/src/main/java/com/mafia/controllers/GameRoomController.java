@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 
     @GetMapping public List<GameRoom> getAllRooms() { return rooms; }
 
-    @GetMapping("/{roomId}") public ResponseEntity<?> getRoomById(@PathVariable UUID roomId)
+    @GetMapping("/{roomId}") public ResponseEntity<GameRoom> getRoomById(@PathVariable UUID roomId)
     {
         return rooms.stream()
             .filter(room -> room.getId().equals(roomId))
             .findFirst()
             .map(ResponseEntity::ok)
-            .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Room with ID: " + roomId + " does not exist!"));
     }
 
     @PostMapping public GameRoom createRoom(@RequestBody CreateRoomRequest request)
