@@ -13,7 +13,18 @@ import org.hibernate.annotations.UuidGenerator;
 
 @Entity @Table(name = "game_rooms") @Getter @Setter public class GameRoom
 {
-
+    public GameRoom(String name, User host, int maxPlayers)
+    {
+        this.name = name;
+        this.host = host;
+        this.maxPlayers = maxPlayers;
+        this.players = new ArrayList<>();
+        this.players.add(host.getId());
+        this.status = GameRoomStatus.CREATED;
+        this.createdAt = LocalDateTime.now();
+        this.invitations = new ArrayList<>();
+        this.id = UUID.randomUUID();
+    }
     public enum GameRoomStatus
     {
         CREATED,

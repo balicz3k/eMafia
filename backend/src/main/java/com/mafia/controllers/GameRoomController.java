@@ -1,6 +1,6 @@
 package com.mafia.controllers;
 
-import com.mafia.dto.CreateRoomRequest;
+import com.mafia.dto.CreateGameRoomRequest;
 import com.mafia.exceptions.ResourceNotFoundException;
 import com.mafia.models.GameRoom;
 import java.util.ArrayList;
@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.*;
             .orElseThrow(() -> new ResourceNotFoundException("Room with ID: " + roomId + " does not exist!"));
     }
 
-    @PostMapping public GameRoom createRoom(@RequestBody CreateRoomRequest request)
+    @PostMapping public GameRoom createGameRoom(@RequestBody CreateGameRoomRequest request)
     {
-        GameRoom newRoom = new GameRoom(request.getName(), request.getMaxPlayers());
+        GameRoom newRoom = new GameRoom(request.getName(), request.getHost(), request.getMaxPlayers());
         rooms.add(newRoom);
         return newRoom;
     }

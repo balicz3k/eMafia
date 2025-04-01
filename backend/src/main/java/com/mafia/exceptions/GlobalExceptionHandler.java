@@ -1,28 +1,25 @@
 package com.mafia.exceptions;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice public class GlobalExceptionHandler
+@RestControllerAdvice public class GlobalExceptionHandler
 {
 
-    // Incorrect argument type (400)
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex)
     {
-        String error = ex.getName() + " It should be of the type " + ex.getRequiredType().getSimpleName();
-        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), error);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    // Resource not found (404)
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex)
-    {
-        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        Map<String, String> errors = new HashMap<>();
+        for (FieldError error : ex.getBindingResult().getFieldErrors())
+        {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 }
