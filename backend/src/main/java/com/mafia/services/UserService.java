@@ -4,6 +4,10 @@ import com.mafia.components.JwtTokenProvider;
 import com.mafia.dto.AuthResponse;
 import com.mafia.dto.LoginRequest;
 import com.mafia.dto.RegistrationRequest;
+import com.mafia.exceptions.EmailAlreadyExistsException;
+import com.mafia.exceptions.InvalidPasswordException;
+import com.mafia.exceptions.UserNotFoundException;
+import com.mafia.exceptions.UsernameAlreadyExistsException;
 import com.mafia.models.User;
 import com.mafia.repositiories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +25,12 @@ import org.springframework.stereotype.Service;
     {
         if (userRepository.existsByEmail(request.getEmail()))
         {
-            throw new IllegalArgumentException("Email is already registered");
+            throw new EmailAlreadyExistsException("Email is already registered");
         }
 
         if (userRepository.existsByUsername(request.getUsername()))
         {
-            throw new IllegalArgumentException("Username is already taken");
+            throw new UsernameAlreadyExistsException("Username is already taken");
         }
 
         User user = new User();
@@ -43,11 +47,11 @@ import org.springframework.stereotype.Service;
     public AuthResponse authenticateUser(LoginRequest request)
     {
         User user = userRepository.findByEmail(request.getEmail())
-                        .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
+                        .orElseThrow(() -> new UserNotFoundException("User does not exist"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
         {
-            throw new IllegalArgumentException("Invalid password");
+            throw new InvalidPasswordException("Invalid password");
         }
 
         String token = jwtTokenProvider.generateToken(user);
