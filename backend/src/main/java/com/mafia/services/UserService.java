@@ -4,12 +4,15 @@ import com.mafia.components.JwtTokenProvider;
 import com.mafia.dto.AuthResponse;
 import com.mafia.dto.LoginRequest;
 import com.mafia.dto.RegistrationRequest;
+import com.mafia.dto.UserResponse;
 import com.mafia.exceptions.EmailAlreadyExistsException;
 import com.mafia.exceptions.InvalidPasswordException;
 import com.mafia.exceptions.UserNotFoundException;
 import com.mafia.exceptions.UsernameAlreadyExistsException;
 import com.mafia.models.User;
 import com.mafia.repositiories.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,5 +59,13 @@ import org.springframework.stereotype.Service;
 
         String token = jwtTokenProvider.generateToken(user);
         return new AuthResponse(token);
+    }
+
+    public List<UserResponse> searchUsers(String query)
+    {
+        List<User> users = userRepository.findByUsernameContainingIgnoreCase(query);
+        return users.stream()
+            .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail()))
+            .collect(Collectors.toList());
     }
 }
