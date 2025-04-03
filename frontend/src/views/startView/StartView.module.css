@@ -30,3 +30,8 @@ body, html {
   font-weight: 400;
   line-height: normal;
 }
+
+.loginForm {
+  display: flex;
+  margin-left: 20%;
+}

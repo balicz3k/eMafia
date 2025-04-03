@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import styles from './StartView.module.css';
-import MainLayout from '../layouts/mainLayout/MainLayout';
-import LoginForm from '../components/loginForm/LoginForm';
+import MainLayout from '../../layouts/mainLayout/MainLayout';
+import LoginForm from '../../components/loginForm/LoginForm';
 
 const StartView = () => {
   const [playersCount, setPlayersCount] = useState(12);
@@ -18,7 +18,9 @@ const StartView = () => {
   return (
      <MainLayout>
       { <img src="../../assets/blood-hand.svg" alt="" /> }
+      <div className='loginForm'>
       <LoginForm />
+      </div>
      </MainLayout>
   );
 };

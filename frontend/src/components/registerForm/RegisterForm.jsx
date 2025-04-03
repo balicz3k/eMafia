@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import styles from './LoginForm.module.css';
+import styles from './RegisterForm.module.css';
 
-const LoginForm = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+const RegisterForm = () => {
+  const [formData, setFormData] = useState({ username: "", email: "", password: "" });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -14,18 +14,17 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data.token);
-        navigate("/search");
+        alert("Registration successful!");
+        navigate("/login");
       } else {
         const error = await response.text();
-        alert(error || "An error occurred!");
+        alert(error);
       }
     } catch (err) {
       console.error(err);
@@ -35,7 +34,11 @@ const LoginForm = () => {
 
   return (
     <form className={styles.loginForm} onSubmit={handleSubmit}>
-      <h2>Sign in!</h2>
+      <h2>Sign up!</h2>
+      <div>
+        <label>Username:</label>
+        <input type="text" name="username" value={formData.username} onChange={handleChange} required />
+      </div>
       <div>
         <label>Email:</label>
         <input type="email" name="email" value={formData.email} onChange={handleChange} required />
@@ -45,17 +48,12 @@ const LoginForm = () => {
         <input type="password" name="password" value={formData.password} onChange={handleChange} required />
       </div>
       <label>By continuing, you agree to the Terms of use and Privacy Policy.</label>
-      <div className={styles.rememberMe}>
-        <input type="checkbox" name="remember" />
-        <label>Remember me</label>
-      </div>
-      <button type="submit">Login</button>
-      <label>Forget your password?</label>
+      <button type="submit">Sign up</button>
       <label>
-        Don't have an account? <Link to="/register">Sign up!</Link>
+        Already have an account? <Link to="/login">Sign in!</Link>
       </label>
     </form>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

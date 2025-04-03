@@ -1,0 +1,19 @@
+.mainContainer {
+  display: flex; /* Ustawia układ poziomy */
+  flex-direction: row; /* Domyślnie, ale warto to określić */
+  justify-content: space-between; /* Rozdziela kolumny */
+  align-items: center; /* Wyśrodkowuje elementy w pionie */
+  height: 100vh; /* Ustawia wysokość na pełne okno przeglądarki */
+}
+
+.leftColumn, .rightColumn {
+  flex: 1; /* Obie kolumny zajmują po 50% szerokości */
+  display: flex;
+  justify-content: center; /* Wyśrodkowanie w poziomie */
+  align-items: center; /* Wyśrodkowanie w pionie */
+}
+
+.rightColumn img {
+  max-width: 80%; /* Obrazek zajmuje maksymalnie 80% szerokości kolumny */
+  height: auto; /* Zachowanie proporcji */
+}

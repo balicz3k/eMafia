@@ -1,30 +1,38 @@
 .header {
     display: flex;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
+    justify-content: space-between; /* Logo po lewej, navbar po prawej */
+    align-items: center; /* Wyśrodkowanie elementów w pionie */
+    padding: 0 20px; /* Dodanie odstępów po bokach */
+    background-color: #f8f9fa; /* Opcjonalne tło */
+    height: 70px; /* Wysokość nagłówka */
 }
 
 .logo {
     color: #CC0404;
     font-family: "DM Sans";
-    font-size: 5vw;
+    font-size: 2rem;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
-    padding: 3%;
+    text-decoration: none; /* Usunięcie podkreślenia */
 }
 
-.navBar {
-    padding: 3%;
+.navbar {
+    display: flex;
+    gap: 20px; /* Równe odstępy między linkami */
 }
 
 .navLink {
     color: #000;
     font-family: "DM Sans";
-    font-size: 40px;
+    font-size: 1rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    text-decoration: none;
-    margin: 0 3vw;
+    text-decoration: none; /* Usunięcie podkreślenia */
+    margin: 0; /* Usunięcie domyślnych marginesów */
+}
+
+.navLink:hover {
+    color: #CC0404; /* Zmiana koloru po najechaniu */
 }
