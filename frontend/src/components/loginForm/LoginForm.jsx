@@ -22,7 +22,8 @@ const LoginForm = () => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
-        navigate("/search");
+        console.log("Token JWT:", data.token);
+        navigate("/dashboard");
       } else {
         const error = await response.text();
         alert(error || "An error occurred!");

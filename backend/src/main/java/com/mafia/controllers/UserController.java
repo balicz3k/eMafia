@@ -1,17 +1,12 @@
 package com.mafia.controllers;
 
-import com.mafia.dto.CreateGameRoomRequest;
 import com.mafia.dto.UserResponse;
-import com.mafia.exceptions.ResourceNotFoundException;
-import com.mafia.models.GameRoom;
 import com.mafia.services.UserService;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController @RequestMapping("/api/rooms") public class UserController
+@RestController @RequestMapping("/api/users") public class UserController
 {
 
     private final UserService userService;
@@ -20,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
     @GetMapping("/search") public ResponseEntity<List<UserResponse>> searchUsers(@RequestParam String query)
     {
+        System.out.println("Zapytanie wyszukiwania: " + query);
         List<UserResponse> users = userService.searchUsers(query);
+        System.out.println("Znalezieni użytkownicy: " + users);
         return ResponseEntity.ok(users);
     }
 }
