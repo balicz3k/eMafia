@@ -5,6 +5,7 @@ import RegisterView from './views/registerView/RegisterView';
 import DashboardView from './views/dashboardView/DashboardView';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfileView from './views/profileView/ProfileView';
+import AdminPanelView from './views/adminPanelView/AdminPanelView';
 
 function App() {
     const [backendMessage, setBackendMessage] = useState('');
@@ -32,6 +33,7 @@ function App() {
             <Route path="/register" element={<RegisterView />} />
             <Route path="/dashboard" element={<ProtectedRoute><DashboardView /></ProtectedRoute>}/>
             <Route path="/profile"element={<ProtectedRoute><ProfileView /></ProtectedRoute>}/>
+            <Route path="/admin" element={<ProtectedRoute><AdminPanelView /></ProtectedRoute>}/>
           </Routes>
         </BrowserRouter>
       );
