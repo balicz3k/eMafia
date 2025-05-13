@@ -54,6 +54,31 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied: " + ex.getMessage());
     }
 
+    @ExceptionHandler(GameRoomNotFoundException.class)
+    public ResponseEntity<String> handleGameRoomNotFoundException(GameRoomNotFoundException ex)
+    {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserAlreadyInRoomException.class)
+    public ResponseEntity<String> handleUserAlreadyInRoomException(UserAlreadyInRoomException ex)
+    {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RoomFullException.class)
+    public ResponseEntity<String> handleRoomFullException(RoomFullException ex)
+    {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException ex)
+    {
+        System.err.println("IllegalStateException caught: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class) public ResponseEntity<String> handleGenericException(Exception ex)
     {
         ex.printStackTrace();
