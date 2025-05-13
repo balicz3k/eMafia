@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import styles from './CreateGameRoomForm.module.css';
 
 const CreateGameRoomForm = () => {

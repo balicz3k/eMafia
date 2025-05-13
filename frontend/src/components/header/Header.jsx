@@ -8,6 +8,7 @@ const Header = () => {
       <nav className={styles.navbar}>
         <Link to="/profile" className={styles.navLink}>Your Profile</Link>
         <Link to="/admin" className={styles.navLink}>Admin Panel</Link>
+        <Link to="/create-room" className={styles.navLink}>Create Room</Link>
         <Link to="/" className={styles.navLink}>Create Game</Link>
         <Link to="/" className={styles.navLink}>Rules</Link>
         <Link to="/" className={styles.navLink}>About Autor</Link>
