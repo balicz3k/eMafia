@@ -2,6 +2,7 @@ package com.mafia.dto;
 
 import com.mafia.models.GameRoomStatus;
 import java.time.LocalDateTime;
+import java.util.List; // DODAJ IMPORT
 import java.util.UUID;
 
 public class GameRoomResponse
@@ -11,23 +12,30 @@ public class GameRoomResponse
     private String name;
     private String hostUsername;
     private int maxPlayers;
+    private int currentPlayers; // NOWE POLE
     private GameRoomStatus status;
     private LocalDateTime createdAt;
-    private String joinLinkPath; // Np. "/join/" - frontend doda roomCode
+    private String joinLinkPath;                // To pole już istnieje i jest używane
+    private List<PlayerInRoomResponse> players; // NOWE POLE
 
+    // Zaktualizowany konstruktor
     public GameRoomResponse(UUID id, String roomCode, String name, String hostUsername, int maxPlayers,
-                            GameRoomStatus status, LocalDateTime createdAt, String joinLinkPath)
+                            int currentPlayers, GameRoomStatus status, LocalDateTime createdAt, String joinLinkPath,
+                            List<PlayerInRoomResponse> players)
     {
         this.id = id;
         this.roomCode = roomCode;
         this.name = name;
         this.hostUsername = hostUsername;
         this.maxPlayers = maxPlayers;
+        this.currentPlayers = currentPlayers;
         this.status = status;
         this.createdAt = createdAt;
         this.joinLinkPath = joinLinkPath;
+        this.players = players;
     }
 
+    // Gettery i Settery (dodaj dla nowych pól)
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     public String getRoomCode() { return roomCode; }
@@ -38,10 +46,14 @@ public class GameRoomResponse
     public void setHostUsername(String hostUsername) { this.hostUsername = hostUsername; }
     public int getMaxPlayers() { return maxPlayers; }
     public void setMaxPlayers(int maxPlayers) { this.maxPlayers = maxPlayers; }
+    public int getCurrentPlayers() { return currentPlayers; }
+    public void setCurrentPlayers(int currentPlayers) { this.currentPlayers = currentPlayers; }
     public GameRoomStatus getStatus() { return status; }
     public void setStatus(GameRoomStatus status) { this.status = status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public String getJoinLinkPath() { return joinLinkPath; }
     public void setJoinLinkPath(String joinLinkPath) { this.joinLinkPath = joinLinkPath; }
+    public List<PlayerInRoomResponse> getPlayers() { return players; }
+    public void setPlayers(List<PlayerInRoomResponse> players) { this.players = players; }
 }
