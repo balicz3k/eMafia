@@ -68,7 +68,7 @@ import org.springframework.stereotype.Service;
     {
         List<User> users = userRepository.findByUsernameContainingIgnoreCase(query);
         return users.stream()
-            .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail()))
+            .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles()))
             .collect(Collectors.toList());
     }
 }
