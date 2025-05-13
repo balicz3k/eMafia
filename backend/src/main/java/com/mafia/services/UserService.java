@@ -9,8 +9,10 @@ import com.mafia.exceptions.EmailAlreadyExistsException;
 import com.mafia.exceptions.InvalidPasswordException;
 import com.mafia.exceptions.UserNotFoundException;
 import com.mafia.exceptions.UsernameAlreadyExistsException;
+import com.mafia.models.Role;
 import com.mafia.models.User;
 import com.mafia.repositiories.UserRepository;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,7 @@ import org.springframework.stereotype.Service;
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRoles(Collections.singleton(Role.ROLE_USER));
 
         User savedUser = userRepository.save(user);
         String token = jwtTokenProvider.generateToken(savedUser);
