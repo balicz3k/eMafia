@@ -1,18 +1,28 @@
+// filepath: backend/src/main/java/com/mafia/dto/CreateGameRoomRequest.java
 package com.mafia.dto;
-import com.mafia.models.User;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class CreateGameRoomRequest
 {
-    private String name;
-    private int maxPlayers;
-    private User host;
 
+    @NotBlank(message = "Room name is required")
+    @Size(min = 3, max = 100, message = "Room name must be between 3 and 100 characters")
+    private String name;
+
+    @Min(value = 2, message = "Minimum number of players is 2")
+    @Max(value = 20, message = "Maximum number of players is 20") // Przykładowe ograniczenie
+    private int maxPlayers;
+
+    // Getters and Setters
     public String getName() { return name; }
+
     public void setName(String name) { this.name = name; }
 
     public int getMaxPlayers() { return maxPlayers; }
-    public void setMaxPlayers(int maxPlayers) { this.maxPlayers = maxPlayers; }
 
-    public User getHost() { return host; }
-    public void setHost(User host) { this.host = host; }
+    public void setMaxPlayers(int maxPlayers) { this.maxPlayers = maxPlayers; }
 }

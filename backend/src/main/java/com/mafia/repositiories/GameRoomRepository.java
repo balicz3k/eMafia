@@ -1,13 +1,13 @@
 package com.mafia.repositiories;
 
 import com.mafia.models.GameRoom;
-import com.mafia.models.User;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface GameRoomRepository extends JpaRepository<GameRoom, UUID>
-{
-    List<GameRoom> findByStatus(GameRoom.GameRoomStatus status);
-    List<GameRoom> findByHost(User host);
+@Repository
+public interface GameRoomRepository extends JpaRepository<GameRoom, UUID> {
+    Optional<GameRoom> findByRoomCode(String roomCode);
+    boolean existsByRoomCode(String roomCode);
 }

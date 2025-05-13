@@ -1,34 +1,31 @@
 package com.mafia.controllers;
 
 import com.mafia.dto.CreateGameRoomRequest;
-import com.mafia.exceptions.ResourceNotFoundException;
-import com.mafia.models.GameRoom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import com.mafia.dto.GameRoomResponse;
+import com.mafia.services.GameRoomService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@RestController @RequestMapping("/api/rooms") public class GameRoomController
+@RestController
+@RequestMapping("/api/gamerooms")
+@RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()") // Tylko zalogowani użytkownicy mogą wchodzić w interakcję z pokojami
+public class GameRoomController
 {
 
-    private List<GameRoom> rooms = new ArrayList<>();
+    private final GameRoomService gameRoomService;
 
-    @GetMapping public List<GameRoom> getAllRooms() { return rooms; }
-
-    @GetMapping("/{roomId}") public ResponseEntity<GameRoom> getRoomById(@PathVariable UUID roomId)
+    @PostMapping("/create")
+    public ResponseEntity<GameRoomResponse> createGameRoom(@Valid @RequestBody CreateGameRoomRequest request)
     {
-        return rooms.stream()
-            .filter(room -> room.getId().equals(roomId))
-            .findFirst()
-            .map(ResponseEntity::ok)
-            .orElseThrow(() -> new ResourceNotFoundException("Room with ID: " + roomId + " does not exist!"));
-    }
-
-    @PostMapping public GameRoom createGameRoom(@RequestBody CreateGameRoomRequest request)
-    {
-        GameRoom newRoom = new GameRoom(request.getName(), request.getHost(), request.getMaxPlayers());
-        rooms.add(newRoom);
-        return newRoom;
+        GameRoomResponse gameRoomResponse = gameRoomService.createRoom(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(gameRoomResponse);
     }
 }
