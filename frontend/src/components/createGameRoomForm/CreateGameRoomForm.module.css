@@ -1,0 +1,115 @@
+.formContainer {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 25px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.formContainer h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.roomForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.formGroup input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.submitButton {
+    padding: 12px 18px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.submitButton:hover {
+    background-color: #4cae4c;
+}
+
+.submitButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    color: #d9534f;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.roomInfoContainer {
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px solid #d6e9c6;
+    border-radius: 4px;
+    background-color: #dff0d8;
+}
+
+.roomInfoContainer h3 {
+    color: #3c763d;
+    margin-top: 0;
+    text-align: center;
+}
+
+.roomInfoContainer p {
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.roomCode {
+    font-weight: bold;
+    color: #CC0404; /* Kolor z Twojego logo */
+    font-size: 1.2em;
+}
+
+.joinLink {
+    color: #31708f;
+    word-break: break-all; /* Aby długie linki się łamały */
+}
+
+.qrCodeContainer {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.qrCodeContainer p {
+    margin-bottom: 10px;
+}
+
+.shareInstructions {
+    margin-top: 15px;
+    font-style: italic;
+    color: #666;
+    text-align: center;
+}
