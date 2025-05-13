@@ -1,14 +1,11 @@
 package com.mafia.components;
 
-import com.mafia.models.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.UUID;
 import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,7 +13,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
 {
 
     private final JwtTokenProvider jwtTokenProvider;
-
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) { this.jwtTokenProvider = jwtTokenProvider; }
 
     @Override
@@ -28,14 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
 
         if (token != null && jwtTokenProvider.validateToken(token))
         {
-            UUID userId = jwtTokenProvider.getUserIdFromToken(token);
-
-            User user = new User();
-            user.setId(userId);
-
-            UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 

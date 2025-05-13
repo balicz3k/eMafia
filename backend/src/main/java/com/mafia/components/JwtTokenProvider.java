@@ -1,16 +1,23 @@
-// filepath: /Users/balicz3k/Documents/Mafia/backend/src/main/java/com/mafia/components/JwtTokenProvider.java
 package com.mafia.components;
 
+import com.mafia.models.Role;
 import com.mafia.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component public class JwtTokenProvider
@@ -22,7 +29,6 @@ import org.springframework.stereotype.Component;
 
     private Key getSigningKey()
     {
-        // Dekodowanie klucza Base64 i tworzenie obiektu Key
         return new SecretKeySpec(Base64.getDecoder().decode(secret), SignatureAlgorithm.HS512.getJcaName());
     }
 
@@ -31,10 +37,12 @@ import org.springframework.stereotype.Component;
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
-        // Użycie nowej metody signWith z obiektem Key
+        Claims claims = Jwts.claims().setSubject(user.getId().toString());
+        claims.put("username", user.getUsername());
+        claims.put("roles", user.getRoles().stream().map(Role::name).collect(Collectors.toList()));
+
         return Jwts.builder()
-            .setSubject(user.getId().toString())
-            .claim("username", user.getUsername())
+            .setClaims(claims)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
             .signWith(getSigningKey(), SignatureAlgorithm.HS512)
@@ -44,8 +52,32 @@ import org.springframework.stereotype.Component;
     public UUID getUserIdFromToken(String token)
     {
         Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
-
         return UUID.fromString(claims.getSubject());
+    }
+
+    public Authentication getAuthentication(String token)
+    {
+        Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+
+        UUID userId = UUID.fromString(claims.getSubject());
+        String username = claims.get("username", String.class);
+
+        @SuppressWarnings("unchecked") List<String> rolesStrings = claims.get("roles", List.class);
+        List<GrantedAuthority> authorities;
+        if (rolesStrings != null)
+        {
+            authorities = rolesStrings.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        }
+        else
+        {
+            authorities = Collections.emptyList();
+        }
+
+        User principalUser = new User();
+        principalUser.setId(userId);
+        principalUser.setUsername(username);
+
+        return new UsernamePasswordAuthenticationToken(principalUser, "", authorities);
     }
 
     public boolean validateToken(String token)
@@ -57,7 +89,6 @@ import org.springframework.stereotype.Component;
         }
         catch (Exception ex)
         {
-            // Logowanie błędów
             return false;
         }
     }
