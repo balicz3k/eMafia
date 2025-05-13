@@ -26,8 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
             .authorizeHttpRequests(auth
                                    -> auth.requestMatchers("/api/auth/**", "/api/test", "/ws/**")
                                           .permitAll() // Publiczne endpointy
-                                          .requestMatchers("/api/users/**")
-                                          .authenticated() // Endpointy wymagające uwierzytelnienia
                                           .anyRequest()
                                           .authenticated())
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
