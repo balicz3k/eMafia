@@ -4,6 +4,7 @@ import LoginView from './views/loginView/LoginView';
 import RegisterView from './views/registerView/RegisterView';
 import DashboardView from './views/dashboardView/DashboardView';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProfileView from './views/profileView/ProfileView';
 
 function App() {
     const [backendMessage, setBackendMessage] = useState('');
@@ -30,6 +31,7 @@ function App() {
             <Route path="/login" element={<LoginView />} />
             <Route path="/register" element={<RegisterView />} />
             <Route path="/dashboard" element={<ProtectedRoute><DashboardView /></ProtectedRoute>}/>
+            <Route path="/profile"element={<ProtectedRoute><ProfileView /></ProtectedRoute>}/>
           </Routes>
         </BrowserRouter>
       );

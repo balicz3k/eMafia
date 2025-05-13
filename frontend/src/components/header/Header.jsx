@@ -6,6 +6,7 @@ const Header = () => {
     <header className={styles.header}>
       <h1 className={styles.logo}>Mafia</h1>
       <nav className={styles.navbar}>
+        <Link to="/profile" className={styles.navLink}>Your Profile</Link>
         <Link to="/" className={styles.navLink}>Create Game</Link>
         <Link to="/" className={styles.navLink}>Rules</Link>
         <Link to="/" className={styles.navLink}>About Autor</Link>
