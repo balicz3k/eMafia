@@ -110,7 +110,7 @@ const CreateGameRoomForm = () => {
                     </p>
                     <div className={styles.qrCodeContainer}>
                         <p><strong>Scan QR Code to Join:</strong></p>
-                        <QRCode value={getFullJoinLink()} size={128} level="H" />
+                        <QRCodeSVG value={getFullJoinLink()} size={128} level="H" />
                     </div>
                     <p className={styles.shareInstructions}>Share the Room Code or Join Link with your friends!</p>
                 </div>

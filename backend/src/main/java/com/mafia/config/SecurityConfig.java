@@ -1,7 +1,6 @@
 package com.mafia.config;
 
 import com.mafia.components.JwtAuthenticationFilter;
-import com.mafia.components.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,19 +15,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration @EnableWebSecurity @EnableMethodSecurity public class SecurityConfig
 {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter; // ZMIANA: Wstrzyknij JwtAuthenticationFilter
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) { this.jwtTokenProvider = jwtTokenProvider; }
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter)
+    {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {
         http.csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth
-                                   -> auth.requestMatchers("/api/auth/**", "/api/test", "/ws/**")
-                                          .permitAll() // Publiczne endpointy
-                                          .anyRequest()
-                                          .authenticated())
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+            .authorizeHttpRequests(
+                auth
+                -> auth.requestMatchers("/api/auth/**", "/api/test", "/ws/**").permitAll().anyRequest().authenticated())
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

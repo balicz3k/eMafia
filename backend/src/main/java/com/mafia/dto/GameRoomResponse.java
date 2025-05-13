@@ -1,4 +1,3 @@
-// filepath: backend/src/main/java/com/mafia/dto/GameRoomResponse.java
 package com.mafia.dto;
 
 import com.mafia.models.GameRoomStatus;
@@ -29,7 +28,6 @@ public class GameRoomResponse
         this.joinLinkPath = joinLinkPath;
     }
 
-    // Getters and Setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     public String getRoomCode() { return roomCode; }

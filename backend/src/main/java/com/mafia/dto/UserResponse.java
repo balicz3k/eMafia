@@ -17,7 +17,6 @@ public class UserResponse
         this.roles = roles;
     }
 
-    // Gettery i settery
     public UUID getId() { return id; }
 
     public void setId(UUID id) { this.id = id; }
@@ -32,5 +31,5 @@ public class UserResponse
 
     public Set<Role> getRoles() { return roles; }
 
-    public void setRoles(Set<Role> roles) { this.roles = roles; } // Ustawiamy rolę użytkownika
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
 }

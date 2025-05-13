@@ -7,8 +7,6 @@ public class AuthResponse
 
     public AuthResponse(String token) { this.token = token; }
 
-    // Gettery
-
     public String getToken() { return token; }
     public String getTokenType() { return tokenType; }
 }

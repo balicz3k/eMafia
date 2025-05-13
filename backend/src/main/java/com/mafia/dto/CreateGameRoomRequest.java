@@ -1,4 +1,3 @@
-// filepath: backend/src/main/java/com/mafia/dto/CreateGameRoomRequest.java
 package com.mafia.dto;
 
 import jakarta.validation.constraints.Max;
@@ -17,7 +16,6 @@ public class CreateGameRoomRequest
     @Max(value = 20, message = "Maximum number of players is 20") // Przykładowe ograniczenie
     private int maxPlayers;
 
-    // Getters and Setters
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }

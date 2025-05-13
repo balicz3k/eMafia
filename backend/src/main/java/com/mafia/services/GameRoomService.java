@@ -22,9 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
     private final GameRoomRepository gameRoomRepository;
     private final UserRepository userRepository;
 
-    @Value("${app.frontend.joinPath:/join/}")
-    // Domyślna ścieżka dołączania, można skonfigurować w application.properties
-    private String frontendJoinPath;
+    @Value("${app.frontend.joinPath:/join/}") private String frontendJoinPath;
 
     private static final String ROOM_CODE_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int ROOM_CODE_LENGTH = 6;
@@ -59,8 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
         gameRoom.setMaxPlayers(request.getMaxPlayers());
         gameRoom.setHost(host);
         gameRoom.setRoomCode(generateUniqueRoomCode());
-        gameRoom.setStatus(GameRoomStatus.WAITING_FOR_PLAYERS); // Status jest już ustawiany w konstruktorze GameRoom
-        // createdAt jest ustawiane przez @CreationTimestamp
+        gameRoom.setStatus(GameRoomStatus.WAITING_FOR_PLAYERS);
 
         GameRoom savedRoom = gameRoomRepository.save(gameRoom);
 

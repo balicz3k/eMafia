@@ -13,7 +13,6 @@ function App() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Test połączenia z backendem
         fetch('/api/test')
             .then(response => response.text())
             .then(data => {

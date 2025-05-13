@@ -19,8 +19,6 @@ public class RegistrationRequest
              message = "Password must contain at least one lowercase letter, one uppercase letter, and one digit")
     private String password;
 
-    // Getters and setters
-
     public String getUsername() { return username; }
 
     public void setUsername(String username) { this.username = username; }
