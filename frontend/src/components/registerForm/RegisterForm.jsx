@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import styles from './RegisterForm.module.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const RegisterForm = () => {
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/auth/register", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

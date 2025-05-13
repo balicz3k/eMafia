@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import styles from './CreateGameRoomForm.module.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL
+
 const CreateGameRoomForm = () => {
     const [roomName, setRoomName] = useState('');
     const [maxPlayers, setMaxPlayers] = useState(5);
@@ -23,7 +25,7 @@ const CreateGameRoomForm = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/gamerooms/create', {
+            const response = await fetch(`${API_BASE_URL}/api/gamerooms/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

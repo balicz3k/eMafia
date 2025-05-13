@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styles from './ProfileForm.module.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const ProfileForm = () => {
     const [usernameData, setUsernameData] = useState({ newUsername: '' });
     const [emailData, setEmailData] = useState({ newEmail: '' });
@@ -19,7 +21,7 @@ const ProfileForm = () => {
         setError('');
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/api/users/profile/${endpoint}`, {
+            const response = await fetch(`${API_BASE_URL}/api/users/profile/${endpoint}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

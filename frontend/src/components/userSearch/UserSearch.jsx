@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const UserSearch = () => {
   const [query, setQuery] = useState(""); // Przechowuje zapytanie wyszukiwania
   const [results, setResults] = useState([]); // Przechowuje wyniki wyszukiwania
@@ -8,7 +10,7 @@ const UserSearch = () => {
     e.preventDefault();
     try {
       console.log("Sending search request with query:", query);
-      const response = await fetch(`http://localhost:8080/api/users/search?query=${query}`, {
+      const response = await fetch(`${API_BASE_URL}/api/users/search?query=${query}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`, // Dodaj token JWT

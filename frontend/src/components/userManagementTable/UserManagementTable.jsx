@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './UserManagementTable.module.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const UserManagementTable = () => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -12,7 +14,7 @@ const UserManagementTable = () => {
         setError('');
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch('http://localhost:8080/api/admin/users', {
+            const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
             if (!response.ok) {
@@ -38,7 +40,7 @@ const UserManagementTable = () => {
         setError('');
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/api/admin/users/${userId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` },
             });
@@ -58,7 +60,7 @@ const UserManagementTable = () => {
         setError('');
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/api/admin/users/${userId}/roles`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/roles`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

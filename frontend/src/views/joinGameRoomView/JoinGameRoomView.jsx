@@ -6,6 +6,8 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { decodeJwt } from "../../utils/decodeJwt"; // Załóżmy, że masz tę funkcję do dekodowania JWT
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const JoinGameRoomView = () => {
     const { roomCode } = useParams();
     const navigate = useNavigate();
@@ -45,7 +47,7 @@ const JoinGameRoomView = () => {
             return;
         }
 
-        const socketFactory = () => new SockJS('http://localhost:8080/ws'); // Upewnij się, że URL jest poprawny
+        const socketFactory = () => new SockJS(`${API_BASE_URL}/ws`); // Upewnij się, że URL jest poprawny
         const client = new Client({
             webSocketFactory: socketFactory,
             connectHeaders: {
@@ -100,7 +102,7 @@ const JoinGameRoomView = () => {
                 return;
             }
             try {
-                const response = await fetch(`http://localhost:8080/api/gamerooms/${roomCode}`, {
+                const response = await fetch(`${API_BASE_URL}/api/gamerooms/${roomCode}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -148,7 +150,7 @@ const JoinGameRoomView = () => {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:8080/api/gamerooms/${roomCode}/join`, {
+            const response = await fetch(`${API_BASE_URL}/api/gamerooms/${roomCode}/join`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
