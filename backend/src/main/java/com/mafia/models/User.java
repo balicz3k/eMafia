@@ -41,8 +41,4 @@ public class User
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<GameRoom> hostedRooms = new ArrayList<>();
-
-    @OneToMany(mappedBy = "sender") @JsonIgnore private List<Invitation> sentInvitations = new ArrayList<>();
-
-    @OneToMany(mappedBy = "receiver") @JsonIgnore private List<Invitation> receivedInvitations = new ArrayList<>();
 }
