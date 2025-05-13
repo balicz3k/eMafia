@@ -97,3 +97,4 @@ docker-compose.override.yml
 .project
 .classpath
 .factorypath
+frontend/package-lock.json
