@@ -16,9 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    ZMIANA : Wstrzyknij JwtAuthenticationFilter
 
-             public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter)
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter)
     {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
