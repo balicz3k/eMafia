@@ -1,4 +1,3 @@
-// frontend/src/views/StartView.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
@@ -11,7 +10,6 @@ const StartView = () => {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    // Tymczasowa nawigacja - później podmienimy na połączenie z API
     navigate(`/room?players=${playersCount}`);
   };
 

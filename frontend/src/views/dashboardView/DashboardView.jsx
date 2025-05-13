@@ -8,8 +8,8 @@ const DashboardView = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Usuń token JWT
-    navigate("/login"); // Przekieruj na stronę logowania
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (

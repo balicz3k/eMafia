@@ -1,4 +1,3 @@
-// filepath: backend/src/main/java/com/mafia/repositiories/PlayerInRoomRepository.java
 package com.mafia.repositiories;
 
 import com.mafia.models.GameRoom;

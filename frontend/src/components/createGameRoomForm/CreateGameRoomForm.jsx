@@ -4,7 +4,7 @@ import styles from './CreateGameRoomForm.module.css';
 
 const CreateGameRoomForm = () => {
     const [roomName, setRoomName] = useState('');
-    const [maxPlayers, setMaxPlayers] = useState(5); // Domyślna wartość
+    const [maxPlayers, setMaxPlayers] = useState(5);
     const [createdRoomInfo, setCreatedRoomInfo] = useState(null);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +51,7 @@ const CreateGameRoomForm = () => {
 
     const getFullJoinLink = () => {
         if (createdRoomInfo && createdRoomInfo.roomCode) {
-            // Zakładamy, że frontend działa na tym samym hoście i porcie co backend (dla uproszczenia)
+            // INF Zakładamy, że frontend działa na tym samym hoście i porcie co backend (dla uproszczenia)
             // W produkcji, to URL frontendu powinien być użyty.
             // Można też pobrać bazowy URL frontendu z konfiguracji lub window.location.origin
             const baseUrl = window.location.origin;

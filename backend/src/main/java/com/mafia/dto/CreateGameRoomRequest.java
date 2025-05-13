@@ -13,7 +13,7 @@ public class CreateGameRoomRequest
     private String name;
 
     @Min(value = 2, message = "Minimum number of players is 2")
-    @Max(value = 20, message = "Maximum number of players is 20") // Przykładowe ograniczenie
+    @Max(value = 20, message = "Maximum number of players is 20")
     private int maxPlayers;
 
     public String getName() { return name; }

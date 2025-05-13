@@ -5,13 +5,12 @@ import java.util.UUID;
 
 public class PlayerInRoomResponse
 {
-    private UUID playerId; // ID encji PlayerInRoom
+    private UUID playerId;
     private UUID userId;
-    private String username;       // Nazwa użytkownika z encji User
-    private String nicknameInRoom; // Nick w pokoju (będzie taki sam jak username)
+    private String username;
+    private String nicknameInRoom;
     private boolean isAlive;
     private LocalDateTime joinedAt;
-    // private String gameRole; // TODO: Dodać gdy role w grze będą zaimplementowane
 
     public PlayerInRoomResponse(UUID playerId, UUID userId, String username, String nicknameInRoom, boolean isAlive,
                                 LocalDateTime joinedAt)
@@ -24,7 +23,6 @@ public class PlayerInRoomResponse
         this.joinedAt = joinedAt;
     }
 
-    // Gettery i Settery
     public UUID getPlayerId() { return playerId; }
     public void setPlayerId(UUID playerId) { this.playerId = playerId; }
     public UUID getUserId() { return userId; }

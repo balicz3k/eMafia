@@ -2,7 +2,7 @@ package com.mafia.dto;
 
 import com.mafia.models.GameRoomStatus;
 import java.time.LocalDateTime;
-import java.util.List; // DODAJ IMPORT
+import java.util.List;
 import java.util.UUID;
 
 public class GameRoomResponse
@@ -12,13 +12,12 @@ public class GameRoomResponse
     private String name;
     private String hostUsername;
     private int maxPlayers;
-    private int currentPlayers; // NOWE POLE
+    private int currentPlayers;
     private GameRoomStatus status;
     private LocalDateTime createdAt;
-    private String joinLinkPath;                // To pole już istnieje i jest używane
-    private List<PlayerInRoomResponse> players; // NOWE POLE
+    private String joinLinkPath;
+    private List<PlayerInRoomResponse> players;
 
-    // Zaktualizowany konstruktor
     public GameRoomResponse(UUID id, String roomCode, String name, String hostUsername, int maxPlayers,
                             int currentPlayers, GameRoomStatus status, LocalDateTime createdAt, String joinLinkPath,
                             List<PlayerInRoomResponse> players)
@@ -35,7 +34,6 @@ public class GameRoomResponse
         this.players = players;
     }
 
-    // Gettery i Settery (dodaj dla nowych pól)
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     public String getRoomCode() { return roomCode; }

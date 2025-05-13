@@ -18,7 +18,7 @@ const UserSearch = () => {
       if (response.ok) {
         const data = await response.json();
         console.log("Fetched users:", data);
-        setResults(data); // Ustaw wyniki wyszukiwania
+        setResults(data);
       } else {
         const errorText = await response.text();
         console.error("Error response:", errorText);

@@ -18,9 +18,9 @@ import org.hibernate.annotations.UuidGenerator;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "game_room_id", nullable = false) private GameRoom gameRoom;
 
-    @Column(nullable = false, length = 50) private String nicknameInRoom; // Będzie to username użytkownika
+    @Column(nullable = false, length = 50) private String nicknameInRoom;
 
-    @Column(nullable = false) private boolean isAlive = true; // Domyślnie gracz jest żywy
+    @Column(nullable = false) private boolean isAlive = true;
 
     @CreationTimestamp @Column(name = "joined_at", nullable = false, updatable = false) private LocalDateTime joinedAt;
 

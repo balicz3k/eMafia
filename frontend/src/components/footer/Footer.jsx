@@ -1,4 +1,3 @@
-// components/Footer/Footer.jsx
 import styles from './Footer.module.css';
 import facebook from '../../assets/facebook.svg';
 import instagram from '../../assets/instagram.svg';

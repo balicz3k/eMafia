@@ -1,4 +1,3 @@
-// filepath: frontend/src/App.jsx
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginView from './views/loginView/LoginView';
@@ -29,7 +28,7 @@ function App() {
                         setIsAdmin(true);
                     }
                 } else {
-                    localStorage.removeItem("token"); // Token wygasł
+                    localStorage.removeItem("token");
                 }
             } catch (error) {
                 console.error("Invalid token:", error);
