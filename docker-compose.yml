@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mafia-backend:
     build: ./backend
@@ -28,6 +26,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

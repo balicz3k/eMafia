@@ -1,5 +1,6 @@
 package com.mafia.config;
 
+import com.mafia.components.JwtAuthenticationFilter;
 import com.mafia.components.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration @EnableWebSecurity @EnableMethodSecurity public class SecurityConfig
 {
@@ -22,14 +24,13 @@ import org.springframework.security.web.SecurityFilterChain;
     {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth
-                                   -> auth.requestMatchers("/api/auth/**")
+                                   -> auth.requestMatchers("/api/auth/**", "/api/test", "/ws/**")
                                           .permitAll() // Publiczne endpointy
-                                          .requestMatchers("/api/test")
-                                          .permitAll() // Dodaj publiczny dostęp do /api/test
                                           .requestMatchers("/api/users/**")
                                           .authenticated() // Endpointy wymagające uwierzytelnienia
                                           .anyRequest()
-                                          .authenticated());
+                                          .authenticated())
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
