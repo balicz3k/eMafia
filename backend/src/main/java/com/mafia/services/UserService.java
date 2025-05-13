@@ -126,4 +126,31 @@ import org.springframework.transaction.annotation.Transactional;
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
+    public List<UserResponse> adminGetAllUsers()
+    {
+        return userRepository.findAll()
+            .stream()
+            .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles()))
+            .collect(Collectors.toList());
+    }
+
+    @Transactional public UserResponse adminUpdateUserRoles(UUID userId, Set<Role> newRoles)
+    {
+        User user = userRepository.findById(userId).orElseThrow(
+            () -> new UserNotFoundException("User not found with ID: " + userId));
+        user.setRoles(newRoles);
+        User updatedUser = userRepository.save(user);
+        return new UserResponse(updatedUser.getId(), updatedUser.getUsername(), updatedUser.getEmail(),
+                                updatedUser.getRoles());
+    }
+
+    @Transactional public void adminDeleteUser(UUID userId)
+    {
+        if (!userRepository.existsById(userId))
+        {
+            throw new UserNotFoundException("User not found with ID: " + userId);
+        }
+        userRepository.deleteById(userId);
+    }
 }
