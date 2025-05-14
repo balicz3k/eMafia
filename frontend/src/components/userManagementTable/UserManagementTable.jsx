@@ -7,7 +7,7 @@ const UserManagementTable = () => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-    const availableRoles = ['ROLE_USER', 'ROLE_ADMIN']; // Define available roles
+    const availableRoles = ['ROLE_USER', 'ROLE_ADMIN'];
 
     const fetchUsers = useCallback(async () => {
         setIsLoading(true);
@@ -72,7 +72,7 @@ const UserManagementTable = () => {
                 const errorText = await response.text();
                 throw new Error(errorText || 'Failed to update roles');
             }
-            fetchUsers(); // Refresh users list
+            fetchUsers();
             alert('User roles updated successfully.');
         } catch (err) {
             setError(err.message);

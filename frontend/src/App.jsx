@@ -39,7 +39,7 @@ function App() {
     }, []);
 
     if (isLoading) {
-        return <div>Loading application...</div>; // Lub jakiś komponent spinnera
+        return <div>Loading application...</div>; 
     }
 
     return (

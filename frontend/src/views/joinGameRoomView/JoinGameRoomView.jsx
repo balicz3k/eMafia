@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import MainLayout from '../../layouts/mainLayout/MainLayout'; // Upewnij się, że ta ścieżka jest poprawna
-import styles from './JoinGameRoomView.module.css'; // Stworzymy ten plik poniżej
+import MainLayout from '../../layouts/mainLayout/MainLayout';
+import styles from './JoinGameRoomView.module.css';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { decodeJwt } from "../../utils/decodeJwt"; // Załóżmy, że masz tę funkcję do dekodowania JWT
+import { decodeJwt } from "../../utils/decodeJwt";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -47,7 +47,7 @@ const JoinGameRoomView = () => {
             return;
         }
 
-        const socketFactory = () => new SockJS(`${API_BASE_URL}/ws`); // Upewnij się, że URL jest poprawny
+        const socketFactory = () => new SockJS(`${API_BASE_URL}/ws`);
         const client = new Client({
             webSocketFactory: socketFactory,
             connectHeaders: {
@@ -83,7 +83,6 @@ const JoinGameRoomView = () => {
 
         client.onWebSocketClose = (event) => {
             console.log("WebSocket closed for room:", currentRoomCode, event);
-            // Możesz chcieć spróbować połączyć się ponownie lub poinformować użytkownika
         };
         
         client.activate();
@@ -98,7 +97,7 @@ const JoinGameRoomView = () => {
             if (!token) {
                 setError("You must be logged in to view or join a room.");
                 setIsLoading(false);
-                navigate('/login'); // Przekieruj do logowania
+                navigate('/login');
                 return;
             }
             try {
@@ -158,9 +157,8 @@ const JoinGameRoomView = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setRoomDetails(data); // Backend zwraca zaktualizowane dane pokoju
+                setRoomDetails(data);
                 console.log('Successfully joined room:', data);
-                // WebSocket powinien również wysłać aktualizację, ale ustawienie tutaj może być szybsze dla UI
             } else {
                 const errorData = await response.json().catch(() => ({ message: "Failed to join room." }));
                 setError(errorData.message || `Failed to join room. Status: ${response.status}`);
@@ -177,15 +175,15 @@ const JoinGameRoomView = () => {
         return <MainLayout><div className={styles.viewContainer}><p>Loading room information...</p></div></MainLayout>;
     }
 
-    if (!roomDetails && !error) { // Jeśli nie ma danych, ale też nie ma błędu (np. początkowy stan)
+    if (!roomDetails && !error) {
         return <MainLayout><div className={styles.viewContainer}><p>Fetching room details...</p></div></MainLayout>;
     }
     
-    if (error && !roomDetails) { // Jeśli jest błąd i nie ma danych pokoju
+    if (error && !roomDetails) { 
         return <MainLayout><div className={styles.viewContainer}><p className={styles.errorMessage}>{error}</p></div></MainLayout>;
     }
     
-    if (!roomDetails) { // Ostateczny fallback, jeśli roomDetails jest null
+    if (!roomDetails) {
         return <MainLayout><div className={styles.viewContainer}><p className={styles.errorMessage}>Could not load room details.</p></div></MainLayout>;
     }
 
@@ -203,7 +201,7 @@ const JoinGameRoomView = () => {
         <MainLayout>
             <div className={styles.viewContainer}>
                 <h2>Room: {roomDetails.name} ({roomDetails.roomCode})</h2>
-                {error && <p className={styles.errorMessage}>{error}</p>} {/* Wyświetl błąd także gdy są dane pokoju */}
+                {error && <p className={styles.errorMessage}>{error}</p>} {}
                 <p>Status: <span className={`${styles.status} ${styles[roomDetails.status.toLowerCase().replace(/_/g, '')]}`}>{roomDetails.status.replace("_", " ")}</span></p>
                 <p>Host: {roomDetails.hostUsername}</p>
                 <p>Players: {roomDetails.currentPlayers} / {roomDetails.maxPlayers}</p>

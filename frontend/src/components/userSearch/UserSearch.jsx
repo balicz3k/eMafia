@@ -3,8 +3,8 @@ import React, { useState } from "react";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const UserSearch = () => {
-  const [query, setQuery] = useState(""); // Przechowuje zapytanie wyszukiwania
-  const [results, setResults] = useState([]); // Przechowuje wyniki wyszukiwania
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,7 +13,7 @@ const UserSearch = () => {
       const response = await fetch(`${API_BASE_URL}/api/users/search?query=${query}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Dodaj token JWT
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       console.log("Response status:", response.status);
