@@ -42,6 +42,7 @@ input {
 }
 
 button {
+    max-width: 100%;
     display: flex;
     width: 505px;
     height: 64px;
