@@ -2,9 +2,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
     position: relative;
     width: 100%;
+    min-height: calc(100vh - 140px - 4rem);
+    margin-top: 2rem;
 }
 
 .formTitle {
@@ -13,6 +15,7 @@
     color: #000000;
     margin-bottom: 2rem;
     font-family: DM Sans, sans-serif;
+    margin-block-start: 0;
 }
 
 .signinForm {

@@ -53,7 +53,7 @@ const LoginForm = () => {
           <h2 className={styles.formTitle}>Sign in</h2>
           <form onSubmit={handleSubmit}>
 
-            <div className={styles.formGroup}>
+            {/* <div className={styles.formGroup}>
               <label htmlFor="username">
                 <MdPerson size={25} />
               </label>
@@ -66,7 +66,7 @@ const LoginForm = () => {
                 onChange={handleChange} 
                 required 
               />
-            </div>
+            </div> */}
 
             <div className={styles.formGroup}>
               <label htmlFor="email">
