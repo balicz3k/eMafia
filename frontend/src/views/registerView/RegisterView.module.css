@@ -1,19 +1,44 @@
 .mainContainer {
-  display: flex; /* Ustawia układ poziomy */
-  flex-direction: row; /* Domyślnie, ale warto to określić */
-  justify-content: space-between; /* Rozdziela kolumny */
-  align-items: center; /* Wyśrodkowuje elementy w pionie */
-  height: 100vh; /* Ustawia wysokość na pełne okno przeglądarki */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
 }
 
 .leftColumn, .rightColumn {
-  flex: 1; /* Obie kolumny zajmują po 50% szerokości */
+  flex: 1;
   display: flex;
-  justify-content: center; /* Wyśrodkowanie w poziomie */
-  align-items: center; /* Wyśrodkowanie w pionie */
+  justify-content: center;
+  align-items: center;
 }
 
 .rightColumn img {
-  max-width: 80%; /* Obrazek zajmuje maksymalnie 80% szerokości kolumny */
-  height: auto; /* Zachowanie proporcji */
+  max-width: 80%;
+  height: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .rightColumn {
+    display: none;
+  }
+  
+  .leftColumn {
+    width: 100%;
+    padding: 1rem;
+    justify-items: center;
+    align-items: flex-start;
+  }
+  
+  .mainContainer {
+    flex-direction: column;
+    padding-bottom: 0;
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .mainContainer {
+    min-height: 0;
+    height: auto;
+  }
 }

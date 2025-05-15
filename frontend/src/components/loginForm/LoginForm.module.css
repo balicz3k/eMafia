@@ -51,8 +51,13 @@
     width: 100%;
     border: none;
     background: transparent;
-    padding: 10px 0 5px 30px;
+    padding: 10px 0 7px 30px;
     font-size: 16px;
+}
+
+.formGroup label {
+    margin-bottom: 0;
+    height: 25px;
 }
 
 .formGroup input:focus {
@@ -110,8 +115,8 @@
 .agreeTerm:checked::after {
     content: '';
     position: absolute;
-    left: 5px;
-    top: 2px;
+    left: 7px;
+    top: 3px;
     width: 5px;
     height: 10px;
     border: solid white;
@@ -151,6 +156,10 @@
     cursor: pointer; /* Zmień kursor na wskaźnik */
     align-items: center; /* Wyśrodkuj tekst w pionie */
     border: none; /* Usuń obramowanie */
+    padding: 12px 0;         /* BRAK - nie ma zdefiniowanego paddingu */
+    justify-content: center; /* BRAK - tekst nie jest wyśrodkowany poziomo */
+    font-size: 16px;         /* BRAK - brak określonego rozmiaru czcionki */
+    margin-top: 1rem;
 }
 
 .loginButton:hover {
@@ -176,4 +185,12 @@
         margin-left: 0;
         margin-top: 8px;
     }
+}
+
+.formGroup input:-webkit-autofill,
+.formGroup input:-webkit-autofill:hover, 
+.formGroup input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: #000000;
 }

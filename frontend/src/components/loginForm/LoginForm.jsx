@@ -53,21 +53,6 @@ const LoginForm = () => {
           <h2 className={styles.formTitle}>Sign in</h2>
           <form onSubmit={handleSubmit}>
 
-            {/* <div className={styles.formGroup}>
-              <label htmlFor="username">
-                <MdPerson size={25} />
-              </label>
-              <input 
-                type="username" 
-                name="username" 
-                id="username"
-                placeholder="Your username"
-                value={formData.username} 
-                onChange={handleChange} 
-                required 
-              />
-            </div> */}
-
             <div className={styles.formGroup}>
               <label htmlFor="email">
                 <MdEmail size={25} />
@@ -95,6 +80,10 @@ const LoginForm = () => {
                 value={formData.password} 
                 onChange={handleChange} 
                 required 
+                autoCorrect="off"
+                autoCapitalize="none"
+                spellCheck="false"
+                data-private="true" 
               />
             </div>
             

@@ -1,72 +1,192 @@
-.loginForm {
+.container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 32px;
+    align-items: center;
+    justify-content: start;
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 140px - 4rem);
+    margin-top: 2rem;
 }
 
-h1 {
-    color: #333;
-    text-align: center;
-    font-family: "DM Sans";
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
+.formTitle {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 2rem;
+    font-family: DM Sans, sans-serif;
+    margin-block-start: 0;
 }
 
-label {
-    color: #666;
-    font-family: "DM Sans";
+.signupForm {
+    position: relative;
+    max-width: 350px;
+    width: 100%;
+}
+
+.formGroup {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    transform: none;
+    color: black;
+    padding: 0 0 5px 0;
+    margin-bottom: 2rem;
+    font-family: DM Sans, sans-serif;
+}
+
+.formGroup::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: -20px;
+    height: 1px;
+    background-color: #9c9797;
+    max-width: 350px;
+}
+
+.formGroup input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 10px 0 7px 30px;
     font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
 }
 
-input {
+.formGroup label {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    height: 25px;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border: none;
+}
+
+.formGroup input::placeholder {
+  font-family: DM Sans, sans-serif;
+}
+
+.formGroup input:focus::placeholder {
+  color: black;
+}
+
+.formGroup:focus-within::after {
+    background-color: black;
+}
+
+.cleanFormGroup {
+    position: relative;
+    width: 100%;
     display: flex;
-    width: 498px;
-    flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
-    border-radius: 12px;
-    border: 1px solid rgba(102, 102, 102, 0.35);
+    transform: none;
+    color: black;
+    padding: 0 0 5px 0;
+    margin-bottom: 2rem;
 }
 
-button {
+.termsWrapper {
+    color: #000000;
     display: flex;
-    width: 505px;
-    height: 64px;
-    padding: 15px 0px 16px 0px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.agreeTerm {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #999;
+    border-radius: 3px;
+    margin-right: 8px;
+    margin-top: 3px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.agreeTerm:checked {
+    background-color: #CC0404;
+    border-color: #CC0404;
+}
+
+.agreeTerm:checked::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.termsText {
+    font-size: 14px;
+    font-family: DM Sans, sans-serif;
+    font-weight: 400;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.termsLink {
+    color: #CC0404;
+    text-decoration: none;
+}
+
+.termsLink:hover {
+    text-decoration: underline;
+}
+
+.registerButton {
+    position: relative;
+    display: flex;
+    width: 100%;
+    color: #ffffff;
+    border-radius: 15px;
+    background-color: #CC0404;
+    opacity: 1;
+    padding: 12px 0;
     justify-content: center;
     align-items: center;
-    border-radius: 32px;
-    opacity: 0.25;
-    background: #111;
-    color: #FFF;
-    text-align: center;
-    font-family: "DM Sans";
-    font-size: 25px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
+    border: none;
+    font-size: 16px;
+    font-family: DM Sans, sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 1rem;
 }
 
-button:hover {
-    opacity: 0.5;
+.registerButton:hover {
+    opacity: 0.8;
 }
 
-button:active {
-    opacity: 0.75;
+.signInLink {
+    text-decoration: none;
+    color: #000000;
+    font-size: 14px;
+    font-family: DM Sans, sans-serif;
+    margin-top: 2rem;
+    font-weight: 400;
 }
 
-button:disabled {
-    opacity: 0.25;
+@media screen and (max-width: 380px) {
+    .cleanFormGroup {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
-button:disabled:hover {
-    opacity: 0.25;
+.formGroup input:-webkit-autofill,
+.formGroup input:-webkit-autofill:hover, 
+.formGroup input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: #000000;
 }
-
