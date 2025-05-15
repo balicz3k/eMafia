@@ -3,7 +3,7 @@
   flex-direction: row; /* Domyślnie, ale warto to określić */
   justify-content: space-between; /* Rozdziela kolumny */
   align-items: center; /* Wyśrodkowuje elementy w pionie */
-  height: 100vh; /* Ustawia wysokość na pełne okno przeglądarki */
+  height: 100vh; /* Wysokość na 100% widoku */
 }
 
 .leftColumn, .rightColumn {
@@ -16,4 +16,22 @@
 .rightColumn img {
   max-width: 80%; /* Obrazek zajmuje maksymalnie 80% szerokości kolumny */
   height: auto; /* Zachowanie proporcji */
+}
+
+@media screen and (max-width: 768px) {
+  .rightColumn {
+    display: none; /* Ukryj prawą kolumnę na mniejszych ekranach */
+  }
+  
+  .leftColumn {
+    width: 100vh; /* Lewa kolumna zajmuje całą szerokość */
+    padding: 1rem 1.5rem; /* Dodaj trochę więcej paddingu po bokach */
+    justify-items: content; /* Wyśrodkowanie w poziomie */
+    align-items: flex-start; /* Wyśrodkowanie w pionie */
+    padding-top: 15px;
+  }
+  
+  .mainContainer {
+    flex-direction: column; /* Na wszelki wypadek, gdyby prawa kolumna była flex-ordered */
+  }
 }
