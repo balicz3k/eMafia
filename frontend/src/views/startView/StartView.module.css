@@ -1,5 +1,6 @@
 /* frontend/src/views/StartView.module.css */
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   background: transparent; /* Upewnij się, że tło jest przezroczyste */
@@ -18,12 +19,12 @@ body, html {
   overflow: hidden; /* Ukrywa ewentualne przewijanie */
   z-index: 0;
 }
-  
+
 .title {
   width: 648px;
   height: 280px;
   flex-shrink: 0;
-  color: #7B0E0E;
+  color: #7b0e0e;
   font-family: "IM FELL English SC";
   font-size: 250px;
   font-style: normal;

@@ -1,117 +1,131 @@
 .viewContainer {
-    padding: 20px;
-    max-width: 700px;
-    margin: 20px auto;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 700px;
+  margin: 20px auto;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
 }
 
 .viewContainer h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 15px;
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px;
 }
 
 .viewContainer h3 {
-    margin-top: 25px;
-    margin-bottom: 10px;
-    color: #444;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
+  margin-top: 25px;
+  margin-bottom: 10px;
+  color: #444;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
 .viewContainer p {
-    font-size: 16px;
-    color: #555;
-    line-height: 1.6;
-    margin-bottom: 8px;
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 8px;
 }
 
 .errorMessage {
-    color: #D8000C;
-    background-color: #FFD2D2;
-    border: 1px solid #D8000C;
-    padding: 12px;
-    border-radius: 4px;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    text-align: center;
+  color: #d8000c;
+  background-color: #ffd2d2;
+  border: 1px solid #d8000c;
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 .infoMessage {
-    color: #00529B;
-    background-color: #BDE5F8;
-    border: 1px solid #00529B;
-    padding: 12px;
-    border-radius: 4px;
-    margin-top: 15px;
-    text-align: center;
+  color: #00529b;
+  background-color: #bde5f8;
+  border: 1px solid #00529b;
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 15px;
+  text-align: center;
 }
 
 .playerList {
-    list-style-type: none;
-    padding-left: 0;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .playerList li {
-    background-color: #fff;
-    border: 1px solid #eee;
-    padding: 10px 15px;
-    margin-bottom: 6px;
-    border-radius: 4px;
-    font-size: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background-color: #fff;
+  border: 1px solid #eee;
+  padding: 10px 15px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .hostLabel {
-    font-size: 0.9em;
-    font-style: italic;
-    color: #777;
+  font-size: 0.9em;
+  font-style: italic;
+  color: #777;
 }
 
-.joinButton, .startButton {
-    display: block;
-    width: auto;
-    padding: 12px 25px;
-    margin: 25px auto 10px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    background-color: #5cb85c; /* Green */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-    text-align: center;
+.joinButton,
+.startButton {
+  display: block;
+  width: auto;
+  padding: 12px 25px;
+  margin: 25px auto 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #5cb85c; /* Green */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  text-align: center;
 }
 
-.joinButton:hover, .startButton:hover {
-    background-color: #4cae4c;
+.joinButton:hover,
+.startButton:hover {
+  background-color: #4cae4c;
 }
 
 .joinButton:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .status {
-    font-weight: bold;
-    padding: 4px 10px;
-    border-radius: 15px; /* More pill-like */
-    color: white;
-    font-size: 0.9em;
-    text-transform: capitalize;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 15px; /* More pill-like */
+  color: white;
+  font-size: 0.9em;
+  text-transform: capitalize;
 }
 
 /* Status colors */
-.status.waitingforplayers { background-color: #f0ad4e; } /* Orange */
-.status.readytostart { background-color: #5bc0de; }    /* Light Blue */
-.status.inprogress { background-color: #337ab7; }      /* Blue */
-.status.paused { background-color: #777; }             /* Gray */
-.status.finished { background-color: #d9534f; }        /* Red */
-.status.abandoned { background-color: #333; }          /* Dark Gray */
+.status.waitingforplayers {
+  background-color: #f0ad4e;
+} /* Orange */
+.status.readytostart {
+  background-color: #5bc0de;
+} /* Light Blue */
+.status.inprogress {
+  background-color: #337ab7;
+} /* Blue */
+.status.paused {
+  background-color: #777;
+} /* Gray */
+.status.finished {
+  background-color: #d9534f;
+} /* Red */
+.status.abandoned {
+  background-color: #333;
+} /* Dark Gray */

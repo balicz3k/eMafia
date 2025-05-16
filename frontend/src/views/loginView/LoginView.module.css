@@ -6,7 +6,8 @@
   flex: 1;
 }
 
-.leftColumn, .rightColumn {
+.leftColumn,
+.rightColumn {
   flex: 1; /* Obie kolumny zajmują po 50% szerokości */
   display: flex;
   justify-content: center; /* Wyśrodkowanie w poziomie */
@@ -22,14 +23,14 @@
   .rightColumn {
     display: none; /* Ukryj prawą kolumnę na mniejszych ekranach */
   }
-  
+
   .leftColumn {
     width: 100%; /* Lewa kolumna zajmuje całą szerokość */
     padding: 1rem 1rem; /* Dodaj trochę więcej paddingu po bokach */
     justify-items: content; /* Wyśrodkowanie w poziomie */
     align-items: flex-start; /* Wyśrodkowanie w pionie */
   }
-  
+
   .mainContainer {
     flex-direction: column; /* Na wszelki wypadek, gdyby prawa kolumna była flex-ordered */
     padding-bottom: 0;

@@ -10,12 +10,15 @@ const UserSearch = () => {
     e.preventDefault();
     try {
       console.log("Sending search request with query:", query);
-      const response = await fetch(`${API_BASE_URL}/api/users/search?query=${query}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const response = await fetch(
+        `${API_BASE_URL}/api/users/search?query=${query}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
-      });
+      );
       console.log("Response status:", response.status);
       if (response.ok) {
         const data = await response.json();

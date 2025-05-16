@@ -54,7 +54,7 @@
   .mainLayoutContainer {
     touch-action: pan-y;
   }
-  
+
   .mainContent > * {
     max-width: 100vw;
     overflow-x: hidden;

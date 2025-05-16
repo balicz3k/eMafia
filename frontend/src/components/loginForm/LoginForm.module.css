@@ -1,72 +1,78 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: start;
-    position: relative;
-    width: 100%;
-    min-height: calc(100vh - 140px - 4rem);
-    margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 140px - 4rem);
+  margin-top: 2rem;
 }
 
 .formTitle {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #000000;
-    margin-bottom: 2rem;
-    font-family: DM Sans, sans-serif;
-    margin-block-start: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 2rem;
+  font-family:
+    DM Sans,
+    sans-serif;
+  margin-block-start: 0;
 }
 
 .signinForm {
-    position: relative;
-    max-width: 350px;
-    width: 100%;
+  position: relative;
+  max-width: 350px;
+  width: 100%;
 }
 
 .formGroup {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    transform: none;
-    color: black;
-    padding: 0 0 5px 0;
-    margin-bottom: 2rem;
-    font-family: DM Sans, sans-serif;
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  transform: none;
+  color: black;
+  padding: 0 0 5px 0;
+  margin-bottom: 2rem;
+  font-family:
+    DM Sans,
+    sans-serif;
 }
 
 .formGroup::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: -20px;
-    height: 1px;
-    background-color: #9c9797;
-    max-width: 350px;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: -20px;
+  height: 1px;
+  background-color: #9c9797;
+  max-width: 350px;
 }
 
 .formGroup input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    padding: 10px 0 7px 30px;
-    font-size: 16px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 10px 0 7px 30px;
+  font-size: 16px;
 }
 
 .formGroup label {
-    margin-bottom: 0;
-    height: 25px;
+  margin-bottom: 0;
+  height: 25px;
 }
 
 .formGroup input:focus {
-    outline: none;
-    border: none;
+  outline: none;
+  border: none;
 }
 
 .formGroup input::placeholder {
-  font-family: DM Sans, sans-serif;
+  font-family:
+    DM Sans,
+    sans-serif;
 }
 
 .formGroup input:focus::placeholder {
@@ -74,123 +80,131 @@
 }
 
 .formGroup:focus-within::after {
-    background-color: black;
+  background-color: black;
 }
 
 .cleanFormGroup {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    transform: none;
-    color: black;
-    padding: 0 0 5px 0;
-    margin-bottom: 2rem;
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  transform: none;
+  color: black;
+  padding: 0 0 5px 0;
+  margin-bottom: 2rem;
 }
 
 .rememberWrapper {
-    color: #000000;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+  color: #000000;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .agreeTerm {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #999;
-    border-radius: 3px;
-    margin-right: 8px;
-    position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #999;
+  border-radius: 3px;
+  margin-right: 8px;
+  position: relative;
 }
 
 .agreeTerm:checked {
-    background-color: #CC0404;
-    border-color: #CC0404;
+  background-color: #cc0404;
+  border-color: #cc0404;
 }
 
 .agreeTerm:checked::after {
-    content: '';
-    position: absolute;
-    left: 7px;
-    top: 3px;
-    width: 5px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .rememberMe {
-    text-wrap: nowrap;
-    color: #000000;
-    font-size: 14px;
-    font-family: DM Sans, sans-serif;
-    font-weight: 400;
+  text-wrap: nowrap;
+  color: #000000;
+  font-size: 14px;
+  font-family:
+    DM Sans,
+    sans-serif;
+  font-weight: 400;
 }
 
 .forgotPassword {
-    color: #000000;
-    text-decoration: none;
-    font-size: 14px;
-    text-wrap: nowrap;
-    margin-left: auto;
-    font-family: DM Sans, sans-serif;
-    opacity: 1;
-    font-weight: 400;
+  color: #000000;
+  text-decoration: none;
+  font-size: 14px;
+  text-wrap: nowrap;
+  margin-left: auto;
+  font-family:
+    DM Sans,
+    sans-serif;
+  opacity: 1;
+  font-weight: 400;
 }
 
 .loginButton {
-    position: relative;
-    display: flex;
-    width: 100%;
-    color: #ffffff;
-    border-radius: 15px;
-    background-color: #CC0404;
-    opacity: 1;
-    font-family: DM Sans, sans-serif;
-    font-weight: 500; /* Półgrubość czcionki */
-    cursor: pointer; /* Zmień kursor na wskaźnik */
-    align-items: center; /* Wyśrodkuj tekst w pionie */
-    border: none; /* Usuń obramowanie */
-    padding: 12px 0;         /* BRAK - nie ma zdefiniowanego paddingu */
-    justify-content: center; /* BRAK - tekst nie jest wyśrodkowany poziomo */
-    font-size: 16px;         /* BRAK - brak określonego rozmiaru czcionki */
-    margin-top: 1rem;
+  position: relative;
+  display: flex;
+  width: 100%;
+  color: #ffffff;
+  border-radius: 15px;
+  background-color: #cc0404;
+  opacity: 1;
+  font-family:
+    DM Sans,
+    sans-serif;
+  font-weight: 500; /* Półgrubość czcionki */
+  cursor: pointer; /* Zmień kursor na wskaźnik */
+  align-items: center; /* Wyśrodkuj tekst w pionie */
+  border: none; /* Usuń obramowanie */
+  padding: 12px 0; /* BRAK - nie ma zdefiniowanego paddingu */
+  justify-content: center; /* BRAK - tekst nie jest wyśrodkowany poziomo */
+  font-size: 16px; /* BRAK - brak określonego rozmiaru czcionki */
+  margin-top: 1rem;
 }
 
 .loginButton:hover {
-    opacity: 0.8;
+  opacity: 0.8;
 }
 
 .signUpLink {
-    text-decoration: none;
-    color : #000000;
-    font-size: 14px;
-    font-family: DM Sans, sans-serif;
-    margin-top: 2rem;
-    font-weight: 400;
-} 
+  text-decoration: none;
+  color: #000000;
+  font-size: 14px;
+  font-family:
+    DM Sans,
+    sans-serif;
+  margin-top: 2rem;
+  font-weight: 400;
+}
 
 @media screen and (max-width: 380px) {
-    .cleanFormGroup {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .forgotPassword {
-        margin-left: 0;
-        margin-top: 8px;
-    }
+  .cleanFormGroup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .forgotPassword {
+    margin-left: 0;
+    margin-top: 8px;
+  }
 }
 
 .formGroup input:-webkit-autofill,
-.formGroup input:-webkit-autofill:hover, 
+.formGroup input:-webkit-autofill:hover,
 .formGroup input:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
-    transition: background-color 5000s ease-in-out 0s;
-    -webkit-text-fill-color: #000000;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: #000000;
 }

@@ -1,6 +1,6 @@
-import Header from '../../components/header/Header';
-import Footer from '../../components/footer/Footer';
-import Styles from './MainLayout.module.css';
+import Header from "../../components/header/Header";
+import Footer from "../../components/footer/Footer";
+import Styles from "./MainLayout.module.css";
 
 const MainLayout = ({ children }) => {
   return (

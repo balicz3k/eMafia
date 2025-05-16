@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import styles from './LoginForm.module.css';
-import { MdEmail, MdLock, MdPerson } from 'react-icons/md';
+import React, { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import styles from "./LoginForm.module.css";
+import { MdEmail, MdLock, MdPerson } from "react-icons/md";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -23,7 +23,7 @@ const LoginForm = () => {
 
   const handleRememberChange = () => {
     setRemember(!remember);
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,67 +49,65 @@ const LoginForm = () => {
 
   return (
     <div className={styles.container}>
-        <div className={styles.signinForm}>
-          <h2 className={styles.formTitle}>Sign in</h2>
-          <form onSubmit={handleSubmit}>
+      <div className={styles.signinForm}>
+        <h2 className={styles.formTitle}>Sign in</h2>
+        <form onSubmit={handleSubmit}>
+          <div className={styles.formGroup}>
+            <label htmlFor="email">
+              <MdEmail size={25} />
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Your Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="email">
-                <MdEmail size={25} />
-              </label>
-              <input 
-                type="email" 
-                name="email" 
-                id="email"
-                placeholder="Your Email"
-                value={formData.email} 
-                onChange={handleChange} 
-                required 
+          <div className={styles.formGroup}>
+            <label htmlFor="password">
+              <MdLock size={25} />
+            </label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck="false"
+              data-private="true"
+            />
+          </div>
+
+          <div className={styles.cleanFormGroup}>
+            <div className={styles.rememberWrapper}>
+              <input
+                type="checkbox"
+                name="remember"
+                id="remember-me"
+                className={styles.agreeTerm}
+                checked={remember}
+                onChange={handleRememberChange}
               />
-            </div>
-            
-            <div className={styles.formGroup}>
-              <label htmlFor="password">
-                <MdLock size={25} />
+              <label htmlFor="remember-me" className={styles.rememberMe}>
+                Remember me
               </label>
-              <input 
-                type="password" 
-                name="password" 
-                id="password"
-                placeholder="Password" 
-                value={formData.password} 
-                onChange={handleChange} 
-                required 
-                autoCorrect="off"
-                autoCapitalize="none"
-                spellCheck="false"
-                data-private="true" 
-              />
             </div>
-            
-            <div className={styles.cleanFormGroup}>
-              <div className={styles.rememberWrapper}>
-                <input 
-                  type="checkbox" 
-                  name="remember" 
-                  id="remember-me"
-                  className={styles.agreeTerm} 
-                  checked={remember}
-                  onChange={handleRememberChange}
-                />
-                <label htmlFor="remember-me" className={styles.rememberMe}>
-                  Remember me
-                </label>
-              </div>
-              <Link className={styles.forgotPassword} to="/forgot-password">Forgot password?</Link>
-            </div>
-            
-            <button className={styles.loginButton}>
-              Log in
-            </button>
-          </form>
-        
-        </div>
+            <Link className={styles.forgotPassword} to="/forgot-password">
+              Forgot password?
+            </Link>
+          </div>
+
+          <button className={styles.loginButton}>Log in</button>
+        </form>
+      </div>
       <Link to="/register" className={styles.signUpLink}>
         Create an account
       </Link>
