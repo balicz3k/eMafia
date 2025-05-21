@@ -9,6 +9,7 @@ import CreateRoomView from "./views/createGameRoomView/CreateGameRoomView";
 import JoinRoomView from "./views/joinGameRoomView/JoinGameRoomView";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import EnterRoomCodeView from "./views/enterRoomCodeView/EnterRoomCodeView";
 import { decodeJwt } from "./utils/decodeJwt";
 
 function App() {
@@ -95,9 +96,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* DODAJ NOWĄ ŚCIEŻKĘ DO DOŁĄCZANIA DO POKOJU */}
-        {/* Ścieżka /join/:roomCode będzie pasować do URLi takich jak /join/ABC123 */}
-        {/* Zakładamy, że dołączanie do pokoju również wymaga zalogowania */}
+        <Route
+          path="/enter-code"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <EnterRoomCodeView />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/join/:roomCode"
           element={

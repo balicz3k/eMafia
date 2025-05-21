@@ -81,6 +81,13 @@ const Header = () => {
       >
         Create Room
       </Link>
+      <Link
+        to="/enter-code"
+        className={styles.navLink}
+        onClick={closeMobileMenu}
+      >
+        Join Room
+      </Link>
     </>
   );
 

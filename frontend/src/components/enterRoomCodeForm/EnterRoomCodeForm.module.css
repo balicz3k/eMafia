@@ -1,0 +1,63 @@
+.joinForm {
+  width: 100%;
+  max-width: 400px; /* Ogranicz szerokość samego formularza */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+.inputField {
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.inputField:focus {
+  border-color: #cc0404;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(204, 4, 4, 0.15);
+}
+
+.joinButton {
+  padding: 12px 20px;
+  background-color: #cc0404;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.joinButton:hover {
+  background-color: #a50303;
+}
+
+.joinButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
