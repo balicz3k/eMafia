@@ -10,6 +10,7 @@ public class GameRoomResponse
     private UUID id;
     private String roomCode;
     private String name;
+    private UUID hostId;
     private String hostUsername;
     private int maxPlayers;
     private int currentPlayers;
@@ -18,13 +19,14 @@ public class GameRoomResponse
     private String joinLinkPath;
     private List<PlayerInRoomResponse> players;
 
-    public GameRoomResponse(UUID id, String roomCode, String name, String hostUsername, int maxPlayers,
+    public GameRoomResponse(UUID id, String roomCode, String name, UUID hostId, String hostUsername, int maxPlayers,
                             int currentPlayers, GameRoomStatus status, LocalDateTime createdAt, String joinLinkPath,
                             List<PlayerInRoomResponse> players)
     {
         this.id = id;
         this.roomCode = roomCode;
         this.name = name;
+        this.hostId = hostId;
         this.hostUsername = hostUsername;
         this.maxPlayers = maxPlayers;
         this.currentPlayers = currentPlayers;
@@ -40,6 +42,8 @@ public class GameRoomResponse
     public void setRoomCode(String roomCode) { this.roomCode = roomCode; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    public UUID getHostId() { return hostId; }
+    public void setHostId(UUID hostId) { this.hostId = hostId; }
     public String getHostUsername() { return hostUsername; }
     public void setHostUsername(String hostUsername) { this.hostUsername = hostUsername; }
     public int getMaxPlayers() { return maxPlayers; }

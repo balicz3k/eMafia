@@ -84,4 +84,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
         ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
     }
+
+    @ExceptionHandler(ForbiddenActionException.class) public ResponseEntity<String> handleForbiddenActionException(ForbiddenActionException ex)
+    {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
 }

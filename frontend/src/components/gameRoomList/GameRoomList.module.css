@@ -1,0 +1,10 @@
+.listContainer {
+  margin-top: 20px;
+}
+
+.noRoomsMessage {
+  text-align: center;
+  color: #777;
+  font-size: 1.1rem;
+  margin-top: 30px;
+}

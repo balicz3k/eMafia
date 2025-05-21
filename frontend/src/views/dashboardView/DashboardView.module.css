@@ -1,0 +1,62 @@
+.dashboardContainer {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 20px; /* Odstęp między wyszukiwarką a przyciskiem */
+}
+
+.newGameButton {
+  background-color: #4caf50; /* Green */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap; /* Zapobiega łamaniu tekstu */
+}
+
+.newGameButton:hover {
+  background-color: #45a049;
+}
+
+.loadingMessage,
+.errorMessage {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 20px;
+}
+
+.errorMessage {
+  color: #d32f2f; /* Red */
+}
+
+.dashboardContainer h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Responsywność dla nagłówka */
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch; /* Elementy zajmują całą szerokość */
+  }
+
+  .newGameButton {
+    width: 100%; /* Przycisk na całą szerokość */
+    margin-top: 10px; /* Odstęp od wyszukiwarki */
+  }
+}

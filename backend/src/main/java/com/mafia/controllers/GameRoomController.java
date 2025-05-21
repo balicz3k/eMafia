@@ -3,6 +3,7 @@ package com.mafia.controllers;
 import com.mafia.dto.CreateGameRoomRequest;
 import com.mafia.dto.GameRoomResponse;
 import com.mafia.services.GameRoomService;
+import java.util.List;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,5 +37,30 @@ public class GameRoomController
     {
         GameRoomResponse gameRoomResponse = gameRoomService.getRoomDetails(roomCode);
         return ResponseEntity.ok(gameRoomResponse);
+    }
+
+    @GetMapping("/my-rooms") // Zmieniono endpoint dla jasności
+    public ResponseEntity<List<GameRoomResponse>> getMyGameRooms() {
+        List<GameRoomResponse> gameRooms = gameRoomService.getGameRoomsForCurrentUser();
+        return ResponseEntity.ok(gameRooms);
+    }
+
+    // Nowy endpoint do wyszukiwania pokoi po nazwie
+    @GetMapping("/search")
+    public ResponseEntity<List<GameRoomResponse>> searchGameRooms(@RequestParam String name) {
+        List<GameRoomResponse> gameRooms = gameRoomService.searchGameRoomsByName(name);
+        return ResponseEntity.ok(gameRooms);
+    }
+
+    @PostMapping("/{roomCode}/leave")
+    public ResponseEntity<Void> leaveGameRoom(@PathVariable String roomCode) {
+        gameRoomService.leaveRoom(roomCode);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{roomCode}/end")
+    public ResponseEntity<Void> endGameRoom(@PathVariable String roomCode) {
+        gameRoomService.endRoom(roomCode);
+        return ResponseEntity.ok().build();
     }
 }
