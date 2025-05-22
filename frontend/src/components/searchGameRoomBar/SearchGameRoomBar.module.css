@@ -1,38 +1,78 @@
 .searchForm {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
   width: 100%;
-  max-width: 600px; /* Or your preferred max width */
+  max-width: 600px;
+  gap: 15px; /* Odstęp między inputem a przyciskiem */
+  /* margin-bottom: 20px; Możesz usunąć, jeśli DashboardView.header zarządza odstępami */
+}
+
+.inputWrapper {
+  position: relative;
+  flex-grow: 1;
+  display: flex; /* Dla potencjalnej ikony wewnątrz */
+  align-items: center;
+}
+
+/* Linia pod inputem */
+.inputWrapper::after {
+  content: "";
+  position: absolute;
+  bottom: -1px; /* Pozycjonowanie linii tuż pod inputem */
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #9c9797; /* Kolor linii jak w EnterRoomCodeForm */
+  transition: background-color 0.3s ease;
+}
+
+/* Zmiana koloru linii przy focusie */
+.inputWrapper:focus-within::after {
+  background-color: black;
 }
 
 .searchInput {
-  flex-grow: 1;
-  padding: 10px 15px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 10px 5px 8px 5px; /* Dostosuj padding, np. 8px na dole dla linii */
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px 0 0 4px;
   outline: none;
+  color: #333; /* Kolor tekstu */
+  font-family: "DM Sans", sans-serif; /* Spójna czcionka */
 }
 
-.searchInput:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+.searchInput::placeholder {
+  color: #999; /* Kolor placeholdera */
+  font-family: "DM Sans", sans-serif;
 }
+
+/* Opcjonalne: jeśli dodasz ikonę */
+/*
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  color: #9c9797;
+}
+.searchInput {
+  padding-left: 35px; // Zrób miejsce na ikonę
+}
+*/
 
 .searchButton {
-  padding: 10px 15px;
+  padding: 10px 20px;
   font-size: 1rem;
-  border: 1px solid #007bff;
-  background-color: #007bff;
+  border: none; /* Usuwamy border */
+  background-color: #cc0404; /* Kolor jak przycisk Join w EnterRoomCodeForm */
   color: white;
   cursor: pointer;
-  border-radius: 0 4px 4px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 15px; /* Zaokrąglenie jak w EnterRoomCodeForm */
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 
 .searchButton:hover {
-  background-color: #0056b3;
+  background-color: #a50303; /* Ciemniejszy odcień przy hover */
 }
