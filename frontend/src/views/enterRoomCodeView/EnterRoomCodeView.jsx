@@ -8,13 +8,12 @@ const EnterRoomCodeView = () => {
   const navigate = useNavigate();
 
   const handleCodeSubmit = (submittedCode) => {
-    navigate(`/join/${submittedCode}`); // Przekieruj do istniejącego JoinGameRoomView
+    navigate(`/join/${submittedCode}`);
   };
 
   return (
     <MainLayout>
       <div className={styles.viewContainer}>
-        <h2 className={styles.title}>Join Game by Code</h2>
         <EnterRoomCodeForm onSubmitCode={handleCodeSubmit} />
       </div>
     </MainLayout>

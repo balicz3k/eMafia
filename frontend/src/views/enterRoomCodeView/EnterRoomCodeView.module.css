@@ -2,19 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Zmieniono na flex-start, aby tytuł był wyżej */
+  justify-content: flex-start;
   padding: 40px 20px;
-  min-height: calc(
-    100vh - 120px
-  ); /* Przykładowa wysokość, aby wypełnić ekran minus header/footer */
+  min-height: calc(100vh - 160px);
   box-sizing: border-box;
-  margin-top: 20px; /* Dodatkowy margines od góry */
-}
-
-.title {
-  color: #333;
-  margin-bottom: 30px;
-  font-size: 2.2rem;
-  text-align: center;
-  font-weight: 600;
+  margin-top: 20px;
 }
