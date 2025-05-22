@@ -54,12 +54,12 @@ public class GameRoomController
     @PostMapping("/{roomCode}/leave")
     public ResponseEntity<Void> leaveGameRoom(@PathVariable String roomCode) {
         gameRoomService.leaveRoom(roomCode);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build(); // Changed from ok() to noContent()
     }
 
     @PostMapping("/{roomCode}/end")
     public ResponseEntity<Void> endGameRoom(@PathVariable String roomCode) {
         gameRoomService.endRoom(roomCode);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build(); // Changed from ok() to noContent()
     }
 }

@@ -158,13 +158,13 @@ const DashboardView = () => {
     <MainLayout>
       <div className={styles.dashboardContainer}>
         <header className={styles.header}>
-          <SearchGameRoomBar onSearch={handleSearch} />
           <button
             className={styles.newGameButton}
-            onClick={() => navigate("/createroom")}
+            onClick={() => navigate("/create-room")}
           >
             New Game
           </button>
+          <SearchGameRoomBar onSearch={handleSearch} />
         </header>
 
         {isLoading && <p className={styles.loadingMessage}>Loading games...</p>}

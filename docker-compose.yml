@@ -1,35 +1,77 @@
+# docker-compose.yml
+version: "3.8" # Zalecane jest dodanie wersji compose
+
 services:
   mafia-backend:
-    build: ./backend
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runtime # Odwołujemy się do nazwanego etapu w Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
+      - SPRING_DATASOURCE_USERNAME=postgres # Użyj użytkownika zdefiniowanego dla db
+      - SPRING_DATASOURCE_PASSWORD=yoursecretpassword # Użyj hasła zdefiniowanego dla db
+      # Dodaj inne zmienne środowiskowe potrzebne aplikacji
     depends_on:
       db:
         condition: service_healthy
 
+  mafia-backend-tests:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: builder # Ta usługa używa etapu 'builder' z Dockerfile
+    volumes:
+      # Montuj lokalny kod, aby zmiany były odzwierciedlane bez przebudowywania obrazu testowego
+      - ./backend/src:/app/src
+      - ./backend/pom.xml:/app/pom.xml
+      # Opcjonalnie: montuj raporty Surefire na hosta
+      - ./backend/target/surefire-reports:/app/target/surefire-reports
+    # Komenda do uruchomienia testów. Przekazujemy konfigurację bazy danych.
+    # Upewnij się, że użytkownik i hasło pasują do konfiguracji usługi 'db'.
+    command: sh -c " \
+      echo 'Waiting for DB to be ready for tests...' && \
+      mvn test \
+      -Dspring.datasource.url='jdbc:postgresql://db:5432/mafia' \
+      -Dspring.datasource.username='postgres' \
+      -Dspring.datasource.password='yoursecretpassword' \
+      -Dspring.jpa.hibernate.ddl-auto='create-drop' \
+      -Dlogging.level.org.hibernate.SQL='DEBUG' \
+      -Dlogging.level.org.hibernate.type.descriptor.sql='TRACE' \
+      "
+    environment: # Te zmienne mogą być potrzebne, jeśli testy ich oczekują
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=yoursecretpassword
+      # Inne zmienne środowiskowe potrzebne dla testów
+    depends_on:
+      db:
+        condition: service_healthy # Uruchom testy dopiero, gdy baza danych będzie gotowa
+
   mafia-frontend:
     build: ./frontend
     ports:
-      - "3000:80"
+      - "3000:80" # Zakładając, że kontener frontend nasłuchuje na porcie 80
     depends_on:
-      - mafia-backend
+      - mafia-backend # Frontend może zależeć od backendu
 
   db:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=mafia
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - POSTGRES_USER=postgres # Zdefiniuj użytkownika
+      - POSTGRES_PASSWORD=yoursecretpassword # Zdefiniuj hasło
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mafia"] # Sprawdź gotowość bazy
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

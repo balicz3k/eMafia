@@ -1,30 +1,29 @@
 import React, { useState } from "react";
 import styles from "./SearchGameRoomBar.module.css";
-import { MdSearch } from "react-icons/md";
+import { FaSearch } from "react-icons/fa";
 
 const SearchGameRoomBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleInputChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
     onSearch(searchTerm);
   };
 
   return (
     <form className={styles.searchForm} onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Search for a game by name..."
-        value={searchTerm}
-        onChange={handleInputChange}
-        className={styles.searchInput}
-      />
+      <div className={styles.inputWrapper}>
+        {<FaSearch className={styles.searchIcon} />}
+        <input
+          type="text"
+          className={styles.searchInput}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search games by name..."
+        />
+      </div>
       <button type="submit" className={styles.searchButton}>
-        <MdSearch size={24} />
+        Search
       </button>
     </form>
   );
