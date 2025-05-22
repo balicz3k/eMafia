@@ -183,54 +183,27 @@ import org.springframework.transaction.annotation.Transactional;
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException("User is not in this room."));
 
-        // Nie pozwalamy na opuszczanie pokoi, które są już formalnie zakończone lub anulowane,
-        // chyba że logika biznesowa tego wymaga (np. usunięcie z historii gracza).
-        // Na potrzeby tej logiki, jeśli gra jest FINISHED/CANCELLED, nie robimy nic.
         if (gameRoom.getStatus() == GameRoomStatus.FINISHED || gameRoom.getStatus() == GameRoomStatus.ABANDONED) {
-            // Można by tu dodać logikę, jeśli np. chcemy p dozwolić na "usunięcie się" z listy zakończonych gier.
-            // Na razie, jeśli gra jest zakończona, nie ma akcji "opuszczania".
             return;
         }
 
         boolean wasHost = gameRoom.getHost().getId().equals(currentUser.getId());
 
         if (wasHost) {
-            // Host opuszcza pokój - usuwamy cały pokój.
-            // Dzięki CascadeType.ALL i orphanRemoval=true na GameRoom.players,
-            // wszystkie powiązane PlayerInRoom zostaną również usunięte.
             gameRoomRepository.delete(gameRoom);
-
-            // Wyślij informację do wszystkich (potencjalnych) graczy, że pokój został usunięty/zakończony.
-            // Można stworzyć dedykowany DTO dla tego typu wiadomości.
-            // Dla uproszczenia, wysyłamy informację o anulowaniu, chociaż pokój jest usuwany.
-            // Klienci powinni obsłużyć brak pokoju przy następnym odświeżeniu lub próbie interakcji.
             messagingTemplate.convertAndSend("/topic/game/" + gameRoom.getRoomCode() + "/roomDeleted",
                                              "Room " + gameRoom.getName() + " has been deleted by the host.");
-            // Alternatywnie, można wysłać zaktualizowany status jako CANCELLED tuż przed usunięciem,
-            // ale usunięcie jest bardziej definitywne.
         } else {
-            // Zwykły gracz opuszcza pokój.
-            gameRoom.removePlayer(playerToRemove); // To usunie PlayerInRoom dzięki orphanRemoval=true
+            gameRoom.removePlayer(playerToRemove);
 
-            // Zaktualizuj status pokoju, jeśli to konieczne
             if (gameRoom.getPlayers().isEmpty() && gameRoom.getStatus() != GameRoomStatus.WAITING_FOR_PLAYERS) {
-                 // Jeśli pokój stał się pusty (a nie był to host, który by go usunął)
-                 // Można by go anulować lub zostawić, zależy od logiki.
-                 // Na razie zostawiamy, bo host mógłby jeszcze wrócić lub zaprosić kogoś.
-                 // Jeśli jednak chcemy anulować pusty pokój:
-                 // gameRoom.setStatus(GameRoomStatus.CANCELLED);
             } else if (gameRoom.getStatus() == GameRoomStatus.READY_TO_START && gameRoom.getPlayers().size() < gameRoom.getMaxPlayers()) {
-                // Jeśli pokój był gotowy do startu, a teraz brakuje graczy
                 gameRoom.setStatus(GameRoomStatus.WAITING_FOR_PLAYERS);
             }
-            // Jeśli pokój był IN_PROGRESS, opuszczenie przez gracza może wymagać innej logiki
-            // (np. oznaczenie gracza jako "opuścił", ale gra toczy się dalej, jeśli to możliwe).
-            // Obecna logika nie obsługuje jeszcze stanu IN_PROGRESS w kontekście opuszczania.
 
             GameRoom updatedRoom = gameRoomRepository.save(gameRoom);
             GameRoomResponse roomResponse = mapGameRoomToResponse(updatedRoom);
 
-            // Wyślij informację o opuszczeniu gracza i zaktualizowanym stanie pokoju
             messagingTemplate.convertAndSend("/topic/game/" + updatedRoom.getRoomCode() + "/playerLeft", mapPlayerToResponse(playerToRemove));
             messagingTemplate.convertAndSend("/topic/game/" + updatedRoom.getRoomCode() + "/updated", roomResponse);
         }
@@ -243,20 +216,18 @@ import org.springframework.transaction.annotation.Transactional;
         User currentUser = userRepository.findById(principalUser.getId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + principalUser.getId()));
 
-        GameRoom gameRoom = gameRoomRepository.findByRoomCodeWithPlayers(roomCode) // Pobierz z graczami dla mapGameRoomToResponse
+        GameRoom gameRoom = gameRoomRepository.findByRoomCodeWithPlayers(roomCode)
                 .orElseThrow(() -> new GameRoomNotFoundException("Game room not found with code: " + roomCode));
 
-        // Tylko host może zakończyć grę przez ten endpoint
         if (!gameRoom.getHost().getId().equals(currentUser.getId())) {
             throw new ForbiddenActionException("Only the host can end the game.");
         }
 
-        if (gameRoom.getStatus() == GameRoomStatus.FINISHED || gameRoom.getStatus() == GameRoomStatus.ABANDONED /* lub ABANDONED, jeśli używasz */) {
-            // Gra już zakończona, nie rób nic lub zwróć informację
+        if (gameRoom.getStatus() == GameRoomStatus.FINISHED || gameRoom.getStatus() == GameRoomStatus.ABANDONED) {
             return;
         }
 
-        gameRoom.setStatus(GameRoomStatus.FINISHED); // Lub CANCELLED/ABANDONED w zależności od logiki
+        gameRoom.setStatus(GameRoomStatus.FINISHED);
         GameRoom updatedRoom = gameRoomRepository.save(gameRoom);
         GameRoomResponse roomResponse = mapGameRoomToResponse(updatedRoom);
 

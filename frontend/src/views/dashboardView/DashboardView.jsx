@@ -4,13 +4,13 @@ import MainLayout from "../../layouts/mainLayout/MainLayout";
 import SearchGameRoomBar from "../../components/searchGameRoomBar/SearchGameRoomBar";
 import GameRoomList from "../../components/gameRoomList/GameRoomList";
 import styles from "./DashboardView.module.css";
-import { decodeJwt } from "../../utils/decodeJwt"; // Załóżmy, że masz taki plik
+import { decodeJwt } from "../../utils/decodeJwt";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const DashboardView = () => {
   const [userGames, setUserGames] = useState([]);
-  const [searchResults, setSearchResults] = useState(null); // null, aby odróżnić od pustej tablicy po wyszukiwaniu
+  const [searchResults, setSearchResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
@@ -21,10 +21,9 @@ const DashboardView = () => {
     if (token) {
       try {
         const decoded = decodeJwt(token);
-        setCurrentUser(decoded); // Przechowuje cały zdekodowany token (np. z ID użytkownika jako 'sub')
+        setCurrentUser(decoded);
       } catch (e) {
         console.error("Failed to decode JWT", e);
-        // Handle invalid token, e.g., logout
       }
     }
   }, []);
@@ -35,8 +34,6 @@ const DashboardView = () => {
     setError("");
     const token = localStorage.getItem("token");
     try {
-      // Endpoint do pobierania gier, w których użytkownik uczestniczy
-      // lub które stworzył. Może wymagać dostosowania.
       const response = await fetch(`${API_BASE_URL}/api/gamerooms/my-rooms`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -61,7 +58,7 @@ const DashboardView = () => {
 
   const handleSearch = async (searchTerm) => {
     if (!searchTerm.trim()) {
-      setSearchResults(null); // Pokaż "Your Games" jeśli wyszukiwanie jest puste
+      setSearchResults(null);
       return;
     }
     setIsLoading(true);
@@ -86,7 +83,7 @@ const DashboardView = () => {
     } catch (err) {
       console.error("Error searching games:", err);
       setError(err.message || "Could not perform search.");
-      setSearchResults([]); // Pokaż pusty wynik w razie błędu
+      setSearchResults([]);
     } finally {
       setIsLoading(false);
     }
@@ -110,10 +107,8 @@ const DashboardView = () => {
           .catch(() => ({ message: "Failed to leave room." }));
         throw new Error(errorData.message);
       }
-      // Odśwież listę gier
       fetchUserGames();
       if (searchResults) {
-        // Jeśli wyniki wyszukiwania są aktywne, odśwież je też
         const updatedResults = searchResults.filter(
           (room) => room.roomCode !== roomCode
         );
@@ -143,7 +138,7 @@ const DashboardView = () => {
           .catch(() => ({ message: "Failed to end game." }));
         throw new Error(errorData.message);
       }
-      // Odśwież listę gier
+
       fetchUserGames();
       if (searchResults) {
         const updatedResults = searchResults.filter(
@@ -166,7 +161,7 @@ const DashboardView = () => {
           <SearchGameRoomBar onSearch={handleSearch} />
           <button
             className={styles.newGameButton}
-            onClick={() => navigate("/createroom")} // Upewnij się, że ścieżka jest poprawna
+            onClick={() => navigate("/createroom")}
           >
             New Game
           </button>
@@ -180,7 +175,7 @@ const DashboardView = () => {
             <h2>{searchResults !== null ? "Search Results" : "Your Games"}</h2>
             <GameRoomList
               rooms={gamesToDisplay}
-              currentUserId={currentUser?.sub} // 'sub' to standardowe pole dla ID użytkownika w JWT
+              currentUserId={currentUser?.sub}
               onLeaveRoom={handleLeaveRoom}
               onEndRoom={handleEndRoom}
             />

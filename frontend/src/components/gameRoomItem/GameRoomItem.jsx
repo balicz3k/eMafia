@@ -12,7 +12,7 @@ const GameRoomItem = ({ room, currentUserId, onLeave, onEnd }) => {
   };
 
   const handleLeaveClick = (e) => {
-    e.stopPropagation(); // Zapobiegaj kliknięciu na cały item
+    e.stopPropagation();
     if (
       window.confirm(`Are you sure you want to leave the room "${room.name}"?`)
     ) {
@@ -21,7 +21,7 @@ const GameRoomItem = ({ room, currentUserId, onLeave, onEnd }) => {
   };
 
   const handleEndClick = (e) => {
-    e.stopPropagation(); // Zapobiegaj kliknięciu na cały item
+    e.stopPropagation();
     if (
       window.confirm(
         `Are you sure you want to end the game "${room.name}"? This action cannot be undone.`

@@ -113,7 +113,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Możesz dodać ścieżkę catch-all dla nieznalezionych stron, jeśli chcesz */}
         {/* <Route path="*" element={<NotFoundView />} /> */}
       </Routes>
     </BrowserRouter>

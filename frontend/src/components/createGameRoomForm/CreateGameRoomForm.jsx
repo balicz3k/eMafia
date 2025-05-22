@@ -40,12 +40,12 @@ const CreateGameRoomForm = () => {
       if (response.status === 201) {
         const data = await response.json();
         setCreatedRoomInfo(data);
-        setRoomName(""); // Resetuj formularz
+        setRoomName("");
         setMaxPlayers(5);
       } else {
         const errorText = await response.text();
         setError(
-          errorText || "Failed to create room. Status: " + response.status,
+          errorText || "Failed to create room. Status: " + response.status
         );
       }
     } catch (err) {
@@ -58,9 +58,6 @@ const CreateGameRoomForm = () => {
 
   const getFullJoinLink = () => {
     if (createdRoomInfo && createdRoomInfo.roomCode) {
-      // INF Zakładamy, że frontend działa na tym samym hoście i porcie co backend (dla uproszczenia)
-      // W produkcji, to URL frontendu powinien być użyty.
-      // Można też pobrać bazowy URL frontendu z konfiguracji lub window.location.origin
       const baseUrl = window.location.origin;
       return `${baseUrl}${createdRoomInfo.joinLinkPath}${createdRoomInfo.roomCode}`;
     }

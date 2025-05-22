@@ -39,13 +39,12 @@ public class GameRoomController
         return ResponseEntity.ok(gameRoomResponse);
     }
 
-    @GetMapping("/my-rooms") // Zmieniono endpoint dla jasności
+    @GetMapping("/my-rooms")
     public ResponseEntity<List<GameRoomResponse>> getMyGameRooms() {
         List<GameRoomResponse> gameRooms = gameRoomService.getGameRoomsForCurrentUser();
         return ResponseEntity.ok(gameRooms);
     }
 
-    // Nowy endpoint do wyszukiwania pokoi po nazwie
     @GetMapping("/search")
     public ResponseEntity<List<GameRoomResponse>> searchGameRooms(@RequestParam String name) {
         List<GameRoomResponse> gameRooms = gameRoomService.searchGameRoomsByName(name);

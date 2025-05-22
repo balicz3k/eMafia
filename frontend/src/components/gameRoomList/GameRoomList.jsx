@@ -19,7 +19,7 @@ const GameRoomList = ({ rooms, currentUserId, onLeaveRoom, onEndRoom }) => {
           fetch
           user
           games
-          key={room.id || room.roomCode} // Użyj stabilnego klucza
+          key={room.id || room.roomCode}
           room={room}
           currentUserId={currentUserId}
           onLeave={onLeaveRoom}

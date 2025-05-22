@@ -89,13 +89,13 @@
 
 .roomCode {
   font-weight: bold;
-  color: #cc0404; /* Kolor z Twojego logo */
+  color: #cc0404;
   font-size: 1.2em;
 }
 
 .joinLink {
   color: #31708f;
-  word-break: break-all; /* Aby długie linki się łamały */
+  word-break: break-all;
 }
 
 .qrCodeContainer {

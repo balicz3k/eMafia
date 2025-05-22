@@ -24,10 +24,6 @@ import org.hibernate.annotations.UuidGenerator;
 
     @CreationTimestamp @Column(name = "joined_at", nullable = false, updatable = false) private LocalDateTime joinedAt;
 
-    // TODO: W przyszłości można dodać pole roli w grze (np. MAFIA, CITIZEN)
-    // @Enumerated(EnumType.STRING)
-    // private GameRole gameRole;
-
     public PlayerInRoom(User user, GameRoom gameRoom, String nicknameInRoom)
     {
         this.user = user;

@@ -240,10 +240,6 @@ const JoinGameRoomView = () => {
     roomDetails.currentPlayers < roomDetails.maxPlayers &&
     !isCurrentUserInRoom;
 
-  // TODO: Logika przycisku "Start Game" dla hosta
-  // const isHost = currentUser && roomDetails.hostUsername === currentUser.username;
-  // const canStartGame = isHost && roomDetails.status === 'READY_TO_START';
-
   return (
     <MainLayout>
       <div className={styles.viewContainer}>
