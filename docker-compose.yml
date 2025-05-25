@@ -9,7 +9,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
       - SPRING_DATASOURCE_USERNAME=postgres # Użyj użytkownika zdefiniowanego dla db
-      - SPRING_DATASOURCE_PASSWORD=yoursecretpassword # Użyj hasła zdefiniowanego dla db
+      - SPRING_DATASOURCE_PASSWORD=postgres # Użyj hasła zdefiniowanego dla db
       # Dodaj inne zmienne środowiskowe potrzebne aplikacji
     depends_on:
       db:
@@ -35,7 +35,7 @@ services:
       mvn test \
       -Dspring.datasource.url='jdbc:postgresql://db:5432/mafia' \
       -Dspring.datasource.username='postgres' \
-      -Dspring.datasource.password='yoursecretpassword' \
+      -Dspring.datasource.password='postgres' \
       -Dspring.jpa.hibernate.ddl-auto='create-drop' \
       -Dlogging.level.org.hibernate.SQL='DEBUG' \
       -Dlogging.level.org.hibernate.type.descriptor.sql='TRACE' \
@@ -43,7 +43,7 @@ services:
     environment: # Te zmienne mogą być potrzebne, jeśli testy ich oczekują
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=yoursecretpassword
+      - SPRING_DATASOURCE_PASSWORD=postgres
       # Inne zmienne środowiskowe potrzebne dla testów
     depends_on:
       db:
@@ -63,7 +63,7 @@ services:
     environment:
       - POSTGRES_DB=mafia
       - POSTGRES_USER=postgres # Zdefiniuj użytkownika
-      - POSTGRES_PASSWORD=yoursecretpassword # Zdefiniuj hasło
+      - POSTGRES_PASSWORD=postgres # Zdefiniuj hasło
     ports:
       - "5432:5432"
     volumes:
