@@ -1,6 +1,6 @@
 # backend/Dockerfile
 # Etap 1: Budowanie (z narzędziami Mavena i JDK)
-FROM maven:3.8.5-openjdk-17 AS builder
+FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
 COPY pom.xml .
 # Pobierz zależności, aby przyspieszyć kolejne buildy, jeśli kod się nie zmienia
@@ -11,8 +11,8 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Etap 2: Środowisko uruchomieniowe (lekki obraz z JRE)
-FROM openjdk:17-jdk-slim AS runtime
+FROM eclipse-temurin:17-jre AS runtime
 WORKDIR /app
 # Kopiuj tylko zbudowany artefakt .jar z etapu builder do finalnego obrazu
 COPY --from=builder /app/target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]docker-compose run --rm mafia-backend-tests
+ENTRYPOINT ["java", "-jar", "app.jar"]

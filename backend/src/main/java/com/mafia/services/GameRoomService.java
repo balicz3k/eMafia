@@ -1,6 +1,7 @@
 package com.mafia.services;
 
 import com.mafia.exceptions.ForbiddenActionException;
+import com.mafia.config.RabbitMQConfig;
 import com.mafia.dto.CreateGameRoomRequest;
 import com.mafia.dto.GameRoomResponse;
 import com.mafia.dto.PlayerInRoomResponse;
@@ -25,6 +26,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.mafia.config.RabbitMQConfig; // Import konfiguracji RabbitMQ
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @Service @RequiredArgsConstructor public class GameRoomService
 {
@@ -33,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
     private final UserRepository userRepository;
     private final PlayerInRoomRepository playerInRoomRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     @Value("${app.frontend.joinPath:/join/}") private String frontendJoinPath;
 
@@ -112,8 +116,19 @@ import org.springframework.transaction.annotation.Transactional;
         gameRoom.addPlayer(hostAsPlayer);
 
         GameRoom savedRoom = gameRoomRepository.save(gameRoom);
+        GameRoomResponse gameRoomResponse = mapGameRoomToResponse(savedRoom);
 
-        return mapGameRoomToResponse(savedRoom);
+        try {
+            // Możesz wysłać cały obiekt gameRoomResponse lub uproszczony DTO
+            // Dla przykładu wyślemy obiekt GameRoomResponse
+            rabbitTemplate.convertAndSend(RabbitMQConfig.ROOM_EVENTS_EXCHANGE, RabbitMQConfig.ROOM_CREATED_ROUTING_KEY, gameRoomResponse);
+            System.out.println("Sent room creation event to RabbitMQ: " + gameRoomResponse.getRoomCode());
+        } catch (Exception e) {
+            // Logowanie błędu wysyłania do RabbitMQ, ale nie przerywaj głównej operacji
+            System.err.println("Error sending room creation event to RabbitMQ: " + e.getMessage());
+        }
+
+        return gameRoomResponse;
     }
 
     @Transactional public GameRoomResponse joinRoom(String roomCode)
