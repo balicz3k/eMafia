@@ -18,10 +18,12 @@ services:
         condition: service_healthy # Poczekaj, aż RabbitMQ będzie gotowy
 
   mafia-backend-tests:
+    profiles:
+      - tests # Przypisz tę usługę do profilu "tests"
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: builder # Ta usługa używa etapu 'builder' z Dockerfile
+      target: tester_base # Ta usługa używa etapu 'tester' z Dockerfile
     volumes:
       # Montuj lokalny kod, aby zmiany były odzwierciedlane bez przebudowywania obrazu testowego
       - ./backend/src:/app/src
