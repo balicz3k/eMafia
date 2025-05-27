@@ -1,26 +1,57 @@
 package com.mafia.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 
-public class CreateGameRoomRequest
-{
+@Schema(description = "Request to create a new game room")
+public class CreateGameRoomRequest {
 
+    @Schema(description = "Name of the game room", example = "Friday Night Mafia", minLength = 1, maxLength = 50, required = true)
     @NotBlank(message = "Room name is required")
-    @Size(min = 3, max = 100, message = "Room name must be between 3 and 100 characters")
+    @Size(max = 50, message = "Room name cannot exceed 50 characters")
     private String name;
 
-    @Min(value = 2, message = "Minimum number of players is 2")
-    @Max(value = 20, message = "Maximum number of players is 20")
-    private int maxPlayers;
+    @Schema(description = "Maximum number of players allowed in the room", example = "8", minimum = "4", maximum = "20", required = true)
+    @NotNull(message = "Max players is required")
+    @Min(value = 4, message = "Minimum 4 players required")
+    @Max(value = 20, message = "Maximum 20 players allowed")
+    private Integer maxPlayers;
 
-    public String getName() { return name; }
+    @Schema(description = "Whether the room is publicly visible in search results", example = "true", required = true)
+    @NotNull(message = "Public visibility setting is required")
+    private Boolean isPublic;
 
-    public void setName(String name) { this.name = name; }
+    // Konstruktory, getters i setters...
+    public CreateGameRoomRequest() {
+    }
 
-    public int getMaxPlayers() { return maxPlayers; }
+    public CreateGameRoomRequest(String name, Integer maxPlayers, Boolean isPublic) {
+        this.name = name;
+        this.maxPlayers = maxPlayers;
+        this.isPublic = isPublic;
+    }
 
-    public void setMaxPlayers(int maxPlayers) { this.maxPlayers = maxPlayers; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(Integer maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
 }
