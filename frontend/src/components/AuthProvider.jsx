@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
   const logout = (redirectToLogin = true) => {
     console.log("Logging out user...");
 
-    // Wyślij logout request do backend jeśli mamy refresh token
     const refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken) {
       fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/logout`, {
@@ -74,7 +73,7 @@ export const AuthProvider = ({ children }) => {
             return true;
           } catch (error) {
             console.error("Token refresh failed:", error);
-            logout(false); // Don't redirect here, let the calling component handle it
+            logout(false);
             return false;
           }
         } else {
@@ -83,7 +82,6 @@ export const AuthProvider = ({ children }) => {
           return false;
         }
       } else {
-        // Token jest ważny
         const decodedToken = decodeJwt(token);
         setIsAuthenticated(true);
         setIsAdmin(decodedToken.roles?.includes("ROLE_ADMIN") || false);
@@ -111,7 +109,6 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, []);
 
-  // Sprawdzaj token co 30 sekund tylko jeśli użytkownik jest uwierzytelniony
   useEffect(() => {
     if (isAuthenticated) {
       const interval = setInterval(async () => {
@@ -119,7 +116,7 @@ export const AuthProvider = ({ children }) => {
         if (!isValid) {
           console.log("Token validation failed, user will be logged out");
         }
-      }, 30000); // 30 sekund
+      }, 30000);
 
       return () => clearInterval(interval);
     }

@@ -6,10 +6,10 @@ import {
 } from "./tokenUtils";
 
 const httpClient = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost:8080",
+  baseURL: process.env.REACT_APP_API_BASE_URL || "http:
 });
 
-// Flag to prevent multiple refresh attempts
+
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -25,13 +25,13 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-// Request interceptor - automatycznie odświeżaj token jeśli wygasł
+
 httpClient.interceptors.request.use(async (config) => {
   let token = localStorage.getItem("token");
 
   if (token && isTokenExpired()) {
     if (isRefreshing) {
-      // If already refreshing, wait for it to complete
+      
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject });
       })
@@ -66,7 +66,7 @@ httpClient.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Response interceptor - obsłuż 401 errors
+
 httpClient.interceptors.response.use(
   (response) => response,
   async (error) => {

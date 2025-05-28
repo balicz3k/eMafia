@@ -84,7 +84,7 @@
   font-size: 16px;
   font-weight: bold;
   color: white;
-  background-color: #5cb85c; /* Green */
+  background-color: #5cb85c;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -105,28 +105,27 @@
 .status {
   font-weight: bold;
   padding: 4px 10px;
-  border-radius: 15px; /* More pill-like */
+  border-radius: 15px;
   color: white;
   font-size: 0.9em;
   text-transform: capitalize;
 }
 
-/* Status colors */
 .status.waitingforplayers {
   background-color: #f0ad4e;
-} /* Orange */
+}
 .status.readytostart {
   background-color: #5bc0de;
-} /* Light Blue */
+}
 .status.inprogress {
   background-color: #337ab7;
-} /* Blue */
+}
 .status.paused {
   background-color: #777;
-} /* Gray */
+}
 .status.finished {
   background-color: #d9534f;
-} /* Red */
+}
 .status.abandoned {
   background-color: #333;
-} /* Dark Gray */
+}

@@ -7,7 +7,7 @@ import com.mafia.models.Role;
 import com.mafia.models.User;
 import com.mafia.repositories.UserRepository;
 
-import java.util.HashSet; // Import HashSet
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -45,11 +45,9 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // MODIFICATION: Use a modifiable HashSet for roles
         Set<Role> initialRoles = new HashSet<>();
         initialRoles.add(Role.ROLE_USER);
         user.setRoles(initialRoles);
-        // END MODIFICATION
 
         User savedUser = userRepository.save(user);
 
@@ -171,7 +169,7 @@ public class UserService {
     public UserResponse adminUpdateUserRoles(UUID userId, Set<Role> newRoles) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("User not found with ID: " + userId));
-        user.setRoles(new HashSet<>(newRoles)); // Ensure a modifiable set is assigned
+        user.setRoles(new HashSet<>(newRoles));
         User updatedUser = userRepository.save(user);
         return new UserResponse(updatedUser.getId(), updatedUser.getUsername(), updatedUser.getEmail(),
                 updatedUser.getRoles());

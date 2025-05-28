@@ -1,22 +1,21 @@
-/* frontend/src/views/StartView.module.css */
 body,
 html {
   margin: 0;
   padding: 0;
-  background: transparent; /* Upewnij się, że tło jest przezroczyste */
+  background: transparent;
 }
 
 .mainContainer {
-  position: fixed; /* Ustawia kontener na stałej pozycji */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0; /* Rozciąga kontener na cały ekran */
+  bottom: 0;
   background-image: url("../assets/bg.png");
-  background-size: cover; /* Dopasowuje obraz do rozmiaru kontenera */
-  background-position: center; /* Centruje obraz */
-  background-repeat: no-repeat; /* Zapobiega powtarzaniu tła */
-  overflow: hidden; /* Ukrywa ewentualne przewijanie */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
   z-index: 0;
 }
 

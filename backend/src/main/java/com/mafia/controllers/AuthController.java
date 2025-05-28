@@ -148,18 +148,18 @@ public class AuthController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Logout user", description = "Revoke refresh token and logout current session. Requires providing the refresh token in the request body.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successfully logged out"), // CHANGED
+            @ApiResponse(responseCode = "204", description = "Successfully logged out"),
             @ApiResponse(responseCode = "400", description = "Bad Request - Refresh token might be missing if required by logic", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Valid access token required in Authorization header", content = @Content)
     })
-    public ResponseEntity<Void> logout( // CHANGED return type
+    public ResponseEntity<Void> logout(
             @Parameter(description = "Logout request with refresh token") @Valid @RequestBody(required = true) LogoutRequest request) {
         if (request == null || request.getRefreshToken() == null || request.getRefreshToken().isBlank()) {
             return ResponseEntity.badRequest().build();
         }
 
         userService.logoutUser(request.getRefreshToken());
-        return ResponseEntity.noContent().build(); // CHANGED
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/logout-all")

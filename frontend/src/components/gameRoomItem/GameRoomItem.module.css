@@ -33,21 +33,20 @@
   text-transform: capitalize;
 }
 
-/* Status colors - adjust as needed */
 .roomStatus.waitingforplayers {
-  color: #ffa500; /* Orange */
+  color: #ffa500;
 }
 .roomStatus.readytostart {
-  color: #4caf50; /* Green */
+  color: #4caf50;
 }
 .roomStatus.inprogress {
-  color: #2196f3; /* Blue */
+  color: #2196f3;
 }
 .roomStatus.finished {
-  color: #757575; /* Grey */
+  color: #757575;
 }
 .roomStatus.cancelled {
-  color: #f44336; /* Red */
+  color: #f44336;
 }
 
 .roomPlayers {
@@ -73,7 +72,7 @@
 }
 
 .leaveButton {
-  background-color: #f44336; /* Red */
+  background-color: #f44336;
   color: white;
 }
 
@@ -82,7 +81,7 @@
 }
 
 .endButton {
-  background-color: #ff9800; /* Orange */
+  background-color: #ff9800;
   color: white;
 }
 

@@ -67,13 +67,13 @@ const DashboardView = () => {
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/gamerooms/search?name=${encodeURIComponent(
-          searchTerm
+          searchTerm,
         )}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (!response.ok) {
         throw new Error("Failed to search games");
@@ -99,7 +99,7 @@ const DashboardView = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (!response.ok) {
         const errorData = await response
@@ -110,7 +110,7 @@ const DashboardView = () => {
       fetchUserGames();
       if (searchResults) {
         const updatedResults = searchResults.filter(
-          (room) => room.roomCode !== roomCode
+          (room) => room.roomCode !== roomCode,
         );
         setSearchResults(updatedResults);
       }
@@ -130,7 +130,7 @@ const DashboardView = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (!response.ok) {
         const errorData = await response
@@ -142,7 +142,7 @@ const DashboardView = () => {
       fetchUserGames();
       if (searchResults) {
         const updatedResults = searchResults.filter(
-          (room) => room.roomCode !== roomCode
+          (room) => room.roomCode !== roomCode,
         );
         setSearchResults(updatedResults);
       }

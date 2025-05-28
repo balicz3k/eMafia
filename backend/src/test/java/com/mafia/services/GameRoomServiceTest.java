@@ -75,7 +75,7 @@ class GameRoomServiceTest {
         gameRoom.setId(UUID.randomUUID());
         gameRoom.setName("Test Room");
         gameRoom.setHost(mockUser);
-        // Set other necessary fields for GameRoom and mapGameRoomToResponse
+
         when(gameRoomRepository.findGameRoomsByUser(mockUser)).thenReturn(Collections.singletonList(gameRoom));
 
         List<GameRoomResponse> responses = gameRoomService.getGameRoomsForCurrentUser();
@@ -109,7 +109,6 @@ class GameRoomServiceTest {
         host.setId(UUID.randomUUID());
         host.setUsername("hostUser");
         gameRoom.setHost(host);
-        // Set other necessary fields for GameRoom and mapGameRoomToResponse
 
         when(gameRoomRepository.findByNameContainingIgnoreCaseWithPlayers(searchTerm))
                 .thenReturn(Collections.singletonList(gameRoom));

@@ -45,7 +45,7 @@ const CreateGameRoomForm = () => {
       } else {
         const errorText = await response.text();
         setError(
-          errorText || "Failed to create room. Status: " + response.status
+          errorText || "Failed to create room. Status: " + response.status,
         );
       }
     } catch (err) {

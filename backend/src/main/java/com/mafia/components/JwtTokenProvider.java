@@ -86,7 +86,7 @@ public class JwtTokenProvider {
     }
 
     public long getExpirationTime() {
-        return expiration / 1000; // Zwracamy w sekundach (nie milisekundach)
+        return expiration / 1000;
     }
 
     public boolean isTokenExpired(String token) {

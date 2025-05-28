@@ -58,7 +58,6 @@ public class GameRoomResponse {
         this.players = players;
     }
 
-    // Getters i setters...
     public UUID getId() {
         return id;
     }

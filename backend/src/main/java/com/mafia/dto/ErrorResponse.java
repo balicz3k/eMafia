@@ -27,7 +27,6 @@ public class ErrorResponse {
     @Schema(description = "Detailed field-specific errors for validation issues")
     private Map<String, String> fieldErrors;
 
-    // Konstruktory
     public ErrorResponse(LocalDateTime timestamp, int status, String error, String message, String path) {
         this.timestamp = timestamp;
         this.status = status;
@@ -42,8 +41,6 @@ public class ErrorResponse {
         this.fieldErrors = fieldErrors;
     }
 
-    // Gettery (i Settery jeśli potrzebne, ale dla odpowiedzi często wystarczą
-    // gettery)
     public LocalDateTime getTimestamp() {
         return timestamp;
     }

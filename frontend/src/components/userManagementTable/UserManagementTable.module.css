@@ -1,6 +1,6 @@
 .tableContainer {
   margin-top: 20px;
-  overflow-x: auto; /* Allows table to be scrollable horizontally if needed */
+  overflow-x: auto;
 }
 
 .userTable {

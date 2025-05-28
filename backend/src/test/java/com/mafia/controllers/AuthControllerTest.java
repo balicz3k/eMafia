@@ -1,7 +1,7 @@
 package com.mafia.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mafia.config.TestApplicationConfig; // Added import
+import com.mafia.config.TestApplicationConfig;
 import com.mafia.dto.AuthResponse;
 import com.mafia.dto.LoginRequest;
 import com.mafia.dto.LogoutRequest;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import; // Added import
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -136,7 +136,7 @@ public class AuthControllerTest {
         mockMvc.perform(post("/api/auth/logout")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(logoutRequest))) // Send LogoutRequest in the body
+                .content(objectMapper.writeValueAsString(logoutRequest)))
                 .andExpect(status().isNoContent());
     }
 }

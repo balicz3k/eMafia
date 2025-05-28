@@ -24,7 +24,7 @@ const GameRoomItem = ({ room, currentUserId, onLeave, onEnd }) => {
     e.stopPropagation();
     if (
       window.confirm(
-        `Are you sure you want to end the game "${room.name}"? This action cannot be undone.`
+        `Are you sure you want to end the game "${room.name}"? This action cannot be undone.`,
       )
     ) {
       onEnd(room.roomCode);

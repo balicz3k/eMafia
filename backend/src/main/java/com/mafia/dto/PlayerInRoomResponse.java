@@ -28,22 +28,19 @@ public class PlayerInRoomResponse {
     @Schema(description = "When player joined the room", example = "2024-01-15T10:30:00")
     private LocalDateTime joinedAt;
 
-    // Konstruktor domyślny
     public PlayerInRoomResponse() {
     }
 
-    // Konstruktor dla starszej wersji (4 parametry)
     public PlayerInRoomResponse(UUID playerId, String username, boolean isHost, boolean isReady) {
         this.playerId = playerId;
-        this.userId = playerId; // fallback - użyj playerId jako userId
+        this.userId = playerId;
         this.username = username;
-        this.displayName = username; // fallback - użyj username jako displayName
+        this.displayName = username;
         this.isHost = isHost;
         this.isReady = isReady;
         this.joinedAt = LocalDateTime.now();
     }
 
-    // Nowy konstruktor dla GameRoomService (6 parametrów)
     public PlayerInRoomResponse(UUID playerId, UUID userId, String username, String displayName, boolean isHost,
             LocalDateTime joinedAt) {
         this.playerId = playerId;
@@ -51,11 +48,10 @@ public class PlayerInRoomResponse {
         this.username = username;
         this.displayName = displayName;
         this.isHost = isHost;
-        this.isReady = false; // domyślnie false
+        this.isReady = false;
         this.joinedAt = joinedAt;
     }
 
-    // Getters i setters
     public UUID getPlayerId() {
         return playerId;
     }
