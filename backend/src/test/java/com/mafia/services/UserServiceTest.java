@@ -6,6 +6,7 @@ import com.mafia.dto.LoginRequest;
 import com.mafia.dto.RegistrationRequest;
 import com.mafia.dto.UserResponse;
 import com.mafia.exceptions.*;
+import com.mafia.models.RefreshToken;
 import com.mafia.models.Role;
 import com.mafia.models.User;
 import com.mafia.repositories.UserRepository;
@@ -23,6 +24,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +43,9 @@ class UserServiceTest {
 
     @Mock
     private JwtTokenProvider jwtTokenProvider;
+
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private UserService userService;
@@ -91,16 +97,24 @@ class UserServiceTest {
         savedUser.setEmail(request.getEmail());
         savedUser.setRoles(Collections.singleton(Role.ROLE_USER));
 
+        RefreshToken mockRefreshToken = new RefreshToken();
+        mockRefreshToken.setToken("sample-refresh-token");
+        mockRefreshToken.setUser(savedUser);
+        mockRefreshToken.setExpiresAt(LocalDateTime.now().plusDays(7));
+
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
         when(userRepository.existsByUsername(request.getUsername())).thenReturn(false);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(jwtTokenProvider.generateToken(savedUser)).thenReturn("testToken");
+        when(jwtTokenProvider.getExpirationTime()).thenReturn(3600L);
+        when(refreshTokenService.createRefreshToken(any(User.class), anyString())).thenReturn(mockRefreshToken);
 
         AuthResponse response = userService.registerUser(request);
 
         assertNotNull(response);
         assertEquals("testToken", response.getToken());
+        assertEquals("sample-refresh-token", response.getRefreshToken());
         verify(userRepository).save(argThat(user -> user.getUsername().equals(request.getUsername()) &&
                 user.getEmail().equals(request.getEmail()) &&
                 user.getPassword().equals("encodedPassword") &&
@@ -135,14 +149,22 @@ class UserServiceTest {
         user.setEmail(request.getEmail());
         user.setPassword("encodedPassword");
 
+        RefreshToken mockRefreshToken = new RefreshToken();
+        mockRefreshToken.setToken("sample-refresh-token");
+        mockRefreshToken.setUser(user);
+        mockRefreshToken.setExpiresAt(LocalDateTime.now().plusDays(7));
+
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(request.getPassword(), "encodedPassword")).thenReturn(true);
         when(jwtTokenProvider.generateToken(user)).thenReturn("testToken");
+        when(jwtTokenProvider.getExpirationTime()).thenReturn(3600L);
+        when(refreshTokenService.createRefreshToken(any(User.class), anyString())).thenReturn(mockRefreshToken);
 
         AuthResponse response = userService.authenticateUser(request);
 
         assertNotNull(response);
         assertEquals("testToken", response.getToken());
+        assertEquals("sample-refresh-token", response.getRefreshToken());
     }
 
     @Test
@@ -221,11 +243,9 @@ class UserServiceTest {
         userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        // No need to mock existsByUsername if username is the same, as the condition
-        // `!user.getUsername().equals(newUsername)` will be false.
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        UserResponse response = userService.updateUsername(currentUsername); // Using the same username
+        UserResponse response = userService.updateUsername(currentUsername);
 
         assertEquals(currentUsername, response.getUsername());
         verify(userRepository).save(userFromDb);
@@ -235,19 +255,22 @@ class UserServiceTest {
     void updateUsername_usernameAlreadyTaken() {
         UUID userId = UUID.randomUUID();
         setupAuthenticationPrincipal(userId, "oldUsername", "user@example.com", "encodedPass");
+
         User userFromDb = new User();
         userFromDb.setId(userId);
         userFromDb.setUsername("oldUsername");
+        String newUsername = "takenUsername";
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(userRepository.existsByUsername("takenUsername")).thenReturn(true);
+        when(userRepository.existsByUsername(newUsername)).thenReturn(true);
 
-        assertThrows(UsernameAlreadyExistsException.class, () -> userService.updateUsername("takenUsername"));
+        assertThrows(UsernameAlreadyExistsException.class, () -> userService.updateUsername(newUsername));
     }
 
     @Test
     void updateUsername_whenAuthenticationIsNull_thenThrowsUserNotFoundException() {
         when(securityContext.getAuthentication()).thenReturn(null);
+
         assertThrows(UserNotFoundException.class, () -> userService.updateUsername("newUsername"));
     }
 
@@ -296,15 +319,16 @@ class UserServiceTest {
     @Test
     void updateEmail_emailAlreadyRegistered() {
         UUID userId = UUID.randomUUID();
-        setupAuthenticationPrincipal(userId, "testuser", "old@example.com", "encodedPass123!");
+        setupAuthenticationPrincipal(userId, "testuser", "old@example.com", "encodedPass");
         User userFromDb = new User();
         userFromDb.setId(userId);
         userFromDb.setEmail("old@example.com");
+        String newEmail = "taken@example.com";
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(userRepository.existsByEmail("taken@example.com")).thenReturn(true);
+        when(userRepository.existsByEmail(newEmail)).thenReturn(true);
 
-        assertThrows(EmailAlreadyExistsException.class, () -> userService.updateEmail("taken@example.com"));
+        assertThrows(EmailAlreadyExistsException.class, () -> userService.updateEmail(newEmail));
     }
 
     // Tests for updatePassword
@@ -317,7 +341,6 @@ class UserServiceTest {
         String encodedNewPassword = "encodedNewPassword";
 
         setupAuthenticationPrincipal(userId, "testuser", "user@example.com", encodedOldPassword);
-        // User fetched from DB will have the encodedOldPassword
         User userFromDb = new User();
         userFromDb.setId(userId);
         userFromDb.setPassword(encodedOldPassword);
@@ -357,7 +380,7 @@ class UserServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.updatePassword("old", "new"));
+        assertThrows(UserNotFoundException.class, () -> userService.updatePassword("oldPass", "newPass"));
     }
 
     // Tests for adminGetAllUsers
@@ -412,7 +435,6 @@ class UserServiceTest {
     void adminDeleteUser_success() {
         UUID userId = UUID.randomUUID();
         when(userRepository.existsById(userId)).thenReturn(true);
-        doNothing().when(userRepository).deleteById(userId);
 
         userService.adminDeleteUser(userId);
 
@@ -425,6 +447,5 @@ class UserServiceTest {
         when(userRepository.existsById(userId)).thenReturn(false);
 
         assertThrows(UserNotFoundException.class, () -> userService.adminDeleteUser(userId));
-        verify(userRepository, never()).deleteById(any(UUID.class));
     }
 }

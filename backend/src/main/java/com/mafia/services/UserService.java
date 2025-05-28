@@ -7,15 +7,13 @@ import com.mafia.models.Role;
 import com.mafia.models.User;
 import com.mafia.repositories.UserRepository;
 
-import java.sql.Ref;
-import java.util.Collections;
+import java.util.HashSet; // Import HashSet
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,8 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private RefreshTokenService refreshTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public AuthResponse registerUser(RegistrationRequest request) {
@@ -47,7 +44,12 @@ public class UserService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(Collections.singleton(Role.ROLE_USER));
+
+        // MODIFICATION: Use a modifiable HashSet for roles
+        Set<Role> initialRoles = new HashSet<>();
+        initialRoles.add(Role.ROLE_USER);
+        user.setRoles(initialRoles);
+        // END MODIFICATION
 
         User savedUser = userRepository.save(user);
 
@@ -66,8 +68,6 @@ public class UserService {
         }
 
         String accessToken = jwtTokenProvider.generateToken(user);
-
-        // Generuj refresh token (z informacją o urządzeniu jeśli dostępna)
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user, "Login");
 
         return new AuthResponse(accessToken, refreshToken.getToken(), jwtTokenProvider.getExpirationTime());
@@ -83,7 +83,17 @@ public class UserService {
     @Transactional
     public void logoutAllDevices() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
+            throw new UserNotFoundException("User not authenticated for logoutAllDevices");
+        }
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof User)) {
+            throw new UserNotFoundException(
+                    "Authenticated principal is not an instance of com.mafia.models.User. Found: "
+                            + (principal != null ? principal.getClass().getName() : "null"));
+        }
+        User user = (User) principal;
         refreshTokenService.revokeAllUserTokens(user);
     }
 
@@ -93,8 +103,13 @@ public class UserService {
                 authentication.getPrincipal().equals("anonymousUser")) {
             throw new UserNotFoundException("User not authenticated");
         }
-
-        User principalUser = (User) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof User)) {
+            throw new UserNotFoundException(
+                    "Authenticated principal is not an instance of com.mafia.models.User. Found: "
+                            + (principal != null ? principal.getClass().getName() : "null"));
+        }
+        User principalUser = (User) principal;
         return principalUser.getId();
     }
 
@@ -156,7 +171,7 @@ public class UserService {
     public UserResponse adminUpdateUserRoles(UUID userId, Set<Role> newRoles) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("User not found with ID: " + userId));
-        user.setRoles(newRoles);
+        user.setRoles(new HashSet<>(newRoles)); // Ensure a modifiable set is assigned
         User updatedUser = userRepository.save(user);
         return new UserResponse(updatedUser.getId(), updatedUser.getUsername(), updatedUser.getEmail(),
                 updatedUser.getRoles());

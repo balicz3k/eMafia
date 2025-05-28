@@ -3,89 +3,75 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: runtime # Odwołujemy się do nazwanego etapu w Dockerfile
+      target: runtime
     ports:
       - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
-      - SPRING_DATASOURCE_USERNAME=postgres # Użyj użytkownika zdefiniowanego dla db
-      - SPRING_DATASOURCE_PASSWORD=postgres # Użyj hasła zdefiniowanego dla db
-      # Dodaj inne zmienne środowiskowe potrzebne aplikacji
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
     depends_on:
       db:
         condition: service_healthy
-      rabbitmq: # Dodaj zależność od RabbitMQ
-        condition: service_healthy # Poczekaj, aż RabbitMQ będzie gotowy
+      rabbitmq:
+        condition: service_healthy
 
   mafia-backend-tests:
     profiles:
-      - tests # Przypisz tę usługę do profilu "tests"
+      - tests
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: tester_base # Ta usługa używa etapu 'tester' z Dockerfile
+      target: tester_base
     volumes:
-      # Montuj lokalny kod, aby zmiany były odzwierciedlane bez przebudowywania obrazu testowego
-      - ./backend/src:/app/src
-      - ./backend/pom.xml:/app/pom.xml
-      # Opcjonalnie: montuj raporty Surefire na hosta
-      - ./backend/target/surefire-reports:/app/target/surefire-reports
-    # Komenda do uruchomienia testów. Przekazujemy konfigurację bazy danych.
-    # Upewnij się, że użytkownik i hasło pasują do konfiguracji usługi 'db'.
+      - ./backend/src:/app/src:ro  # read-only
+      - ./backend/pom.xml:/app/pom.xml:ro  # read-only
+      - test-reports:/app/target/surefire-reports  # named volume zamiast bind mount
     command: sh -c " \
-      echo 'Waiting for DB to be ready for tests...' && \
+      echo 'Starting integration tests with H2 database...' && \
+      rm -rf /app/target/surefire-reports/* && \
       mvn test \
-      -Dspring.datasource.url='jdbc:postgresql://db:5432/mafia' \
-      -Dspring.datasource.username='postgres' \
-      -Dspring.datasource.password='postgres' \
-      -Dspring.jpa.hibernate.ddl-auto='create-drop' \
-      -Dlogging.level.org.hibernate.SQL='DEBUG' \
-      -Dlogging.level.org.hibernate.type.descriptor.sql='TRACE' \
+      -Dspring.profiles.active=test \
+      -Dlogging.level.com.mafia=INFO \
+      -Dmaven.test.failure.ignore=false \
       "
-    environment: # Te zmienne mogą być potrzebne, jeśli testy ich oczekują
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      # Inne zmienne środowiskowe potrzebne dla testów
-    depends_on:
-      db:
-        condition: service_healthy # Uruchom testy dopiero, gdy baza danych będzie gotowa
-      rabbitmq: # Dodaj zależność od RabbitMQ
-        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
 
   mafia-frontend:
     build: ./frontend
     ports:
-      - "3000:80" # Zakładając, że kontener frontend nasłuchuje na porcie 80
+      - "3000:80"
     depends_on:
-      - mafia-backend # Frontend może zależeć od backendu
+      - mafia-backend
 
   db:
     image: postgres:15-alpine
     environment:
       - POSTGRES_DB=mafia
-      - POSTGRES_USER=postgres # Zdefiniuj użytkownika
-      - POSTGRES_PASSWORD=postgres # Zdefiniuj hasło
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d mafia"] # Sprawdź gotowość bazy
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mafia"]
       interval: 10s
       timeout: 5s
       retries: 5
+        
   rabbitmq:
-    image: rabbitmq:3.13-management-alpine # Używamy obrazu z interfejsem zarządzania
+    image: rabbitmq:3.13-management-alpine
     container_name: rabbitmq
     ports:
-      - "5672:5672" # Port AMQP
-      - "15672:15672" # Port interfejsu zarządzania RabbitMQ
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
     environment:
-      - RABBITMQ_DEFAULT_USER=guest # Możesz zmienić na własne
-      - RABBITMQ_DEFAULT_PASS=guest # Pamiętaj, aby zmienić na silne hasło w produkcji
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 10s
@@ -95,3 +81,4 @@ services:
 volumes:
   postgres_data:
   rabbitmq_data:
+  test-reports:  # Nowy named volume dla raportów testów

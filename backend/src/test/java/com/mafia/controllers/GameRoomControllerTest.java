@@ -20,15 +20,14 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-// import static org.mockito.ArgumentMatchers.anyString; // This import is not strictly necessary if not used directly
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(GameRoomController.class)
-@WithMockUser // Zapewnia kontekst bezpieczeństwa dla @PreAuthorize("isAuthenticated()")
+@WithMockUser
 public class GameRoomControllerTest {
 
     @Autowired
@@ -37,7 +36,7 @@ public class GameRoomControllerTest {
     @MockBean
     private GameRoomService gameRoomService;
 
-    @MockBean // Added mock for JwtTokenProvider
+    @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
@@ -60,13 +59,25 @@ public class GameRoomControllerTest {
         when(gameRoomService.createRoom(any(CreateGameRoomRequest.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/gamerooms/create")
-                .with(csrf()) // Jeśli CSRF jest włączone
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.roomCode").value(response.getRoomCode()))
                 .andExpect(jsonPath("$.name").value(response.getName()));
+    }
+
+    @Test
+    void createGameRoom_withInvalidData_shouldReturnBadRequest() throws Exception {
+        CreateGameRoomRequest request = new CreateGameRoomRequest();
+        // Brak wymaganych pól
+
+        mockMvc.perform(post("/api/gamerooms/create")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -83,11 +94,21 @@ public class GameRoomControllerTest {
     }
 
     @Test
+    void joinGameRoom_invalidCode_shouldReturnNotFound() throws Exception {
+        String roomCode = "INVALID";
+        when(gameRoomService.joinRoom(roomCode))
+            .thenThrow(new RuntimeException("Room not found"));
+
+        mockMvc.perform(post("/api/gamerooms/{roomCode}/join", roomCode)
+                .with(csrf()))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
     void getGameRoomDetails_shouldReturnRoomDetails() throws Exception {
         String roomCode = "ROOM123";
         GameRoomResponse response = createSampleGameRoomResponse();
-        when(gameRoomService.getRoomDetails(roomCode)).thenReturn(response); // Changed getGameRoomDetails to
-                                                                             // getRoomDetails
+        when(gameRoomService.getRoomDetails(roomCode)).thenReturn(response);
 
         mockMvc.perform(get("/api/gamerooms/{roomCode}", roomCode))
                 .andExpect(status().isOk())
@@ -95,7 +116,7 @@ public class GameRoomControllerTest {
                 .andExpect(jsonPath("$.roomCode").value(roomCode));
     }
 
-    @Test // Added @Test annotation
+    @Test
     void getMyGameRooms_shouldReturnUserRooms() throws Exception {
         List<GameRoomResponse> responses = Collections.singletonList(createSampleGameRoomResponse());
         when(gameRoomService.getGameRoomsForCurrentUser()).thenReturn(responses);
@@ -120,6 +141,12 @@ public class GameRoomControllerTest {
     }
 
     @Test
+    void searchGameRooms_withoutQuery_shouldReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/api/gamerooms/search"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void leaveGameRoom_shouldReturnNoContent() throws Exception {
         String roomCode = "ROOM123";
         doNothing().when(gameRoomService).leaveRoom(roomCode);
@@ -137,5 +164,16 @@ public class GameRoomControllerTest {
         mockMvc.perform(post("/api/gamerooms/{roomCode}/end", roomCode)
                 .with(csrf()))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void endRoom_notHost_shouldReturnForbidden() throws Exception {
+        String roomCode = "ROOM123";
+        doThrow(new RuntimeException("Not authorized"))
+            .when(gameRoomService).endRoom(roomCode);
+
+        mockMvc.perform(post("/api/gamerooms/{roomCode}/end", roomCode)
+                .with(csrf()))
+                .andExpect(status().isInternalServerError());
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Comparator;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -91,11 +92,12 @@ public class RefreshTokenService {
         long validTokensCount = refreshTokenRepository.countValidTokensByUser(user, LocalDateTime.now());
 
         if (validTokensCount >= maxRefreshTokensPerUser) {
-            // Usuń najstarsze tokeny użytkownika
             List<RefreshToken> userTokens = refreshTokenRepository.findByUserAndRevokedFalse(user);
             userTokens.stream()
-                    .sorted((t1, t2) -> t1.getCreatedAt().compareTo(t2.getCreatedAt()))
-                    .limit(userTokens.size() - maxRefreshTokensPerUser + 1)
+                    .sorted(Comparator.comparing(RefreshToken::getCreatedAt,
+                            Comparator.nullsLast(Comparator.naturalOrder()))) // MODIFIED LINE
+                    .limit(userTokens.size() - (long) maxRefreshTokensPerUser + 1) // Ensure limit argument is long if
+                                                                                   // needed, or cast appropriately
                     .forEach(token -> token.setRevoked(true));
 
             refreshTokenRepository.saveAll(userTokens);
