@@ -36,6 +36,10 @@ const LoginForm = () => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
+        localStorage.setItem("refreshToken", data.refreshToken);
+        localStorage.setItem("expiresIn", data.expiresIn);
+        const expirationTime = Date.now() + data.expiresIn * 1000;
+        localStorage.setItem("tokenExpiration", expirationTime);
         navigate("/dashboard");
       } else {
         const error = await response.text();

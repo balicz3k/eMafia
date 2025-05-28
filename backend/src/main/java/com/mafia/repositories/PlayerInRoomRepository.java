@@ -1,4 +1,4 @@
-package com.mafia.repositiories;
+package com.mafia.repositories;
 
 import com.mafia.models.GameRoom;
 import com.mafia.models.PlayerInRoom;
@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PlayerInRoomRepository extends JpaRepository<PlayerInRoom, UUID> {
     boolean existsByUserAndGameRoom(User user, GameRoom gameRoom);
+
     Optional<PlayerInRoom> findByUserAndGameRoom(User user, GameRoom gameRoom);
 }

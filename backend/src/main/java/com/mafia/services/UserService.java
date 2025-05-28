@@ -5,35 +5,41 @@ import com.mafia.dto.*;
 import com.mafia.exceptions.*;
 import com.mafia.models.Role;
 import com.mafia.models.User;
-import com.mafia.repositiories.UserRepository;
+import com.mafia.repositories.UserRepository;
+
+import java.sql.Ref;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.mafia.models.RefreshToken;
 
-@Service @RequiredArgsConstructor public class UserService
-{
+@Service
+@RequiredArgsConstructor
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
-    @Transactional public AuthResponse registerUser(RegistrationRequest request)
-    {
-        if (userRepository.existsByEmail(request.getEmail()))
-        {
+    @Transactional
+    public AuthResponse registerUser(RegistrationRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Email is already registered");
         }
 
-        if (userRepository.existsByUsername(request.getUsername()))
-        {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new UsernameAlreadyExistsException("Username is already taken");
         }
 
@@ -44,111 +50,121 @@ import org.springframework.transaction.annotation.Transactional;
         user.setRoles(Collections.singleton(Role.ROLE_USER));
 
         User savedUser = userRepository.save(user);
-        String token = jwtTokenProvider.generateToken(savedUser);
 
-        return new AuthResponse(token);
+        String accessToken = jwtTokenProvider.generateToken(savedUser);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser, "Registration");
+
+        return new AuthResponse(accessToken, refreshToken.getToken(), jwtTokenProvider.getExpirationTime());
     }
 
-    public AuthResponse authenticateUser(LoginRequest request)
-    {
+    public AuthResponse authenticateUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                        .orElseThrow(() -> new UserNotFoundException("User does not exist"));
+                .orElseThrow(() -> new UserNotFoundException("User does not exist"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
-        {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidPasswordException("Invalid password");
         }
 
-        String token = jwtTokenProvider.generateToken(user);
-        return new AuthResponse(token);
+        String accessToken = jwtTokenProvider.generateToken(user);
+
+        // Generuj refresh token (z informacją o urządzeniu jeśli dostępna)
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user, "Login");
+
+        return new AuthResponse(accessToken, refreshToken.getToken(), jwtTokenProvider.getExpirationTime());
     }
 
-    private UUID getCurrentAuthenticatedUserId()
-    {
+    @Transactional
+    public void logoutUser(String refreshTokenString) {
+        if (refreshTokenString != null) {
+            refreshTokenService.revokeRefreshToken(refreshTokenString);
+        }
+    }
+
+    @Transactional
+    public void logoutAllDevices() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        refreshTokenService.revokeAllUserTokens(user);
+    }
+
+    private UUID getCurrentAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() ||
-            authentication.getPrincipal().equals("anonymousUser"))
-        {
+                authentication.getPrincipal().equals("anonymousUser")) {
             throw new UserNotFoundException("User not authenticated");
         }
 
-        User principalUser = (User)authentication.getPrincipal();
+        User principalUser = (User) authentication.getPrincipal();
         return principalUser.getId();
     }
 
-    public List<UserResponse> searchUsers(String query)
-    {
+    public List<UserResponse> searchUsers(String query) {
         List<User> users = userRepository.findByUsernameContainingIgnoreCase(query);
         return users.stream()
-            .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles()))
-            .collect(Collectors.toList());
+                .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles()))
+                .collect(Collectors.toList());
     }
 
-    @Transactional public UserResponse updateUsername(String newUsername)
-    {
+    @Transactional
+    public UserResponse updateUsername(String newUsername) {
         UUID userId = getCurrentAuthenticatedUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (userRepository.existsByUsername(newUsername) && !user.getUsername().equals(newUsername))
-        {
+        if (userRepository.existsByUsername(newUsername) && !user.getUsername().equals(newUsername)) {
             throw new UsernameAlreadyExistsException("Username is already taken");
         }
         user.setUsername(newUsername);
         User updatedUser = userRepository.save(user);
         return new UserResponse(updatedUser.getId(), updatedUser.getUsername(), updatedUser.getEmail(),
-                                updatedUser.getRoles());
+                updatedUser.getRoles());
     }
 
-    @Transactional public UserResponse updateEmail(String newEmail)
-    {
+    @Transactional
+    public UserResponse updateEmail(String newEmail) {
         UUID userId = getCurrentAuthenticatedUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (userRepository.existsByEmail(newEmail) && !user.getEmail().equals(newEmail))
-        {
+        if (userRepository.existsByEmail(newEmail) && !user.getEmail().equals(newEmail)) {
             throw new EmailAlreadyExistsException("Email is already registered");
         }
         user.setEmail(newEmail);
         User updatedUser = userRepository.save(user);
         return new UserResponse(updatedUser.getId(), updatedUser.getUsername(), updatedUser.getEmail(),
-                                updatedUser.getRoles());
+                updatedUser.getRoles());
     }
 
-    @Transactional public void updatePassword(String oldPassword, String newPassword)
-    {
+    @Transactional
+    public void updatePassword(String oldPassword, String newPassword) {
         UUID userId = getCurrentAuthenticatedUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (!passwordEncoder.matches(oldPassword, user.getPassword()))
-        {
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new InvalidPasswordException("Invalid old password");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
-    public List<UserResponse> adminGetAllUsers()
-    {
+    public List<UserResponse> adminGetAllUsers() {
         return userRepository.findAll()
-            .stream()
-            .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles()))
-            .collect(Collectors.toList());
+                .stream()
+                .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles()))
+                .collect(Collectors.toList());
     }
 
-    @Transactional public UserResponse adminUpdateUserRoles(UUID userId, Set<Role> newRoles)
-    {
+    @Transactional
+    public UserResponse adminUpdateUserRoles(UUID userId, Set<Role> newRoles) {
         User user = userRepository.findById(userId).orElseThrow(
-            () -> new UserNotFoundException("User not found with ID: " + userId));
+                () -> new UserNotFoundException("User not found with ID: " + userId));
         user.setRoles(newRoles);
         User updatedUser = userRepository.save(user);
         return new UserResponse(updatedUser.getId(), updatedUser.getUsername(), updatedUser.getEmail(),
-                                updatedUser.getRoles());
+                updatedUser.getRoles());
     }
 
-    @Transactional public void adminDeleteUser(UUID userId)
-    {
-        if (!userRepository.existsById(userId))
-        {
+    @Transactional
+    public void adminDeleteUser(UUID userId) {
+        if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User not found with ID: " + userId);
         }
         userRepository.deleteById(userId);

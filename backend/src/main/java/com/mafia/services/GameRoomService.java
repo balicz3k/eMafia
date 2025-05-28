@@ -13,9 +13,10 @@ import com.mafia.models.GameRoom;
 import com.mafia.models.GameRoomStatus;
 import com.mafia.models.PlayerInRoom;
 import com.mafia.models.User;
-import com.mafia.repositiories.GameRoomRepository;
-import com.mafia.repositiories.PlayerInRoomRepository;
-import com.mafia.repositiories.UserRepository;
+import com.mafia.repositories.GameRoomRepository;
+import com.mafia.repositories.PlayerInRoomRepository;
+import com.mafia.repositories.UserRepository;
+
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,8 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
-@Service @RequiredArgsConstructor public class GameRoomService
-{
+@Service
+@RequiredArgsConstructor
+public class GameRoomService {
 
     private final GameRoomRepository gameRoomRepository;
     private final UserRepository userRepository;
@@ -37,7 +39,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
     private final SimpMessagingTemplate messagingTemplate;
     private final RabbitTemplate rabbitTemplate;
 
-    @Value("${app.frontend.joinPath:/join/}") private String frontendJoinPath;
+    @Value("${app.frontend.joinPath:/join/}")
+    private String frontendJoinPath;
 
     private static final String ROOM_CODE_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int ROOM_CODE_LENGTH = 6;
@@ -64,15 +67,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
                 .collect(Collectors.toList());
     }
 
-    private String generateUniqueRoomCode()
-    {
+    private String generateUniqueRoomCode() {
         StringBuilder sb;
         String code;
-        do
-        {
+        do {
             sb = new StringBuilder(ROOM_CODE_LENGTH);
-            for (int i = 0; i < ROOM_CODE_LENGTH; i++)
-            {
+            for (int i = 0; i < ROOM_CODE_LENGTH; i++) {
                 sb.append(ROOM_CODE_CHARACTERS.charAt(random.nextInt(ROOM_CODE_CHARACTERS.length())));
             }
             code = sb.toString();
@@ -80,29 +80,27 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
         return code;
     }
 
-    private PlayerInRoomResponse mapPlayerToResponse(PlayerInRoom player)
-    {
+    private PlayerInRoomResponse mapPlayerToResponse(PlayerInRoom player) {
         return new PlayerInRoomResponse(player.getId(), player.getUser().getId(), player.getUser().getUsername(),
-                                        player.getNicknameInRoom(), player.isAlive(), player.getJoinedAt());
+                player.getNicknameInRoom(), player.isAlive(), player.getJoinedAt());
     }
 
-    private GameRoomResponse mapGameRoomToResponse(GameRoom gameRoom)
-    {
-        List<PlayerInRoomResponse> playerResponses =
-            gameRoom.getPlayers().stream().map(this::mapPlayerToResponse).collect(Collectors.toList());
+    private GameRoomResponse mapGameRoomToResponse(GameRoom gameRoom) {
+        List<PlayerInRoomResponse> playerResponses = gameRoom.getPlayers().stream().map(this::mapPlayerToResponse)
+                .collect(Collectors.toList());
 
-        return new GameRoomResponse(gameRoom.getId(), gameRoom.getRoomCode(), gameRoom.getName(), gameRoom.getHost().getId(),
-                                    gameRoom.getHost().getUsername(), gameRoom.getMaxPlayers(),
-                                    gameRoom.getCurrentPlayersCount(), gameRoom.getStatus(), gameRoom.getCreatedAt(),
-                                    frontendJoinPath, playerResponses);
+        return new GameRoomResponse(gameRoom.getId(), gameRoom.getRoomCode(), gameRoom.getName(),
+                gameRoom.getHost().getId(),
+                gameRoom.getHost().getUsername(), gameRoom.getMaxPlayers(),
+                gameRoom.getCurrentPlayersCount(), gameRoom.getStatus(), gameRoom.getCreatedAt(),
+                frontendJoinPath, playerResponses);
     }
 
-    @Transactional public GameRoomResponse createRoom(CreateGameRoomRequest request)
-    {
+    @Transactional
+    public GameRoomResponse createRoom(CreateGameRoomRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User principalUser = (User)authentication.getPrincipal();
-        User host =
-            userRepository.findById(principalUser.getId())
+        User principalUser = (User) authentication.getPrincipal();
+        User host = userRepository.findById(principalUser.getId())
                 .orElseThrow(() -> new UserNotFoundException("Host user not found with ID: " + principalUser.getId()));
 
         GameRoom gameRoom = new GameRoom();
@@ -120,7 +118,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
         try {
             // Możesz wysłać cały obiekt gameRoomResponse lub uproszczony DTO
             // Dla przykładu wyślemy obiekt GameRoomResponse
-            rabbitTemplate.convertAndSend(RabbitMQConfig.ROOM_EVENTS_EXCHANGE, RabbitMQConfig.ROOM_CREATED_ROUTING_KEY, gameRoomResponse);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.ROOM_EVENTS_EXCHANGE, RabbitMQConfig.ROOM_CREATED_ROUTING_KEY,
+                    gameRoomResponse);
             System.out.println("Sent room creation event to RabbitMQ: " + gameRoomResponse.getRoomCode());
         } catch (Exception e) {
             // Logowanie błędu wysyłania do RabbitMQ, ale nie przerywaj głównej operacji
@@ -130,38 +129,33 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
         return gameRoomResponse;
     }
 
-    @Transactional public GameRoomResponse joinRoom(String roomCode)
-    {
+    @Transactional
+    public GameRoomResponse joinRoom(String roomCode) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User principalUser = (User)authentication.getPrincipal();
-        User userToJoin =
-            userRepository.findById(principalUser.getId())
+        User principalUser = (User) authentication.getPrincipal();
+        User userToJoin = userRepository.findById(principalUser.getId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + principalUser.getId()));
 
         GameRoom gameRoom = gameRoomRepository.findByRoomCodeWithPlayers(roomCode).orElseThrow(
-            () -> new GameRoomNotFoundException("Game room not found with code: " + roomCode));
+                () -> new GameRoomNotFoundException("Game room not found with code: " + roomCode));
 
-        if (gameRoom.getStatus() != GameRoomStatus.WAITING_FOR_PLAYERS)
-        {
+        if (gameRoom.getStatus() != GameRoomStatus.WAITING_FOR_PLAYERS) {
             throw new IllegalStateException("Cannot join room: Game is " +
-                                            gameRoom.getStatus().name().toLowerCase().replace("_", " ") + ".");
+                    gameRoom.getStatus().name().toLowerCase().replace("_", " ") + ".");
         }
 
-        if (playerInRoomRepository.existsByUserAndGameRoom(userToJoin, gameRoom))
-        {
+        if (playerInRoomRepository.existsByUserAndGameRoom(userToJoin, gameRoom)) {
             throw new UserAlreadyInRoomException("User " + userToJoin.getUsername() + " is already in this room.");
         }
 
-        if (gameRoom.getCurrentPlayersCount() >= gameRoom.getMaxPlayers())
-        {
+        if (gameRoom.getCurrentPlayersCount() >= gameRoom.getMaxPlayers()) {
             throw new RoomFullException("Game room " + roomCode + " is full.");
         }
 
         PlayerInRoom newPlayer = new PlayerInRoom(userToJoin, gameRoom, userToJoin.getUsername());
         gameRoom.addPlayer(newPlayer);
 
-        if (gameRoom.getCurrentPlayersCount() == gameRoom.getMaxPlayers())
-        {
+        if (gameRoom.getCurrentPlayersCount() == gameRoom.getMaxPlayers()) {
             gameRoom.setStatus(GameRoomStatus.READY_TO_START);
         }
 
@@ -169,20 +163,20 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
         GameRoomResponse roomResponse = mapGameRoomToResponse(updatedRoom);
 
         messagingTemplate.convertAndSend("/topic/game/" + updatedRoom.getRoomCode() + "/playerJoined",
-                                         mapPlayerToResponse(newPlayer));
+                mapPlayerToResponse(newPlayer));
         messagingTemplate.convertAndSend("/topic/game/" + updatedRoom.getRoomCode() + "/updated", roomResponse);
 
         return roomResponse;
     }
 
-    @Transactional(readOnly = true) public GameRoomResponse getRoomDetails(String roomCode)
-    {
+    @Transactional(readOnly = true)
+    public GameRoomResponse getRoomDetails(String roomCode) {
         GameRoom gameRoom = gameRoomRepository.findByRoomCodeWithPlayers(roomCode).orElseThrow(
-            () -> new GameRoomNotFoundException("Game room not found with code: " + roomCode));
+                () -> new GameRoomNotFoundException("Game room not found with code: " + roomCode));
         return mapGameRoomToResponse(gameRoom);
     }
 
-       @Transactional
+    @Transactional
     public void leaveRoom(String roomCode) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User principalUser = (User) authentication.getPrincipal();
@@ -206,19 +200,21 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
         if (wasHost) {
             gameRoomRepository.delete(gameRoom);
             messagingTemplate.convertAndSend("/topic/game/" + gameRoom.getRoomCode() + "/roomDeleted",
-                                             "Room " + gameRoom.getName() + " has been deleted by the host.");
+                    "Room " + gameRoom.getName() + " has been deleted by the host.");
         } else {
             gameRoom.removePlayer(playerToRemove);
 
             if (gameRoom.getPlayers().isEmpty() && gameRoom.getStatus() != GameRoomStatus.WAITING_FOR_PLAYERS) {
-            } else if (gameRoom.getStatus() == GameRoomStatus.READY_TO_START && gameRoom.getPlayers().size() < gameRoom.getMaxPlayers()) {
+            } else if (gameRoom.getStatus() == GameRoomStatus.READY_TO_START
+                    && gameRoom.getPlayers().size() < gameRoom.getMaxPlayers()) {
                 gameRoom.setStatus(GameRoomStatus.WAITING_FOR_PLAYERS);
             }
 
             GameRoom updatedRoom = gameRoomRepository.save(gameRoom);
             GameRoomResponse roomResponse = mapGameRoomToResponse(updatedRoom);
 
-            messagingTemplate.convertAndSend("/topic/game/" + updatedRoom.getRoomCode() + "/playerLeft", mapPlayerToResponse(playerToRemove));
+            messagingTemplate.convertAndSend("/topic/game/" + updatedRoom.getRoomCode() + "/playerLeft",
+                    mapPlayerToResponse(playerToRemove));
             messagingTemplate.convertAndSend("/topic/game/" + updatedRoom.getRoomCode() + "/updated", roomResponse);
         }
     }

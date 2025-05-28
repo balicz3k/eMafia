@@ -3,11 +3,20 @@ package com.mafia.controllers;
 import com.mafia.dto.AuthResponse;
 import com.mafia.dto.LoginRequest;
 import com.mafia.dto.RegistrationRequest;
+import com.mafia.exceptions.TokenExpiredException;
+import com.mafia.exceptions.TokenNotFoundException;
+import com.mafia.services.RefreshTokenService;
 import com.mafia.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +30,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.mafia.dto.RefreshTokenRequest;
+import com.mafia.dto.LogoutRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,6 +40,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class AuthController {
 
     private final UserService userService;
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @PostMapping("/register")
     @Operation(summary = "Register new user", description = "Creates a new user account with username, email and password. Email must be unique in the system.", operationId = "registerUser")
@@ -98,6 +111,75 @@ public class AuthController {
                     }
                     """))) @Valid @RequestBody LoginRequest request) {
         AuthResponse response = userService.authenticateUser(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token", description = "Generate new access token using refresh token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "New access token generated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponse.class), examples = @ExampleObject(name = "Successful refresh", value = """
+                    {
+                        "token": "eyJhbGciOiJIUzI1NiJ9...",
+                        "refreshToken": "new_refresh_token_here",
+                        "tokenType": "Bearer",
+                        "expiresIn": 3600
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "Invalid or expired refresh token", content = @Content(mediaType = "application/json", examples = @ExampleObject(name = "Invalid refresh token", value = """
+                    {
+                        "error": "Unauthorized",
+                        "message": "Refresh token has expired",
+                        "timestamp": "2024-01-15T10:30:00Z"
+                    }
+                    """)))
+    })
+    public ResponseEntity<AuthResponse> refreshToken(
+            @Parameter(description = "Refresh token request", required = true) @RequestBody RefreshTokenRequest request) {
+
+        try {
+            AuthResponse response = refreshTokenService.refreshAccessToken(request.getRefreshToken());
+            return ResponseEntity.ok(response);
+        } catch (TokenExpiredException | TokenNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Logout user", description = "Revoke refresh token and logout current session")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully logged out"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token required")
+    })
+    public ResponseEntity<Map<String, String>> logout(
+            @Parameter(description = "Logout request with refresh token") @RequestBody(required = false) LogoutRequest request) {
+
+        try {
+            if (request != null && request.getRefreshToken() != null) {
+                userService.logoutUser(request.getRefreshToken());
+            }
+
+            Map<String, String> response = Map.of(
+                    "message", "Successfully logged out",
+                    "timestamp", LocalDateTime.now().toString());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = Map.of(
+                    "message", "Logout completed with warnings",
+                    "timestamp", LocalDateTime.now().toString());
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @PostMapping("/logout-all")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Logout from all devices", description = "Revoke all refresh tokens for current user")
+    public ResponseEntity<Map<String, String>> logoutAllDevices() {
+        userService.logoutAllDevices();
+
+        Map<String, String> response = Map.of(
+                "message", "Successfully logged out from all devices",
+                "timestamp", LocalDateTime.now().toString());
         return ResponseEntity.ok(response);
     }
 }

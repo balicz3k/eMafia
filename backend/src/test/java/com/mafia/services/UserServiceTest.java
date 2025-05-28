@@ -8,7 +8,8 @@ import com.mafia.dto.UserResponse;
 import com.mafia.exceptions.*;
 import com.mafia.models.Role;
 import com.mafia.models.User;
-import com.mafia.repositiories.UserRepository;
+import com.mafia.repositories.UserRepository;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,8 @@ class UserServiceTest {
         when(authentication.isAuthenticated()).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(principalUser);
 
-        // Dopiero potem przekaż skonfigurowany mock 'authentication' do 'securityContext'
+        // Dopiero potem przekaż skonfigurowany mock 'authentication' do
+        // 'securityContext'
         when(securityContext.getAuthentication()).thenReturn(authentication);
         return principalUser;
     }
@@ -99,12 +101,10 @@ class UserServiceTest {
 
         assertNotNull(response);
         assertEquals("testToken", response.getToken());
-        verify(userRepository).save(argThat(user ->
-                user.getUsername().equals(request.getUsername()) &&
+        verify(userRepository).save(argThat(user -> user.getUsername().equals(request.getUsername()) &&
                 user.getEmail().equals(request.getEmail()) &&
                 user.getPassword().equals("encodedPassword") &&
-                user.getRoles().contains(Role.ROLE_USER)
-        ));
+                user.getRoles().contains(Role.ROLE_USER)));
     }
 
     @Test
@@ -170,7 +170,11 @@ class UserServiceTest {
     @Test
     void searchUsers_success() {
         String query = "test";
-        User user1 = new User(); user1.setId(UUID.randomUUID()); user1.setUsername("testuser1"); user1.setEmail("t1@e.com"); user1.setRoles(Collections.singleton(Role.ROLE_USER));
+        User user1 = new User();
+        user1.setId(UUID.randomUUID());
+        user1.setUsername("testuser1");
+        user1.setEmail("t1@e.com");
+        user1.setRoles(Collections.singleton(Role.ROLE_USER));
         List<User> users = Collections.singletonList(user1);
         when(userRepository.findByUsernameContainingIgnoreCase(query)).thenReturn(users);
 
@@ -186,8 +190,12 @@ class UserServiceTest {
     void updateUsername_success() {
         UUID userId = UUID.randomUUID();
         setupAuthenticationPrincipal(userId, "oldUsername", "user@example.com", "encodedPass");
-        
-        User userFromDb = new User(); userFromDb.setId(userId); userFromDb.setUsername("oldUsername"); userFromDb.setEmail("user@example.com"); userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
+
+        User userFromDb = new User();
+        userFromDb.setId(userId);
+        userFromDb.setUsername("oldUsername");
+        userFromDb.setEmail("user@example.com");
+        userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
         String newUsername = "newUsername";
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
@@ -199,17 +207,22 @@ class UserServiceTest {
         assertEquals(newUsername, response.getUsername());
         verify(userRepository).save(argThat(u -> u.getUsername().equals(newUsername)));
     }
-    
+
     @Test
     void updateUsername_success_sameUsername() {
         UUID userId = UUID.randomUUID();
         String currentUsername = "currentUsername";
         setupAuthenticationPrincipal(userId, currentUsername, "user@example.com", "encodedPass");
-        
-        User userFromDb = new User(); userFromDb.setId(userId); userFromDb.setUsername(currentUsername); userFromDb.setEmail("user@example.com"); userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
+
+        User userFromDb = new User();
+        userFromDb.setId(userId);
+        userFromDb.setUsername(currentUsername);
+        userFromDb.setEmail("user@example.com");
+        userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        // No need to mock existsByUsername if username is the same, as the condition `!user.getUsername().equals(newUsername)` will be false.
+        // No need to mock existsByUsername if username is the same, as the condition
+        // `!user.getUsername().equals(newUsername)` will be false.
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         UserResponse response = userService.updateUsername(currentUsername); // Using the same username
@@ -222,7 +235,9 @@ class UserServiceTest {
     void updateUsername_usernameAlreadyTaken() {
         UUID userId = UUID.randomUUID();
         setupAuthenticationPrincipal(userId, "oldUsername", "user@example.com", "encodedPass");
-        User userFromDb = new User(); userFromDb.setId(userId); userFromDb.setUsername("oldUsername");
+        User userFromDb = new User();
+        userFromDb.setId(userId);
+        userFromDb.setUsername("oldUsername");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
         when(userRepository.existsByUsername("takenUsername")).thenReturn(true);
@@ -241,7 +256,11 @@ class UserServiceTest {
     void updateEmail_success() {
         UUID userId = UUID.randomUUID();
         setupAuthenticationPrincipal(userId, "testuser", "old@example.com", "encodedPass");
-        User userFromDb = new User(); userFromDb.setId(userId); userFromDb.setUsername("testuser"); userFromDb.setEmail("old@example.com"); userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
+        User userFromDb = new User();
+        userFromDb.setId(userId);
+        userFromDb.setUsername("testuser");
+        userFromDb.setEmail("old@example.com");
+        userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
         String newEmail = "new@example.com";
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
@@ -253,13 +272,17 @@ class UserServiceTest {
         assertEquals(newEmail, response.getEmail());
         verify(userRepository).save(argThat(u -> u.getEmail().equals(newEmail)));
     }
-    
+
     @Test
     void updateEmail_success_sameEmail() {
         UUID userId = UUID.randomUUID();
         String currentEmail = "current@example.com";
         setupAuthenticationPrincipal(userId, "testuser", currentEmail, "encodedPass");
-        User userFromDb = new User(); userFromDb.setId(userId); userFromDb.setUsername("testuser"); userFromDb.setEmail(currentEmail); userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
+        User userFromDb = new User();
+        userFromDb.setId(userId);
+        userFromDb.setUsername("testuser");
+        userFromDb.setEmail(currentEmail);
+        userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -270,13 +293,13 @@ class UserServiceTest {
         verify(userRepository).save(userFromDb);
     }
 
-
     @Test
     void updateEmail_emailAlreadyRegistered() {
         UUID userId = UUID.randomUUID();
         setupAuthenticationPrincipal(userId, "testuser", "old@example.com", "encodedPass123!");
-        User userFromDb = new User(); userFromDb.setId(userId); userFromDb.setEmail("old@example.com");
-
+        User userFromDb = new User();
+        userFromDb.setId(userId);
+        userFromDb.setEmail("old@example.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
         when(userRepository.existsByEmail("taken@example.com")).thenReturn(true);
@@ -292,11 +315,12 @@ class UserServiceTest {
         String newPassword = "newPassword";
         String encodedOldPassword = "encodedOldPassword";
         String encodedNewPassword = "encodedNewPassword";
-        
+
         setupAuthenticationPrincipal(userId, "testuser", "user@example.com", encodedOldPassword);
         // User fetched from DB will have the encodedOldPassword
-        User userFromDb = new User(); userFromDb.setId(userId); userFromDb.setPassword(encodedOldPassword);
-
+        User userFromDb = new User();
+        userFromDb.setId(userId);
+        userFromDb.setPassword(encodedOldPassword);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
         when(passwordEncoder.matches(oldPassword, encodedOldPassword)).thenReturn(true);
@@ -307,23 +331,25 @@ class UserServiceTest {
         verify(userRepository).save(argThat(u -> u.getPassword().equals(encodedNewPassword)));
     }
 
-    @Test 
+    @Test
     void updatePassword_invalidOldPassword() {
-            UUID userId = UUID.randomUUID();
-            String oldPassword = "wrongOldPassword";
-            String newPassword = "newPassword";
-            String encodedPasswordInDb = "encodedCorrectOldPassword";
-    
-            setupAuthenticationPrincipal(userId, "testuser", "user@example.com", encodedPasswordInDb);
-            User userFromDb = new User(); userFromDb.setId(userId); userFromDb.setPassword(encodedPasswordInDb);
-    
-            when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-            when(passwordEncoder.matches(oldPassword, encodedPasswordInDb)).thenReturn(false);
-    
-            assertThrows(InvalidPasswordException.class, () -> userService.updatePassword(oldPassword, newPassword));
-            verify(userRepository, never()).save(any(User.class));
+        UUID userId = UUID.randomUUID();
+        String oldPassword = "wrongOldPassword";
+        String newPassword = "newPassword";
+        String encodedPasswordInDb = "encodedCorrectOldPassword";
+
+        setupAuthenticationPrincipal(userId, "testuser", "user@example.com", encodedPasswordInDb);
+        User userFromDb = new User();
+        userFromDb.setId(userId);
+        userFromDb.setPassword(encodedPasswordInDb);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+        when(passwordEncoder.matches(oldPassword, encodedPasswordInDb)).thenReturn(false);
+
+        assertThrows(InvalidPasswordException.class, () -> userService.updatePassword(oldPassword, newPassword));
+        verify(userRepository, never()).save(any(User.class));
     }
-    
+
     @Test
     void updatePassword_userNotFoundInDb() {
         UUID userId = UUID.randomUUID();
@@ -334,12 +360,19 @@ class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> userService.updatePassword("old", "new"));
     }
 
-
     // Tests for adminGetAllUsers
     @Test
     void adminGetAllUsers_success() {
-        User user1 = new User(); user1.setId(UUID.randomUUID()); user1.setUsername("u1"); user1.setEmail("u1@e.com"); user1.setRoles(Collections.singleton(Role.ROLE_USER));
-        User user2 = new User(); user2.setId(UUID.randomUUID()); user2.setUsername("u2"); user2.setEmail("u2@e.com"); user2.setRoles(Collections.singleton(Role.ROLE_ADMIN));
+        User user1 = new User();
+        user1.setId(UUID.randomUUID());
+        user1.setUsername("u1");
+        user1.setEmail("u1@e.com");
+        user1.setRoles(Collections.singleton(Role.ROLE_USER));
+        User user2 = new User();
+        user2.setId(UUID.randomUUID());
+        user2.setUsername("u2");
+        user2.setEmail("u2@e.com");
+        user2.setRoles(Collections.singleton(Role.ROLE_ADMIN));
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
         List<UserResponse> responses = userService.adminGetAllUsers();
@@ -351,7 +384,9 @@ class UserServiceTest {
     @Test
     void adminUpdateUserRoles_success() {
         UUID userId = UUID.randomUUID();
-        User userToUpdate = new User(); userToUpdate.setId(userId); userToUpdate.setRoles(Collections.singleton(Role.ROLE_USER));
+        User userToUpdate = new User();
+        userToUpdate.setId(userId);
+        userToUpdate.setRoles(Collections.singleton(Role.ROLE_USER));
         Set<Role> newRoles = Collections.singleton(Role.ROLE_ADMIN);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(userToUpdate));
@@ -368,7 +403,8 @@ class UserServiceTest {
         UUID userId = UUID.randomUUID();
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.adminUpdateUserRoles(userId, Collections.emptySet()));
+        assertThrows(UserNotFoundException.class,
+                () -> userService.adminUpdateUserRoles(userId, Collections.emptySet()));
     }
 
     // Tests for adminDeleteUser

@@ -4,9 +4,10 @@ import com.mafia.dto.GameRoomResponse;
 import com.mafia.exceptions.UserNotFoundException;
 import com.mafia.models.GameRoom;
 import com.mafia.models.User;
-import com.mafia.repositiories.GameRoomRepository;
-import com.mafia.repositiories.PlayerInRoomRepository;
-import com.mafia.repositiories.UserRepository;
+import com.mafia.repositories.GameRoomRepository;
+import com.mafia.repositories.PlayerInRoomRepository;
+import com.mafia.repositories.UserRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +30,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
-
 
 @ExtendWith(MockitoExtension.class)
 class GameRoomServiceTest {
@@ -125,7 +125,8 @@ class GameRoomServiceTest {
     @Test
     void searchGameRoomsByName_noRoomsFound_shouldReturnEmptyList() {
         String searchTerm = "NonExistent";
-        when(gameRoomRepository.findByNameContainingIgnoreCaseWithPlayers(searchTerm)).thenReturn(Collections.emptyList());
+        when(gameRoomRepository.findByNameContainingIgnoreCaseWithPlayers(searchTerm))
+                .thenReturn(Collections.emptyList());
 
         List<GameRoomResponse> responses = gameRoomService.searchGameRoomsByName(searchTerm);
 
