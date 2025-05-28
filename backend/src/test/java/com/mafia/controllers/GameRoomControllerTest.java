@@ -47,8 +47,7 @@ public class GameRoomControllerTest {
         return new GameRoomResponse(
                 UUID.randomUUID(), "ROOM123", "Test Room", UUID.randomUUID(), "HostUser",
                 10, 1, GameRoomStatus.WAITING_FOR_PLAYERS, LocalDateTime.now(),
-                "/join/ROOM123", Collections.emptyList()
-        );
+                "/join/ROOM123", Collections.emptyList());
     }
 
     @Test
@@ -61,9 +60,9 @@ public class GameRoomControllerTest {
         when(gameRoomService.createRoom(any(CreateGameRoomRequest.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/gamerooms/create")
-                        .with(csrf()) // Jeśli CSRF jest włączone
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf()) // Jeśli CSRF jest włączone
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.roomCode").value(response.getRoomCode()))
@@ -77,7 +76,7 @@ public class GameRoomControllerTest {
         when(gameRoomService.joinRoom(roomCode)).thenReturn(response);
 
         mockMvc.perform(post("/api/gamerooms/{roomCode}/join", roomCode)
-                        .with(csrf()))
+                .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.roomCode").value(roomCode));
@@ -87,7 +86,8 @@ public class GameRoomControllerTest {
     void getGameRoomDetails_shouldReturnRoomDetails() throws Exception {
         String roomCode = "ROOM123";
         GameRoomResponse response = createSampleGameRoomResponse();
-        when(gameRoomService.getRoomDetails(roomCode)).thenReturn(response); // Changed getGameRoomDetails to getRoomDetails
+        when(gameRoomService.getRoomDetails(roomCode)).thenReturn(response); // Changed getGameRoomDetails to
+                                                                             // getRoomDetails
 
         mockMvc.perform(get("/api/gamerooms/{roomCode}", roomCode))
                 .andExpect(status().isOk())
@@ -113,7 +113,7 @@ public class GameRoomControllerTest {
         when(gameRoomService.searchGameRoomsByName(query)).thenReturn(responses);
 
         mockMvc.perform(get("/api/gamerooms/search")
-                        .param("name", query))
+                .param("name", query))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].name").value(responses.get(0).getName()));
@@ -125,7 +125,7 @@ public class GameRoomControllerTest {
         doNothing().when(gameRoomService).leaveRoom(roomCode);
 
         mockMvc.perform(post("/api/gamerooms/{roomCode}/leave", roomCode)
-                        .with(csrf()))
+                .with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
@@ -135,7 +135,7 @@ public class GameRoomControllerTest {
         doNothing().when(gameRoomService).endRoom(roomCode);
 
         mockMvc.perform(post("/api/gamerooms/{roomCode}/end", roomCode)
-                        .with(csrf()))
+                .with(csrf()))
                 .andExpect(status().isNoContent());
     }
 }

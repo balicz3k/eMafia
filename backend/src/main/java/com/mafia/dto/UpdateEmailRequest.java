@@ -1,13 +1,29 @@
 package com.mafia.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class UpdateEmailRequest
-{
-    @NotBlank(message = "New email is required") @Email(message = "Invalid email format") private String newEmail;
+@Schema(description = "Request to update user's email address")
+public class UpdateEmailRequest {
 
-    public String getNewEmail() { return newEmail; }
+    @Schema(description = "New email address", example = "newemail@example.com", format = "email", required = true)
+    @NotBlank(message = "New email is required")
+    @Email(message = "Email format is invalid")
+    private String newEmail;
 
-    public void setNewEmail(String newEmail) { this.newEmail = newEmail; }
+    public UpdateEmailRequest() {
+    }
+
+    public UpdateEmailRequest(String newEmail) {
+        this.newEmail = newEmail;
+    }
+
+    public String getNewEmail() {
+        return newEmail;
+    }
+
+    public void setNewEmail(String newEmail) {
+        this.newEmail = newEmail;
+    }
 }

@@ -17,18 +17,13 @@ public class CreateGameRoomRequest {
     @Max(value = 20, message = "Maximum 20 players allowed")
     private Integer maxPlayers;
 
-    @Schema(description = "Whether the room is publicly visible in search results", example = "true", required = true)
-    @NotNull(message = "Public visibility setting is required")
-    private Boolean isPublic;
-
     // Konstruktory, getters i setters...
     public CreateGameRoomRequest() {
     }
 
-    public CreateGameRoomRequest(String name, Integer maxPlayers, Boolean isPublic) {
+    public CreateGameRoomRequest(String name, Integer maxPlayers) {
         this.name = name;
         this.maxPlayers = maxPlayers;
-        this.isPublic = isPublic;
     }
 
     public String getName() {
@@ -45,13 +40,5 @@ public class CreateGameRoomRequest {
 
     public void setMaxPlayers(Integer maxPlayers) {
         this.maxPlayers = maxPlayers;
-    }
-
-    public Boolean getIsPublic() {
-        return isPublic;
-    }
-
-    public void setIsPublic(Boolean isPublic) {
-        this.isPublic = isPublic;
     }
 }
