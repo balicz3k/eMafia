@@ -14,9 +14,7 @@
   font-weight: 600;
   color: #000000;
   margin-bottom: 2rem;
-  font-family:
-    DM Sans,
-    sans-serif;
+  font-family: DM Sans, sans-serif;
   margin-block-start: 0;
 }
 
@@ -29,9 +27,7 @@
   color: black;
   padding: 0 0 5px 0;
   margin-bottom: 2rem;
-  font-family:
-    DM Sans,
-    sans-serif;
+  font-family: DM Sans, sans-serif;
 }
 
 .formGroup::after {
@@ -64,9 +60,7 @@
 }
 
 .formGroup input::placeholder {
-  font-family:
-    DM Sans,
-    sans-serif;
+  font-family: DM Sans, sans-serif;
 }
 
 .formGroup input:focus::placeholder {
@@ -85,9 +79,7 @@
   border-radius: 15px;
   background-color: #cc0404;
   opacity: 1;
-  font-family:
-    DM Sans,
-    sans-serif;
+  font-family: DM Sans, sans-serif;
   font-weight: 500;
   cursor: pointer;
   align-items: center;
