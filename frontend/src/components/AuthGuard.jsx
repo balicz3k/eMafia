@@ -27,7 +27,6 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }) => {
           if (refreshToken) {
             try {
               await refreshAccessToken();
-
               const newToken = localStorage.getItem("token");
               if (newToken) {
                 const { decodeJwt } = await import("../utils/decodeJwt");
@@ -38,7 +37,6 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }) => {
               }
             } catch (error) {
               console.error("Token refresh failed:", error);
-
               localStorage.clear();
               setIsAuthenticated(false);
               setIsAdmin(false);

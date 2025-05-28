@@ -2,7 +2,6 @@ package com.mafia.services;
 
 import com.mafia.components.JwtTokenProvider;
 import com.mafia.dto.AuthResponse;
-import com.mafia.exceptions.InvalidRefreshTokenException;
 import com.mafia.exceptions.TokenExpiredException;
 import com.mafia.exceptions.TokenNotFoundException;
 import com.mafia.models.RefreshToken;
@@ -18,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,7 +78,7 @@ class RefreshTokenServiceTest {
         newRefreshToken.setExpiresAt(LocalDateTime.now().plusDays(7));
 
         when(refreshTokenRepository.findByTokenAndRevokedFalse(testRefreshToken.getToken()))
-            .thenReturn(Optional.of(testRefreshToken));
+                .thenReturn(Optional.of(testRefreshToken));
         when(jwtTokenProvider.generateToken(testUser)).thenReturn(newAccessToken);
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(newRefreshToken);
         when(refreshTokenRepository.countValidTokensByUser(any(User.class), any(LocalDateTime.class))).thenReturn(0L);
@@ -97,21 +95,21 @@ class RefreshTokenServiceTest {
     @Test
     void refreshAccessToken_tokenNotFound_throwsException() {
         when(refreshTokenRepository.findByTokenAndRevokedFalse(anyString()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
-        assertThrows(TokenNotFoundException.class, 
-            () -> refreshTokenService.refreshAccessToken("invalid-token"));
+        assertThrows(TokenNotFoundException.class,
+                () -> refreshTokenService.refreshAccessToken("invalid-token"));
     }
 
     @Test
     void refreshAccessToken_expiredToken_throwsException() {
         testRefreshToken.setExpiresAt(LocalDateTime.now().minusDays(1));
         when(refreshTokenRepository.findByTokenAndRevokedFalse(testRefreshToken.getToken()))
-            .thenReturn(Optional.of(testRefreshToken));
+                .thenReturn(Optional.of(testRefreshToken));
         doNothing().when(refreshTokenRepository).revokeByToken(testRefreshToken.getToken());
 
-        assertThrows(TokenExpiredException.class, 
-            () -> refreshTokenService.refreshAccessToken(testRefreshToken.getToken()));
+        assertThrows(TokenExpiredException.class,
+                () -> refreshTokenService.refreshAccessToken(testRefreshToken.getToken()));
     }
 
     @Test
