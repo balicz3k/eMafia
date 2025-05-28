@@ -27,7 +27,7 @@ public class RabbitMQConfig {
 
     @Bean
     Queue roomCreationLogQueue() {
-        // Kolejka trwała (durable=true)
+
         return new Queue(ROOM_CREATION_LOG_QUEUE, true);
     }
 
@@ -36,13 +36,11 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(roomCreationLogQueue).to(roomEventsExchange).with(ROOM_CREATED_ROUTING_KEY);
     }
 
-    // Konwerter wiadomości na JSON (aby wysyłać obiekty jako JSON)
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    // Skonfiguruj RabbitTemplate, aby używał konwertera JSON
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);

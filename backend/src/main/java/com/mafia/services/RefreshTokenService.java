@@ -26,7 +26,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("${jwt.refresh-expiration:604800000}") // 7 dni w milisekundach
+    @Value("${jwt.refresh-expiration:604800000}")
     private long refreshTokenExpiration;
 
     @Value("${jwt.max-refresh-tokens-per-user:5}")
@@ -36,10 +36,9 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(User user, String deviceInfo) {
-        // Sprawdź limit tokenów na użytkownika
+
         cleanupUserTokensIfNeeded(user);
 
-        // Generuj bezpieczny token
         String token = generateSecureToken();
         LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(refreshTokenExpiration / 1000);
 
@@ -59,10 +58,8 @@ public class RefreshTokenService {
             throw new TokenExpiredException("Refresh token has expired");
         }
 
-        // Generuj nowy access token
         String newAccessToken = jwtTokenProvider.generateToken(refreshToken.getUser());
 
-        // Opcjonalnie: rotacja refresh tokena (generuj nowy refresh token)
         RefreshToken newRefreshToken = rotateRefreshToken(refreshToken);
 
         return new AuthResponse(newAccessToken, newRefreshToken.getToken());
@@ -80,11 +77,10 @@ public class RefreshTokenService {
 
     @Transactional
     protected RefreshToken rotateRefreshToken(RefreshToken oldToken) {
-        // Unieważnij stary token
+
         oldToken.setRevoked(true);
         refreshTokenRepository.save(oldToken);
 
-        // Stwórz nowy token
         return createRefreshToken(oldToken.getUser(), oldToken.getDeviceInfo());
     }
 
@@ -95,9 +91,9 @@ public class RefreshTokenService {
             List<RefreshToken> userTokens = refreshTokenRepository.findByUserAndRevokedFalse(user);
             userTokens.stream()
                     .sorted(Comparator.comparing(RefreshToken::getCreatedAt,
-                            Comparator.nullsLast(Comparator.naturalOrder()))) // MODIFIED LINE
-                    .limit(userTokens.size() - (long) maxRefreshTokensPerUser + 1) // Ensure limit argument is long if
-                                                                                   // needed, or cast appropriately
+                            Comparator.nullsLast(Comparator.naturalOrder())))
+                    .limit(userTokens.size() - (long) maxRefreshTokensPerUser + 1)
+
                     .forEach(token -> token.setRevoked(true));
 
             refreshTokenRepository.saveAll(userTokens);
@@ -110,8 +106,7 @@ public class RefreshTokenService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
-    // Czyszczenie wygasłych tokenów - uruchamiane co godzinę
-    @Scheduled(fixedRate = 3600000) // 1 godzina
+    @Scheduled(fixedRate = 3600000)
     @Transactional
     public void cleanupExpiredTokens() {
         refreshTokenRepository.deleteExpiredAndRevokedTokens(LocalDateTime.now());

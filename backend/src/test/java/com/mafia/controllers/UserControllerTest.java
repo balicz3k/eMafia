@@ -38,7 +38,7 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    @MockBean // Add mock for JwtTokenProvider
+    @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
@@ -61,8 +61,8 @@ public class UserControllerTest {
         when(userService.searchUsers(query)).thenReturn(userList);
 
         mockMvc.perform(get("/api/users/search")
-                        .param("query", query)
-                        .with(csrf())) // Assuming CSRF is enabled, otherwise remove .with(csrf()) if not needed or if GET requests don't require it
+                .param("query", query)
+                .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(sampleUserId.toString()))
@@ -73,8 +73,8 @@ public class UserControllerTest {
     @Test
     void searchUsers_whenNotAuthenticated_shouldReturnUnauthorized() throws Exception {
         mockMvc.perform(get("/api/users/search")
-                        .param("query", "test")
-                        .with(csrf())) // Consistent with above
+                .param("query", "test")
+                .with(csrf()))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -84,13 +84,14 @@ public class UserControllerTest {
         UpdateUsernameRequest request = new UpdateUsernameRequest();
         request.setNewUsername("newTestUser");
 
-        UserResponse updatedUserResponse = new UserResponse(sampleUserId, request.getNewUsername(), sampleUserResponse.getEmail(), Set.of(Role.ROLE_USER));
+        UserResponse updatedUserResponse = new UserResponse(sampleUserId, request.getNewUsername(),
+                sampleUserResponse.getEmail(), Set.of(Role.ROLE_USER));
         when(userService.updateUsername(request.getNewUsername())).thenReturn(updatedUserResponse);
 
         mockMvc.perform(put("/api/users/profile/username")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(sampleUserId.toString()))
@@ -103,25 +104,23 @@ public class UserControllerTest {
         request.setNewUsername("newTestUser");
 
         mockMvc.perform(put("/api/users/profile/username")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
     void updateUsername_whenAuthenticatedAndInvalidRequest_shouldReturnBadRequest() throws Exception {
-        UpdateUsernameRequest request = new UpdateUsernameRequest(); // newUsername is null or invalid based on DTO validation
-        // Assuming UpdateUsernameRequest has validation like @NotBlank
+        UpdateUsernameRequest request = new UpdateUsernameRequest();
 
         mockMvc.perform(put("/api/users/profile/username")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
-
 
     @Test
     @WithMockUser
@@ -129,13 +128,14 @@ public class UserControllerTest {
         UpdateEmailRequest request = new UpdateEmailRequest();
         request.setNewEmail("newemail@example.com");
 
-        UserResponse updatedUserResponse = new UserResponse(sampleUserId, sampleUserResponse.getUsername(), request.getNewEmail(), Set.of(Role.ROLE_USER));
+        UserResponse updatedUserResponse = new UserResponse(sampleUserId, sampleUserResponse.getUsername(),
+                request.getNewEmail(), Set.of(Role.ROLE_USER));
         when(userService.updateEmail(request.getNewEmail())).thenReturn(updatedUserResponse);
 
         mockMvc.perform(put("/api/users/profile/email")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(sampleUserId.toString()))
@@ -148,9 +148,9 @@ public class UserControllerTest {
         request.setNewEmail("newemail@example.com");
 
         mockMvc.perform(put("/api/users/profile/email")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -158,12 +158,12 @@ public class UserControllerTest {
     @WithMockUser
     void updateEmail_whenAuthenticatedAndInvalidRequest_shouldReturnBadRequest() throws Exception {
         UpdateEmailRequest request = new UpdateEmailRequest();
-        request.setNewEmail("invalid-email"); // Assuming @Email validation in DTO
+        request.setNewEmail("invalid-email");
 
         mockMvc.perform(put("/api/users/profile/email")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -177,9 +177,9 @@ public class UserControllerTest {
         doNothing().when(userService).updatePassword(request.getOldPassword(), request.getNewPassword());
 
         mockMvc.perform(put("/api/users/profile/password")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
     }
 
@@ -190,22 +190,21 @@ public class UserControllerTest {
         request.setNewPassword("newValidPassword123!");
 
         mockMvc.perform(put("/api/users/profile/password")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
     void updatePassword_whenAuthenticatedAndInvalidRequest_shouldReturnBadRequest() throws Exception {
-        UpdatePasswordRequest request = new UpdatePasswordRequest(); // e.g., newPassword is null or doesn't meet criteria
-        // Assuming validation in UpdatePasswordRequest DTO
+        UpdatePasswordRequest request = new UpdatePasswordRequest();
 
         mockMvc.perform(put("/api/users/profile/password")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 }

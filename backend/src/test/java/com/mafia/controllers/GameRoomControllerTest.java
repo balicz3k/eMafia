@@ -71,7 +71,6 @@ public class GameRoomControllerTest {
     @Test
     void createGameRoom_withInvalidData_shouldReturnBadRequest() throws Exception {
         CreateGameRoomRequest request = new CreateGameRoomRequest();
-        // Brak wymaganych pól
 
         mockMvc.perform(post("/api/gamerooms/create")
                 .with(csrf())
@@ -97,7 +96,7 @@ public class GameRoomControllerTest {
     void joinGameRoom_invalidCode_shouldReturnNotFound() throws Exception {
         String roomCode = "INVALID";
         when(gameRoomService.joinRoom(roomCode))
-            .thenThrow(new RuntimeException("Room not found"));
+                .thenThrow(new RuntimeException("Room not found"));
 
         mockMvc.perform(post("/api/gamerooms/{roomCode}/join", roomCode)
                 .with(csrf()))
@@ -170,7 +169,7 @@ public class GameRoomControllerTest {
     void endRoom_notHost_shouldReturnForbidden() throws Exception {
         String roomCode = "ROOM123";
         doThrow(new RuntimeException("Not authorized"))
-            .when(gameRoomService).endRoom(roomCode);
+                .when(gameRoomService).endRoom(roomCode);
 
         mockMvc.perform(post("/api/gamerooms/{roomCode}/end", roomCode)
                 .with(csrf()))

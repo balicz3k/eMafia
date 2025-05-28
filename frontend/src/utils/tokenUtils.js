@@ -16,7 +16,7 @@ export const refreshAccessToken = async () => {
     if (response.ok) {
       const data = await response.json();
 
-      // Aktualizuj tokeny
+      
       localStorage.setItem("token", data.token);
       if (data.refreshToken) {
         localStorage.setItem("refreshToken", data.refreshToken);
@@ -33,7 +33,7 @@ export const refreshAccessToken = async () => {
       const errorText = await response.text();
       console.error("Token refresh failed:", response.status, errorText);
 
-      // Token refresh failed - clear storage
+      
       localStorage.clear();
       throw new Error(`Token refresh failed: ${response.status}`);
     }
@@ -47,12 +47,12 @@ export const refreshAccessToken = async () => {
 export const isTokenExpired = () => {
   const expiration = localStorage.getItem("tokenExpiration");
   if (!expiration) {
-    // Jeśli nie ma expiration time, sprawdź token bezpośrednio
+    
     const token = localStorage.getItem("token");
     if (!token) return true;
 
     try {
-      // Sprawdź czy token jest prawidłowy JSON
+      
       const base64Url = token.split(".")[1];
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const jsonPayload = decodeURIComponent(
@@ -70,7 +70,7 @@ export const isTokenExpired = () => {
       return decoded.exp < currentTime;
     } catch (error) {
       console.error("Error checking token expiration:", error);
-      return true; // Jeśli nie można sprawdzić, zakładaj że wygasł
+      return true; 
     }
   }
 

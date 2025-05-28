@@ -17,7 +17,6 @@ public class CreateGameRoomRequest {
     @Max(value = 20, message = "Maximum 20 players allowed")
     private Integer maxPlayers;
 
-    // Konstruktory, getters i setters...
     public CreateGameRoomRequest() {
     }
 

@@ -17,7 +17,6 @@ public class AuthResponse {
     @Schema(description = "Access token expiration time in seconds", example = "3600")
     private long expiresIn;
 
-    // Konstruktory
     public AuthResponse() {
     }
 
@@ -36,7 +35,6 @@ public class AuthResponse {
         this.expiresIn = expiresIn;
     }
 
-    // Getters i Setters
     public String getToken() {
         return token;
     }

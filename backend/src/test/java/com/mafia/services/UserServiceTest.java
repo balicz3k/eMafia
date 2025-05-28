@@ -75,19 +75,16 @@ class UserServiceTest {
         principalUser.setId(userId);
         principalUser.setUsername(username);
         principalUser.setEmail(email);
-        principalUser.setPassword(password); // Encoded password
+        principalUser.setPassword(password);
         principalUser.setRoles(Collections.singleton(Role.ROLE_USER));
 
         when(authentication.isAuthenticated()).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(principalUser);
 
-        // Dopiero potem przekaż skonfigurowany mock 'authentication' do
-        // 'securityContext'
         when(securityContext.getAuthentication()).thenReturn(authentication);
         return principalUser;
     }
 
-    // Tests for registerUser
     @Test
     void registerUser_success() {
         RegistrationRequest request = new RegistrationRequest("testuser", "test@example.com", "password");
@@ -140,7 +137,6 @@ class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
-    // Tests for authenticateUser
     @Test
     void authenticateUser_success() {
         LoginRequest request = new LoginRequest("test@example.com", "password");
@@ -188,7 +184,6 @@ class UserServiceTest {
         assertThrows(InvalidPasswordException.class, () -> userService.authenticateUser(request));
     }
 
-    // Tests for searchUsers
     @Test
     void searchUsers_success() {
         String query = "test";
@@ -207,7 +202,6 @@ class UserServiceTest {
         assertEquals("testuser1", responses.get(0).getUsername());
     }
 
-    // Tests for updateUsername
     @Test
     void updateUsername_success() {
         UUID userId = UUID.randomUUID();
@@ -274,7 +268,6 @@ class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> userService.updateUsername("newUsername"));
     }
 
-    // Tests for updateEmail
     @Test
     void updateEmail_success() {
         UUID userId = UUID.randomUUID();
@@ -331,7 +324,6 @@ class UserServiceTest {
         assertThrows(EmailAlreadyExistsException.class, () -> userService.updateEmail(newEmail));
     }
 
-    // Tests for updatePassword
     @Test
     void updatePassword_success() {
         UUID userId = UUID.randomUUID();
@@ -383,7 +375,6 @@ class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> userService.updatePassword("oldPass", "newPass"));
     }
 
-    // Tests for adminGetAllUsers
     @Test
     void adminGetAllUsers_success() {
         User user1 = new User();
@@ -403,7 +394,6 @@ class UserServiceTest {
         assertEquals(2, responses.size());
     }
 
-    // Tests for adminUpdateUserRoles
     @Test
     void adminUpdateUserRoles_success() {
         UUID userId = UUID.randomUUID();
@@ -430,7 +420,6 @@ class UserServiceTest {
                 () -> userService.adminUpdateUserRoles(userId, Collections.emptySet()));
     }
 
-    // Tests for adminDeleteUser
     @Test
     void adminDeleteUser_success() {
         UUID userId = UUID.randomUUID();

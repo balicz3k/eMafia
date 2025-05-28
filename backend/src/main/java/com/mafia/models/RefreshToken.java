@@ -42,9 +42,8 @@ public class RefreshToken {
     private boolean revoked = false;
 
     @Column(name = "device_info", length = 500)
-    private String deviceInfo; // Optional: User-Agent, IP, etc.
+    private String deviceInfo;
 
-    // Konstruktory
     public RefreshToken() {
     }
 
@@ -54,7 +53,6 @@ public class RefreshToken {
         this.expiresAt = expiresAt;
     }
 
-    // Metody pomocnicze
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(this.expiresAt);
     }

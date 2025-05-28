@@ -20,7 +20,7 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }) => {
           return;
         }
 
-        // Sprawdź czy token wygasł
+        
         if (isTokenExpired()) {
           console.log("Token expired, trying to refresh...");
 
@@ -28,7 +28,7 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }) => {
           if (refreshToken) {
             try {
               await refreshAccessToken();
-              // Token został odświeżony
+              
               const newToken = localStorage.getItem("token");
               if (newToken) {
                 const { decodeJwt } = await import("../utils/decodeJwt");
@@ -39,7 +39,7 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }) => {
               }
             } catch (error) {
               console.error("Token refresh failed:", error);
-              // Refresh token failed - logout
+              
               localStorage.clear();
               setIsAuthenticated(false);
               setIsAdmin(false);
@@ -51,7 +51,7 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }) => {
             setIsAdmin(false);
           }
         } else {
-          // Token jest ważny
+          
           const { decodeJwt } = await import("../utils/decodeJwt");
           const decodedToken = decodeJwt(token);
 
@@ -87,21 +87,21 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }) => {
     );
   }
 
-  // Jeśli nie wymaga autoryzacji (np. login/register), pokaż dzieci
+  
   if (!requireAuth) {
-    // Ale jeśli jest zalogowany, przekieruj do dashboard
+    
     if (isAuthenticated) {
       return <Navigate to="/dashboard" replace />;
     }
     return children;
   }
 
-  // Wymaga autoryzacji
+  
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  // Sprawdź wymagania admin
+  
   if (requireAdmin && !isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }

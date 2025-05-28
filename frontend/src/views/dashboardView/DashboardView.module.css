@@ -10,11 +10,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  gap: 20px; /* Odstęp między wyszukiwarką a przyciskiem */
+  gap: 20px;
 }
 
 .newGameButton {
-  background-color: #4caf50; /* Green */
+  background-color: #4caf50;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -23,7 +23,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  white-space: nowrap; /* Zapobiega łamaniu tekstu */
+  white-space: nowrap;
 }
 
 .newGameButton:hover {
@@ -38,7 +38,7 @@
 }
 
 .errorMessage {
-  color: #d32f2f; /* Red */
+  color: #d32f2f;
 }
 
 .dashboardContainer h2 {
@@ -49,15 +49,15 @@
   padding-bottom: 10px;
 }
 
-/* Responsywność dla nagłówka */
+
 @media (max-width: 600px) {
   .header {
     flex-direction: column;
-    align-items: stretch; /* Elementy zajmują całą szerokość */
+    align-items: stretch;
   }
 
   .newGameButton {
-    width: 100%; /* Przycisk na całą szerokość */
-    margin-top: 10px; /* Odstęp od wyszukiwarki */
+    width: 100%;
+    margin-top: 10px;
   }
 }

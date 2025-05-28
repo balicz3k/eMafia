@@ -80,13 +80,13 @@
   background-color: #cc0404;
   opacity: 1;
   font-family: DM Sans, sans-serif;
-  font-weight: 500; /* Półgrubość czcionki */
-  cursor: pointer; /* Zmień kursor na wskaźnik */
-  align-items: center; /* Wyśrodkuj tekst w pionie */
-  border: none; /* Usuń obramowanie */
-  padding: 12px 0; /* BRAK - nie ma zdefiniowanego paddingu */
-  justify-content: center; /* BRAK - tekst nie jest wyśrodkowany poziomo */
-  font-size: 16px; /* BRAK - brak określonego rozmiaru czcionki */
+  font-weight: 500;
+  cursor: pointer;
+  align-items: center;
+  border: none;
+  padding: 12px 0;
+  justify-content: center;
+  font-size: 16px;
   margin-top: 1rem;
 }
 

@@ -116,13 +116,12 @@ public class GameRoomService {
         GameRoomResponse gameRoomResponse = mapGameRoomToResponse(savedRoom);
 
         try {
-            // Możesz wysłać cały obiekt gameRoomResponse lub uproszczony DTO
-            // Dla przykładu wyślemy obiekt GameRoomResponse
+
             rabbitTemplate.convertAndSend(RabbitMQConfig.ROOM_EVENTS_EXCHANGE, RabbitMQConfig.ROOM_CREATED_ROUTING_KEY,
                     gameRoomResponse);
             System.out.println("Sent room creation event to RabbitMQ: " + gameRoomResponse.getRoomCode());
         } catch (Exception e) {
-            // Logowanie błędu wysyłania do RabbitMQ, ale nie przerywaj głównej operacji
+
             System.err.println("Error sending room creation event to RabbitMQ: " + e.getMessage());
         }
 

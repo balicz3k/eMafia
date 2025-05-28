@@ -36,7 +36,7 @@ class AuthIntegrationTest {
 
         @Test
         void fullAuthFlow_registerLoginLogout_success() throws Exception {
-                // 1. Register new user
+
                 RegistrationRequest registerRequest = new RegistrationRequest();
                 registerRequest.setUsername("integrationUser");
                 registerRequest.setEmail("integration@example.com");
@@ -51,7 +51,6 @@ class AuthIntegrationTest {
                                 .andExpect(jsonPath("$.refreshToken").exists())
                                 .andReturn();
 
-                // 2. Login with same credentials
                 LoginRequest loginRequest = new LoginRequest();
                 loginRequest.setEmail("integration@example.com");
                 loginRequest.setPassword("Password123!");
@@ -67,19 +66,17 @@ class AuthIntegrationTest {
 
                 AuthResponse loginResponse = objectMapper.readValue(
                                 loginResult.getResponse().getContentAsString(), AuthResponse.class);
-                String accessToken = loginResponse.getToken(); // Get the access token
+                String accessToken = loginResponse.getToken();
 
-                // 3. Logout using refresh token
                 LogoutRequest logoutRequest = new LogoutRequest(loginResponse.getRefreshToken());
 
                 mockMvc.perform(post("/api/auth/logout")
                                 .with(csrf())
-                                .header("Authorization", "Bearer " + accessToken) // Add Access Token here
+                                .header("Authorization", "Bearer " + accessToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(logoutRequest)))
                                 .andExpect(status().isNoContent());
 
-                // 4. Try to login again (should work)
                 mockMvc.perform(post("/api/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -101,14 +98,14 @@ class AuthIntegrationTest {
                                 .andExpect(status().isCreated());
 
                 LoginRequest invalidRequest = new LoginRequest();
-                invalidRequest.setEmail("exists@example.com"); // Existing email
-                invalidRequest.setPassword("wrongpassword"); // Incorrect password
+                invalidRequest.setEmail("exists@example.com");
+                invalidRequest.setPassword("wrongpassword");
 
                 mockMvc.perform(post("/api/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(invalidRequest)))
-                                .andExpect(status().isUnauthorized()); // Should now be 401
+                                .andExpect(status().isUnauthorized());
         }
 
         @Test
@@ -118,14 +115,12 @@ class AuthIntegrationTest {
                 request.setEmail("duplicate@example.com");
                 request.setPassword("Password123!");
 
-                // First registration - should succeed
                 mockMvc.perform(post("/api/auth/register")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isCreated());
 
-                // Second registration with same email - should fail
                 mockMvc.perform(post("/api/auth/register")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)

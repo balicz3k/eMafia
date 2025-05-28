@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AdminController.class)
-@WithMockUser(roles = "ADMIN") // Zapewnia kontekst bezpieczeństwa dla @PreAuthorize("hasRole('ADMIN')")
+@WithMockUser(roles = "ADMIN")
 public class AdminControllerTest {
 
     @Autowired
@@ -37,7 +37,7 @@ public class AdminControllerTest {
     @MockBean
     private UserService userService;
 
-    @MockBean // Potrzebne, jeśli JwtAuthenticationFilter jest częścią kontekstu bezpieczeństwa
+    @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
@@ -75,15 +75,16 @@ public class AdminControllerTest {
         when(userService.adminUpdateUserRoles(eq(userId), eq(newRolesEnum))).thenReturn(updatedUserResponse);
 
         mockMvc.perform(put("/api/admin/users/{userId}/roles", userId)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(userId.toString()))
                 .andExpect(jsonPath("$.username").value("updatedUser"))
                 .andExpect(jsonPath("$.roles").isArray())
-                .andExpect(jsonPath("$.roles").value(newRolesEnum.stream().map(Enum::name).collect(Collectors.toList())));
+                .andExpect(
+                        jsonPath("$.roles").value(newRolesEnum.stream().map(Enum::name).collect(Collectors.toList())));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class AdminControllerTest {
         doNothing().when(userService).adminDeleteUser(userId);
 
         mockMvc.perform(delete("/api/admin/users/{userId}", userId)
-                        .with(csrf()))
+                .with(csrf()))
                 .andExpect(status().isNoContent());
     }
 }
