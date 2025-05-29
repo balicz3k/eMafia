@@ -298,8 +298,8 @@ const JoinGameRoomView = () => {
           <p className={styles.infoMessage}>Room is ready to start!</p>
         )}
         {/* {canStartGame && (
-                    <button className={styles.startButton}>Start Game</button>
-                )} */}
+                      <button className={styles.startButton}>Start Game</button>
+                  )} */}
       </div>
     </MainLayout>
   );

@@ -1,7 +1,7 @@
 .formContainer {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centruje sekcje formularza */
+  align-items: center;
   width: 100%;
   max-width: 550px;
   padding: 1rem;
@@ -10,28 +10,26 @@
 }
 
 .profileFormSection {
-  /* Ta klasa jest na tagu <form> w JSX */
   width: 100%;
   display: flex;
-  flex-direction: column; /* Elementy wewnątrz formularza (h3, div.formGroup, button) ułożone pionowo */
-  margin-bottom: 2.5rem; /* Większy odstęp między poszczególnymi formularzami-sekcjami */
-  padding: 1.5rem; /* Wewnętrzny padding dla każdej sekcji-formularza */
-  background-color: #ffffff; /* Białe tło dla każdej sekcji */
+  flex-direction: column;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background-color: #ffffff;
 }
 
 .profileFormSection h3 {
   font-size: 1.25rem;
   font-weight: 600;
   color: #333;
-  margin-top: 0; /* Usunięcie domyślnego marginesu h3 */
+  margin-top: 0;
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
   font-family: "DM Sans", sans-serif;
-  text-align: left; /* Wyrównanie tytułu sekcji do lewej */
+  text-align: left;
 }
 
 .formGroup {
-  /* Ta klasa jest na divie opakowującym label i input w JSX */
   position: relative;
   width: 100%;
   padding: 0 0 5px 0;
@@ -40,7 +38,6 @@
 }
 
 .formGroup::after {
-  /* Podkreślenie pod inputem */
   content: "";
   position: absolute;
   bottom: 0;
@@ -55,7 +52,6 @@
 }
 
 .profileFormSection label {
-  /* Celuje w label wewnątrz .formGroup (który jest w .profileFormSection) */
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
@@ -67,7 +63,6 @@
 .profileFormSection input[type="text"],
 .profileFormSection input[type="email"],
 .profileFormSection input[type="password"] {
-  /* Celuje w inputy wewnątrz .formGroup */
   width: 100%;
   border: none;
   background: transparent;
@@ -87,19 +82,18 @@
   color: #9c9797;
 }
 
-/* Styl dla przycisków submit wewnątrz każdej sekcji-formularza */
 .profileFormSection button[type="submit"] {
-  display: flex; /* Używamy flex dla centrowania tekstu, jeśli potrzeba */
-  width: 100%; /* Przycisk na całą szerokość sekcji */
-  max-width: 250px; /* Ograniczenie szerokości przycisku */
+  display: flex;
+  width: 100%;
+  max-width: 250px;
   padding: 10px 20px;
-  margin-top: 0.5rem; /* Mniejszy margines nad przyciskiem */
+  margin-top: 0.5rem;
   margin-left: auto;
   margin-right: auto;
   font-size: 0.95rem;
   font-weight: 500;
   color: white;
-  background-color: #cc0404; /* Główny kolor akcji */
+  background-color: #cc0404;
   border: none;
   border-radius: 15px;
   cursor: pointer;
@@ -119,14 +113,13 @@
   cursor: not-allowed;
 }
 
-/* Komunikaty o błędach/sukcesie - pozostają na górze w .formContainer */
 .errorMessage,
 .successMessage {
   font-size: 0.875rem;
-  margin-top: 0; /* Komunikaty bezpośrednio pod sobą, jeśli oba są widoczne */
-  margin-bottom: 1.5rem; /* Odstęp przed pierwszą sekcją formularza */
+  margin-top: 0;
+  margin-bottom: 1.5rem;
   text-align: center;
-  width: 100%; /* Na całą szerokość .formContainer */
+  width: 100%;
   padding: 0.75rem;
   border-radius: 8px;
   box-sizing: border-box;
@@ -151,7 +144,7 @@
   width: 30px;
   height: 30px;
   animation: spin 1s linear infinite;
-  margin: 1rem auto; /* Jeśli jest używany globalnie w .formContainer */
+  margin: 1rem auto;
 }
 
 @keyframes spin {

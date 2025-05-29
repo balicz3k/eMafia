@@ -1,16 +1,19 @@
 .viewContainer {
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centruje bezpośrednie dzieci w poziomie */
-  max-width: 700px; /* Można zachować lub dostosować */
+  align-items: center;
+  max-width: 700px;
   padding: 1.5rem;
-  font-family: "DM Sans", sans-serif; /* Ujednolicony font */
-  min-height: calc(100vh - 140px); /* Spójna minimalna wysokość */
+  font-family: "DM Sans", sans-serif;
+  min-height: calc(100vh - 140px);
   box-sizing: border-box;
   width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.viewContainer h2 { /* Styl spójny z .formTitle */
+.viewContainer h2 {
   font-size: 2rem;
   font-weight: 600;
   color: #000000;
@@ -22,26 +25,26 @@
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   color: #333;
-  border-bottom: 1px solid #e0e0e0; /* Subtelne podkreślenie */
+  border-bottom: 1px solid #e0e0e0;
   padding-bottom: 0.5rem;
   font-size: 1.25rem;
   font-weight: 600;
-  width: 100%; /* Aby linia była na całą szerokość kontenera h3 */
-  max-width: 600px; /* Ograniczenie szerokości dla czytelności */
+  width: 100%;
+  max-width: 600px;
   text-align: left;
 }
 
 .viewContainer p {
-  font-size: 1rem; /* Spójny rozmiar fontu */
-  color: #333;    /* Spójny kolor tekstu */
+  font-size: 1rem;
+  color: #333;
   line-height: 1.6;
   margin-bottom: 0.75rem;
   width: 100%;
-  max-width: 600px; /* Ograniczenie szerokości dla czytelności */
+  max-width: 600px;
   text-align: left;
 }
 
-.errorMessage { /* Spójny z błędami w RegisterForm */
+.errorMessage {
   color: #cc0404;
   background-color: transparent;
   border: none;
@@ -51,11 +54,11 @@
   text-align: center;
   font-size: 0.875rem;
   width: 100%;
-  max-width: 450px; /* Spójna szerokość z formularzami */
+  max-width: 450px;
 }
 
 .infoMessage {
-  color: #007bff; /* Kolor dla informacji */
+  color: #007bff;
   background-color: transparent;
   border: none;
   padding: 0;
@@ -71,42 +74,42 @@
   list-style-type: none;
   padding-left: 0;
   width: 100%;
-  max-width: 500px; /* Ograniczenie szerokości listy */
+  max-width: 500px;
   margin-top: 1rem;
 }
 
 .playerList li {
-  background-color: #ffffff; /* Czyste tło dla elementów listy */
-  border: 1px solid #e0e0e0; /* Subtelne obramowanie */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
   padding: 12px 18px;
   margin-bottom: 8px;
-  border-radius: 8px; /* Zaokrąglenie spójne z innymi elementami */
+  border-radius: 8px;
   font-size: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtelny cień */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .hostLabel {
   font-size: 0.85em;
   font-style: italic;
-  color: #666; /* Ciemniejszy szary dla lepszego kontrastu */
+  color: #666;
 }
 
 .joinButton,
-.startButton { /* Styl spójny z .loginButton / .registerButton */
-  display: flex; /* Używamy flex dla centrowania tekstu, jeśli potrzeba */
+.startButton {
+  display: flex;
   width: 100%;
-  max-width: 350px; /* Spójna maksymalna szerokość */
+  max-width: 350px;
   padding: 12px 20px;
-  margin: 1.5rem auto 1rem; /* Centrowanie przycisku i marginesy */
-  font-size: 1rem; /* 16px */
+  margin: 1.5rem auto 1rem;
+  font-size: 1rem;
   font-weight: 500;
   color: white;
-  background-color: #cc0404; /* Główny kolor akcji */
+  background-color: #cc0404;
   border: none;
-  border-radius: 15px; /* Spójne zaokrąglenie */
+  border-radius: 15px;
   cursor: pointer;
   text-align: center;
   justify-content: center;
@@ -126,18 +129,17 @@
   cursor: not-allowed;
 }
 
-.status { /* Styl "badge" dla statusu */
+.status {
   font-weight: bold;
-  padding: 5px 12px; /* Lekko zwiększony padding */
+  padding: 5px 12px;
   border-radius: 15px;
   color: white;
   font-size: 0.9em;
   text-transform: capitalize;
-  font-family: "DM Sans", sans-serif; /* Upewnienie się co do fontu */
-  margin-left: 10px; /* Dodatkowy margines, jeśli jest obok innego tekstu */
+  font-family: "DM Sans", sans-serif;
+  margin-left: 10px;
 }
 
-/* Kolory statusów pozostają bez zmian, są specyficzne dla znaczenia */
 .status.waitingforplayers {
   background-color: #f0ad4e;
 }
@@ -157,14 +159,13 @@
   background-color: #333;
 }
 
-/* Dodatkowe style dla elementów, które mogą się pojawić w tym widoku */
 .detailsSection {
   width: 100%;
-  max-width: 600px; /* Spójna szerokość dla bloków tekstu */
+  max-width: 600px;
   margin-bottom: 1.5rem;
-  text-align: left; /* Domyślne wyrównanie dla sekcji detali */
+  text-align: left;
 }
 
 .detailsSection p strong {
-  color: #111; /* Lekkie wyróżnienie etykiet */
+  color: #111;
 }
