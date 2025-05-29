@@ -1,19 +1,14 @@
-/* Usunięto oryginalny .formContainer, zakładając, że komponent CreateGameRoomForm
-   będzie miał strukturę podobną do RegisterForm, z głównym divem stylizowanym przez .container */
-
-.container { /* Nowy główny kontener, spójny z RegisterForm/LoginForm */
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Dodane dla lepszego centrowania, jeśli jest w widoku */
+  justify-content: center;
   width: 100%;
-  padding: 2rem 2rem; /* Dodany padding dla estetyki */
+  padding: 2rem 2rem;
   box-sizing: border-box;
-  /* min-height można dodać, jeśli ten formularz jest główną treścią widoku,
-     np. min-height: calc(100vh - 140px - 4rem); */
 }
 
-.formTitle { /* Spójny z .formTitle w RegisterForm/LoginForm */
+.formTitle {
   font-size: 2rem;
   font-weight: 600;
   color: #000000;
@@ -22,30 +17,30 @@
   text-align: center;
 }
 
-.roomForm { /* Spójny z .signupForm / .signinForm */
+.roomForm {
   position: relative;
-  max-width: 400px; /* Można dostosować */
+  max-width: 400px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0; /* Usunięto gap, marginesy będą kontrolowane przez .formGroup */
+  gap: 0;
 }
 
-.formGroup { /* Spójny z .formGroup w RegisterForm/LoginForm */
+.formGroup {
   position: relative;
   width: 100%;
-  /* display: flex; align-items: center; - jeśli chcemy ikonę obok inputa */
+
   padding: 0 0 5px 0;
   margin-bottom: 2rem;
   font-family: "DM Sans", sans-serif;
 }
 
-.formGroup::after { /* Podkreślenie pod inputem */
+.formGroup::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0; /* Rozciągnięcie na całą szerokość */
+  right: 0;
   height: 1px;
   background-color: #9c9797;
 }
@@ -55,21 +50,21 @@
 }
 
 .formGroup label {
-  display: block; /* Etykieta nad inputem */
-  margin-bottom: 8px; /* Odstęp między etykietą a inputem */
-  font-weight: 500; /* Lekko pogrubiona etykieta */
-  color: #333; /* Ciemniejszy kolor etykiety */
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
   font-size: 0.9rem;
   font-family: "DM Sans", sans-serif;
 }
 
 .formGroup input[type="text"],
 .formGroup input[type="number"],
-.formGroup input[type="password"] { /* Spójne style dla inputów */
+.formGroup input[type="password"] {
   width: 100%;
   border: none;
   background: transparent;
-  padding: 10px 5px 7px 5px; /* Dostosowany padding, bez ikon */
+  padding: 10px 5px 7px 5px;
   font-size: 16px;
   font-family: "DM Sans", sans-serif;
   color: #000000;
@@ -85,13 +80,13 @@
   color: #9c9797;
 }
 
-.submitButton { /* Spójny z .registerButton / .loginButton */
+.submitButton {
   position: relative;
   display: flex;
   width: 100%;
   color: #ffffff;
   border-radius: 15px;
-  background-color: #cc0404; /* Główny kolor akcji */
+  background-color: #cc0404;
   opacity: 1;
   padding: 12px 0;
   justify-content: center;
@@ -101,7 +96,7 @@
   font-family: "DM Sans", sans-serif;
   font-weight: 500;
   cursor: pointer;
-  margin-top: 1rem; /* Odstęp nad przyciskiem */
+  margin-top: 1rem;
   transition: opacity 0.2s ease-in-out;
 }
 
@@ -115,30 +110,25 @@
   cursor: not-allowed;
 }
 
-.errorMessage { /* Spójny z .errorMessage w RegisterForm */
+.errorMessage {
   color: #cc0404;
   font-size: 0.875rem;
-  margin-top: 0.5rem; /* Odstęp nad komunikatem błędu, jeśli jest pod przyciskiem */
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
-  text-align: center; /* Wyśrodkowany ogólny błąd */
+  text-align: center;
   width: 100%;
-  /* Jeśli błędy są per pole, dostosuj marginesy jak w RegisterForm */
 }
-
-/* Style dla sekcji informacji o pokoju - można je zostawić, jeśli mają inny cel wizualny,
-   lub dostosować do ogólnego motywu aplikacji, ale niekoniecznie do stylu formularza.
-   Poniżej przykład lekkiego dostosowania, aby pasowały do czystszego wyglądu. */
 
 .roomInfoContainer {
   margin-top: 25px;
   padding: 20px;
-  border: 1px solid #e0e0e0; /* Lżejsze obramowanie */
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  background-color: #ffffff; /* Czyste tło */
+  background-color: #ffffff;
   width: 100%;
-  max-width: 400px; /* Spójna szerokość z formularzem */
+  max-width: 400px;
   box-sizing: border-box;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtelny cień */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .roomInfoContainer h3 {
@@ -159,15 +149,15 @@
 
 .roomCode {
   font-weight: bold;
-  color: #cc0404; /* Utrzymanie wyróżnienia kodu pokoju */
+  color: #cc0404;
   font-size: 1.25em;
-  display: block; /* Aby był w nowej linii i łatwiejszy do skopiowania */
+  display: block;
   text-align: center;
   margin-bottom: 10px;
 }
 
 .joinLink {
-  color: #007bff; /* Standardowy kolor linku */
+  color: #007bff;
   word-break: break-all;
   font-family: "DM Sans", sans-serif;
 }

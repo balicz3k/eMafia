@@ -10,6 +10,7 @@ const CreateGameRoomForm = () => {
   const [createdRoomInfo, setCreatedRoomInfo] = useState(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,15 +43,18 @@ const CreateGameRoomForm = () => {
         setCreatedRoomInfo(data);
         setRoomName("");
         setMaxPlayers(5);
+        setIsFormVisible(false);
       } else {
         const errorText = await response.text();
         setError(
           errorText || "Failed to create room. Status: " + response.status
         );
+        setIsFormVisible(true);
       }
     } catch (err) {
       console.error("Error creating room:", err);
       setError("An error occurred while creating the room.");
+      setIsFormVisible(true);
     } finally {
       setIsLoading(false);
     }
@@ -64,42 +68,53 @@ const CreateGameRoomForm = () => {
     return "";
   };
 
+  const handleCreateAnotherRoom = () => {
+    setIsFormVisible(true);
+    setCreatedRoomInfo(null);
+    setError("");
+  };
+
   return (
     <div className={styles.formContainer}>
-      <h2 className={styles.formTitle}>Create a Game Room</h2>
-      <form onSubmit={handleSubmit} className={styles.roomForm}>
-        <div className={styles.formGroup}>
-          <input
-            type="text"
-            id="roomName"
-            value={roomName}
-            onChange={(e) => setRoomName(e.target.value)}
-            placeholder="Room name"
-            required
-            minLength="3"
-            maxLength="100"
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="maxPlayers">Max Players (4-20):</label>
-          <input
-            type="number"
-            id="maxPlayers"
-            value={maxPlayers}
-            onChange={(e) => setMaxPlayers(e.target.value)}
-            required
-            min="2"
-            max="20"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className={styles.submitButton}
-        >
-          {isLoading ? "Creating..." : "Create Room"}
-        </button>
-      </form>
+      {isFormVisible && (
+        <>
+          <h2 className={styles.formTitle}>Create a Game Room</h2>
+          <form onSubmit={handleSubmit} className={styles.roomForm}>
+            <div className={styles.formGroup}>
+              <input
+                type="text"
+                id="roomName"
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+                placeholder="Room name"
+                required
+                minLength="3"
+                maxLength="100"
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="maxPlayers">Max Players (2-20):</label>{" "}
+              {/* Zaktualizowano min z etykiety */}
+              <input
+                type="number"
+                id="maxPlayers"
+                value={maxPlayers}
+                onChange={(e) => setMaxPlayers(e.target.value)}
+                required
+                min="2"
+                max="20"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={styles.submitButton}
+            >
+              {isLoading ? "Creating..." : "Create Room"}
+            </button>
+          </form>
+        </>
+      )}
 
       {error && <p className={styles.errorMessage}>{error}</p>}
 
@@ -139,6 +154,15 @@ const CreateGameRoomForm = () => {
           <p className={styles.shareInstructions}>
             Share the Room Code or Join Link with your friends!
           </p>
+          {!isFormVisible && (
+            <button
+              onClick={handleCreateAnotherRoom}
+              className={styles.submitButton}
+              style={{ marginTop: "20px" }}
+            >
+              Create Another Room
+            </button>
+          )}
         </div>
       )}
     </div>
