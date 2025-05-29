@@ -6,7 +6,7 @@ import styles from "./ProfileView.module.css";
 const ProfileView = () => {
   return (
     <MainLayout>
-      <div className={styles.profileContainer}>
+      <div className={styles.profileViewContainer}>
         <h1>Your Profile</h1>
         <ProfileForm />
       </div>

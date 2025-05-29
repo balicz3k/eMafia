@@ -1,116 +1,143 @@
 .viewContainer {
-  padding: 20px;
-  max-width: 700px;
-  margin: 20px auto;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-  min-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centruje bezpośrednie dzieci w poziomie */
+  max-width: 700px; /* Można zachować lub dostosować */
+  padding: 1.5rem;
+  font-family: "DM Sans", sans-serif; /* Ujednolicony font */
+  min-height: calc(100vh - 140px); /* Spójna minimalna wysokość */
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.viewContainer h2 {
+.viewContainer h2 { /* Styl spójny z .formTitle */
+  font-size: 2rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 2rem;
   text-align: center;
-  color: #333;
-  margin-bottom: 15px;
 }
 
 .viewContainer h3 {
-  margin-top: 25px;
-  margin-bottom: 10px;
-  color: #444;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0; /* Subtelne podkreślenie */
+  padding-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  width: 100%; /* Aby linia była na całą szerokość kontenera h3 */
+  max-width: 600px; /* Ograniczenie szerokości dla czytelności */
+  text-align: left;
 }
 
 .viewContainer p {
-  font-size: 16px;
-  color: #555;
+  font-size: 1rem; /* Spójny rozmiar fontu */
+  color: #333;    /* Spójny kolor tekstu */
   line-height: 1.6;
-  margin-bottom: 8px;
+  margin-bottom: 0.75rem;
+  width: 100%;
+  max-width: 600px; /* Ograniczenie szerokości dla czytelności */
+  text-align: left;
 }
 
-.errorMessage {
-  color: #d8000c;
-  background-color: #ffd2d2;
-  border: 1px solid #d8000c;
-  padding: 12px;
-  border-radius: 4px;
-  margin-top: 15px;
-  margin-bottom: 15px;
+.errorMessage { /* Spójny z błędami w RegisterForm */
+  color: #cc0404;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   text-align: center;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 450px; /* Spójna szerokość z formularzami */
 }
 
 .infoMessage {
-  color: #00529b;
-  background-color: #bde5f8;
-  border: 1px solid #00529b;
-  padding: 12px;
-  border-radius: 4px;
-  margin-top: 15px;
+  color: #007bff; /* Kolor dla informacji */
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   text-align: center;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 450px;
 }
 
 .playerList {
   list-style-type: none;
   padding-left: 0;
+  width: 100%;
+  max-width: 500px; /* Ograniczenie szerokości listy */
+  margin-top: 1rem;
 }
 
 .playerList li {
-  background-color: #fff;
-  border: 1px solid #eee;
-  padding: 10px 15px;
-  margin-bottom: 6px;
-  border-radius: 4px;
-  font-size: 15px;
+  background-color: #ffffff; /* Czyste tło dla elementów listy */
+  border: 1px solid #e0e0e0; /* Subtelne obramowanie */
+  padding: 12px 18px;
+  margin-bottom: 8px;
+  border-radius: 8px; /* Zaokrąglenie spójne z innymi elementami */
+  font-size: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtelny cień */
 }
 
 .hostLabel {
-  font-size: 0.9em;
+  font-size: 0.85em;
   font-style: italic;
-  color: #777;
+  color: #666; /* Ciemniejszy szary dla lepszego kontrastu */
 }
 
 .joinButton,
-.startButton {
-  display: block;
-  width: auto;
-  padding: 12px 25px;
-  margin: 25px auto 10px;
-  font-size: 16px;
-  font-weight: bold;
+.startButton { /* Styl spójny z .loginButton / .registerButton */
+  display: flex; /* Używamy flex dla centrowania tekstu, jeśli potrzeba */
+  width: 100%;
+  max-width: 350px; /* Spójna maksymalna szerokość */
+  padding: 12px 20px;
+  margin: 1.5rem auto 1rem; /* Centrowanie przycisku i marginesy */
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
   color: white;
-  background-color: #5cb85c;
+  background-color: #cc0404; /* Główny kolor akcji */
   border: none;
-  border-radius: 5px;
+  border-radius: 15px; /* Spójne zaokrąglenie */
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
   text-align: center;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .joinButton:hover,
 .startButton:hover {
-  background-color: #4cae4c;
+  opacity: 0.8;
 }
 
-.joinButton:disabled {
+.joinButton:disabled,
+.startButton:disabled {
   background-color: #ccc;
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
-.status {
+.status { /* Styl "badge" dla statusu */
   font-weight: bold;
-  padding: 4px 10px;
+  padding: 5px 12px; /* Lekko zwiększony padding */
   border-radius: 15px;
   color: white;
   font-size: 0.9em;
   text-transform: capitalize;
+  font-family: "DM Sans", sans-serif; /* Upewnienie się co do fontu */
+  margin-left: 10px; /* Dodatkowy margines, jeśli jest obok innego tekstu */
 }
 
+/* Kolory statusów pozostają bez zmian, są specyficzne dla znaczenia */
 .status.waitingforplayers {
   background-color: #f0ad4e;
 }
@@ -128,4 +155,16 @@
 }
 .status.abandoned {
   background-color: #333;
+}
+
+/* Dodatkowe style dla elementów, które mogą się pojawić w tym widoku */
+.detailsSection {
+  width: 100%;
+  max-width: 600px; /* Spójna szerokość dla bloków tekstu */
+  margin-bottom: 1.5rem;
+  text-align: left; /* Domyślne wyrównanie dla sekcji detali */
+}
+
+.detailsSection p strong {
+  color: #111; /* Lekkie wyróżnienie etykiet */
 }

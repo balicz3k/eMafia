@@ -70,11 +70,11 @@ const ProfileForm = () => {
       >
         <h3>Change Username</h3>
         <div className={styles.formGroup}>
-          <label htmlFor="newUsername">New Username:</label>
           <input
             type="text"
             id="newUsername"
             name="newUsername"
+            placeholder="newUsername"
             value={usernameData.newUsername}
             onChange={handleInputChange(setUsernameData)}
             required
@@ -92,11 +92,11 @@ const ProfileForm = () => {
       >
         <h3>Change Email</h3>
         <div className={styles.formGroup}>
-          <label htmlFor="newEmail">New Email:</label>
           <input
             type="email"
             id="newEmail"
             name="newEmail"
+            placeholder="example@mail.com"
             value={emailData.newEmail}
             onChange={handleInputChange(setEmailData)}
             required
@@ -118,22 +118,22 @@ const ProfileForm = () => {
       >
         <h3>Change Password</h3>
         <div className={styles.formGroup}>
-          <label htmlFor="oldPassword">Old Password:</label>
           <input
             type="password"
             id="oldPassword"
             name="oldPassword"
+            placeholder="OldPassword123"
             value={passwordData.oldPassword}
             onChange={handleInputChange(setPasswordData)}
             required
           />
         </div>
         <div className={styles.formGroup}>
-          <label htmlFor="newPassword">New Password:</label>
           <input
             type="password"
             id="newPassword"
             name="newPassword"
+            placeholder="NewPassword123"
             value={passwordData.newPassword}
             onChange={handleInputChange(setPasswordData)}
             required

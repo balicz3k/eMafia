@@ -43,7 +43,7 @@ const LoginForm = () => {
         navigate("/dashboard");
       } else {
         const error = await response.text();
-        alert(error || "An error occurred!");
+        alert("Password or email is incorrect!");
       }
     } catch (err) {
       console.error(err);

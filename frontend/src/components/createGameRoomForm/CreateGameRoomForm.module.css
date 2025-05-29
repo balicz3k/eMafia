@@ -1,115 +1,197 @@
-.formContainer {
-  max-width: 500px;
-  margin: 20px auto;
-  padding: 25px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Usunięto oryginalny .formContainer, zakładając, że komponent CreateGameRoomForm
+   będzie miał strukturę podobną do RegisterForm, z głównym divem stylizowanym przez .container */
+
+.container { /* Nowy główny kontener, spójny z RegisterForm/LoginForm */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Dodane dla lepszego centrowania, jeśli jest w widoku */
+  width: 100%;
+  padding: 2rem 2rem; /* Dodany padding dla estetyki */
+  box-sizing: border-box;
+  /* min-height można dodać, jeśli ten formularz jest główną treścią widoku,
+     np. min-height: calc(100vh - 140px - 4rem); */
 }
 
-.formContainer h2 {
+.formTitle { /* Spójny z .formTitle w RegisterForm/LoginForm */
+  font-size: 2rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 2rem;
+  font-family: "DM Sans", sans-serif;
   text-align: center;
-  margin-bottom: 20px;
-  color: #333;
 }
 
-.roomForm {
+.roomForm { /* Spójny z .signupForm / .signinForm */
+  position: relative;
+  max-width: 400px; /* Można dostosować */
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 0; /* Usunięto gap, marginesy będą kontrolowane przez .formGroup */
 }
 
-.formGroup {
-  display: flex;
-  flex-direction: column;
+.formGroup { /* Spójny z .formGroup w RegisterForm/LoginForm */
+  position: relative;
+  width: 100%;
+  /* display: flex; align-items: center; - jeśli chcemy ikonę obok inputa */
+  padding: 0 0 5px 0;
+  margin-bottom: 2rem;
+  font-family: "DM Sans", sans-serif;
+}
+
+.formGroup::after { /* Podkreślenie pod inputem */
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0; /* Rozciągnięcie na całą szerokość */
+  height: 1px;
+  background-color: #9c9797;
+}
+
+.formGroup:focus-within::after {
+  background-color: black;
 }
 
 .formGroup label {
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
+  display: block; /* Etykieta nad inputem */
+  margin-bottom: 8px; /* Odstęp między etykietą a inputem */
+  font-weight: 500; /* Lekko pogrubiona etykieta */
+  color: #333; /* Ciemniejszy kolor etykiety */
+  font-size: 0.9rem;
+  font-family: "DM Sans", sans-serif;
 }
 
-.formGroup input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.submitButton {
-  padding: 12px 18px;
-  background-color: #5cb85c;
-  color: white;
+.formGroup input[type="text"],
+.formGroup input[type="number"],
+.formGroup input[type="password"] { /* Spójne style dla inputów */
+  width: 100%;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  background: transparent;
+  padding: 10px 5px 7px 5px; /* Dostosowany padding, bez ikon */
   font-size: 16px;
-  transition: background-color 0.2s ease-in-out;
+  font-family: "DM Sans", sans-serif;
+  color: #000000;
+  box-sizing: border-box;
+}
+
+.formGroup input:focus {
+  outline: none;
+}
+
+.formGroup input::placeholder {
+  font-family: "DM Sans", sans-serif;
+  color: #9c9797;
+}
+
+.submitButton { /* Spójny z .registerButton / .loginButton */
+  position: relative;
+  display: flex;
+  width: 100%;
+  color: #ffffff;
+  border-radius: 15px;
+  background-color: #cc0404; /* Główny kolor akcji */
+  opacity: 1;
+  padding: 12px 0;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  font-size: 16px;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 1rem; /* Odstęp nad przyciskiem */
+  transition: opacity 0.2s ease-in-out;
 }
 
 .submitButton:hover {
-  background-color: #4cae4c;
+  opacity: 0.8;
 }
 
 .submitButton:disabled {
   background-color: #ccc;
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
-.errorMessage {
-  color: #d9534f;
-  background-color: #f2dede;
-  border: 1px solid #ebccd1;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 15px;
-  text-align: center;
+.errorMessage { /* Spójny z .errorMessage w RegisterForm */
+  color: #cc0404;
+  font-size: 0.875rem;
+  margin-top: 0.5rem; /* Odstęp nad komunikatem błędu, jeśli jest pod przyciskiem */
+  margin-bottom: 1rem;
+  text-align: center; /* Wyśrodkowany ogólny błąd */
+  width: 100%;
+  /* Jeśli błędy są per pole, dostosuj marginesy jak w RegisterForm */
 }
+
+/* Style dla sekcji informacji o pokoju - można je zostawić, jeśli mają inny cel wizualny,
+   lub dostosować do ogólnego motywu aplikacji, ale niekoniecznie do stylu formularza.
+   Poniżej przykład lekkiego dostosowania, aby pasowały do czystszego wyglądu. */
 
 .roomInfoContainer {
   margin-top: 25px;
   padding: 20px;
-  border: 1px solid #d6e9c6;
-  border-radius: 4px;
-  background-color: #dff0d8;
+  border: 1px solid #e0e0e0; /* Lżejsze obramowanie */
+  border-radius: 8px;
+  background-color: #ffffff; /* Czyste tło */
+  width: 100%;
+  max-width: 400px; /* Spójna szerokość z formularzem */
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtelny cień */
 }
 
 .roomInfoContainer h3 {
-  color: #3c763d;
+  color: #333;
   margin-top: 0;
+  margin-bottom: 15px;
   text-align: center;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 600;
 }
 
 .roomInfoContainer p {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-size: 15px;
+  color: #555;
+  font-family: "DM Sans", sans-serif;
 }
 
 .roomCode {
   font-weight: bold;
-  color: #cc0404;
-  font-size: 1.2em;
+  color: #cc0404; /* Utrzymanie wyróżnienia kodu pokoju */
+  font-size: 1.25em;
+  display: block; /* Aby był w nowej linii i łatwiejszy do skopiowania */
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .joinLink {
-  color: #31708f;
+  color: #007bff; /* Standardowy kolor linku */
   word-break: break-all;
+  font-family: "DM Sans", sans-serif;
+}
+
+.joinLink:hover {
+  text-decoration: underline;
 }
 
 .qrCodeContainer {
   text-align: center;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
 .qrCodeContainer p {
   margin-bottom: 10px;
+  color: #555;
+  font-family: "DM Sans", sans-serif;
 }
 
 .shareInstructions {
-  margin-top: 15px;
+  margin-top: 20px;
   font-style: italic;
-  color: #666;
+  color: #777;
   text-align: center;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.9rem;
 }

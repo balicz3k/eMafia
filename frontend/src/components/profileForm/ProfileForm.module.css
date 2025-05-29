@@ -1,71 +1,164 @@
 .formContainer {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  align-items: center; /* Centruje sekcje formularza */
+  width: 100%;
+  max-width: 550px;
+  padding: 1rem;
+  box-sizing: border-box;
+  font-family: "DM Sans", sans-serif;
 }
 
 .profileFormSection {
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
+  /* Ta klasa jest na tagu <form> w JSX */
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* Elementy wewnątrz formularza (h3, div.formGroup, button) ułożone pionowo */
+  margin-bottom: 2.5rem; /* Większy odstęp między poszczególnymi formularzami-sekcjami */
+  padding: 1.5rem; /* Wewnętrzny padding dla każdej sekcji-formularza */
+  background-color: #ffffff; /* Białe tło dla każdej sekcji */
 }
 
 .profileFormSection h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: #555;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0; /* Usunięcie domyślnego marginesu h3 */
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  font-family: "DM Sans", sans-serif;
+  text-align: left; /* Wyrównanie tytułu sekcji do lewej */
 }
 
 .formGroup {
-  margin-bottom: 15px;
+  /* Ta klasa jest na divie opakowującym label i input w JSX */
+  position: relative;
+  width: 100%;
+  padding: 0 0 5px 0;
+  margin-bottom: 1.5rem;
+  font-family: "DM Sans", sans-serif;
 }
 
-.formGroup label {
+.formGroup::after {
+  /* Podkreślenie pod inputem */
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #9c9797;
+}
+
+.formGroup:focus-within::after {
+  background-color: black;
+}
+
+.profileFormSection label {
+  /* Celuje w label wewnątrz .formGroup (który jest w .profileFormSection) */
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-weight: 500;
   color: #333;
+  font-size: 0.9rem;
+  font-family: "DM Sans", sans-serif;
 }
 
-.formGroup input {
-  width: calc(100% - 22px);
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.profileFormSection input[type="text"],
+.profileFormSection input[type="email"],
+.profileFormSection input[type="password"] {
+  /* Celuje w inputy wewnątrz .formGroup */
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 10px 5px 7px 5px;
+  font-size: 16px;
+  font-family: "DM Sans", sans-serif;
+  color: #000000;
   box-sizing: border-box;
 }
 
-.profileFormSection button {
-  padding: 10px 15px;
-  background-color: #5cb85c;
+.profileFormSection input:focus {
+  outline: none;
+}
+
+.profileFormSection input::placeholder {
+  font-family: "DM Sans", sans-serif;
+  color: #9c9797;
+}
+
+/* Styl dla przycisków submit wewnątrz każdej sekcji-formularza */
+.profileFormSection button[type="submit"] {
+  display: flex; /* Używamy flex dla centrowania tekstu, jeśli potrzeba */
+  width: 100%; /* Przycisk na całą szerokość sekcji */
+  max-width: 250px; /* Ograniczenie szerokości przycisku */
+  padding: 10px 20px;
+  margin-top: 0.5rem; /* Mniejszy margines nad przyciskiem */
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: white;
+  background-color: #cc0404; /* Główny kolor akcji */
   border: none;
-  border-radius: 4px;
+  border-radius: 15px;
   cursor: pointer;
-  font-size: 16px;
-}
-
-.profileFormSection button:hover {
-  background-color: #4cae4c;
-}
-
-.successMessage {
-  color: green;
-  background-color: #e6ffed;
-  border: 1px solid #b7ebc3;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
   text-align: center;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.profileFormSection button[type="submit"]:hover {
+  opacity: 0.8;
+}
+
+.profileFormSection button[type="submit"]:disabled {
+  background-color: #ccc;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Komunikaty o błędach/sukcesie - pozostają na górze w .formContainer */
+.errorMessage,
+.successMessage {
+  font-size: 0.875rem;
+  margin-top: 0; /* Komunikaty bezpośrednio pod sobą, jeśli oba są widoczne */
+  margin-bottom: 1.5rem; /* Odstęp przed pierwszą sekcją formularza */
+  text-align: center;
+  width: 100%; /* Na całą szerokość .formContainer */
+  padding: 0.75rem;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
 .errorMessage {
-  color: red;
-  background-color: #ffe6e6;
-  border: 1px solid #ffb3b3;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  text-align: center;
+  color: #cc0404;
+  background-color: rgba(204, 4, 4, 0.05);
+  border: 1px solid rgba(204, 4, 4, 0.2);
+}
+
+.successMessage {
+  color: #155724;
+  background-color: rgba(212, 237, 218, 0.3);
+  border: 1px solid rgba(195, 230, 203, 0.5);
+}
+
+.loadingSpinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #cc0404;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 1rem auto; /* Jeśli jest używany globalnie w .formContainer */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

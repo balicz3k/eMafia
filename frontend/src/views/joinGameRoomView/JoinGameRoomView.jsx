@@ -75,10 +75,10 @@ const JoinGameRoomView = () => {
               console.error(
                 "Error parsing WebSocket message:",
                 e,
-                message.body,
+                message.body
               );
             }
-          },
+          }
         );
       };
 
@@ -94,7 +94,7 @@ const JoinGameRoomView = () => {
 
       client.activate();
     },
-    [token],
+    [token]
   );
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const JoinGameRoomView = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
         if (response.ok) {
           const data = await response.json();
@@ -134,7 +134,7 @@ const JoinGameRoomView = () => {
       } catch (err) {
         console.error("Error fetching room details:", err);
         setError(
-          "An error occurred while fetching room details. Please try again.",
+          "An error occurred while fetching room details. Please try again."
         );
       } finally {
         setIsLoading(false);
@@ -170,7 +170,7 @@ const JoinGameRoomView = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
       if (response.ok) {
         const data = await response.json();
@@ -181,8 +181,7 @@ const JoinGameRoomView = () => {
           .json()
           .catch(() => ({ message: "Failed to join room." }));
         setError(
-          errorData.message ||
-            `Failed to join room. Status: ${response.status}`,
+          errorData.message || `Failed to join room. Status: ${response.status}`
         );
       }
     } catch (err) {
@@ -255,7 +254,7 @@ const JoinGameRoomView = () => {
               styles[roomDetails.status.toLowerCase().replace(/_/g, "")]
             }`}
           >
-            {roomDetails.status.replace("_", " ")}
+            {roomDetails.status.replace(/_/g, " ")}
           </span>
         </p>
         <p>Host: {roomDetails.hostUsername}</p>
@@ -266,9 +265,10 @@ const JoinGameRoomView = () => {
         {roomDetails.players && roomDetails.players.length > 0 ? (
           <ul className={styles.playerList}>
             {roomDetails.players.map((player) => (
-              <li key={player.playerId || player.userId}>
-                {player.nicknameInRoom}{" "}
-                {player.username === roomDetails.hostUsername ? (
+              <li key={player.playerId}>
+                {" "}
+                {player.displayName}{" "}
+                {player.isHost ? (
                   <span className={styles.hostLabel}>(Host)</span>
                 ) : (
                   ""

@@ -45,7 +45,7 @@ const CreateGameRoomForm = () => {
       } else {
         const errorText = await response.text();
         setError(
-          errorText || "Failed to create room. Status: " + response.status,
+          errorText || "Failed to create room. Status: " + response.status
         );
       }
     } catch (err) {
@@ -66,22 +66,22 @@ const CreateGameRoomForm = () => {
 
   return (
     <div className={styles.formContainer}>
-      <h2>Create a New Game Room</h2>
+      <h2 className={styles.formTitle}>Create a Game Room</h2>
       <form onSubmit={handleSubmit} className={styles.roomForm}>
         <div className={styles.formGroup}>
-          <label htmlFor="roomName">Room Name:</label>
           <input
             type="text"
             id="roomName"
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
+            placeholder="Room name"
             required
             minLength="3"
             maxLength="100"
           />
         </div>
         <div className={styles.formGroup}>
-          <label htmlFor="maxPlayers">Max Players (2-20):</label>
+          <label htmlFor="maxPlayers">Max Players (4-20):</label>
           <input
             type="number"
             id="maxPlayers"

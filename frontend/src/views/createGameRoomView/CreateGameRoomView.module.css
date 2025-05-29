@@ -1,4 +1,8 @@
 .viewContainer {
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex: 1;
   min-height: calc(100vh - 140px);
+  padding: 1.5rem;
 }

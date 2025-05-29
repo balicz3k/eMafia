@@ -33,10 +33,7 @@
   text-transform: capitalize;
 }
 
-<<<<<<<
-  HEAD
-  =======>>>>>>>b858d630b638a54197cb55056775d45125b846d8
-  .roomStatus.waitingforplayers {
+.roomStatus.waitingforplayers {
   color: #ffa500;
 }
 .roomStatus.readytostart {

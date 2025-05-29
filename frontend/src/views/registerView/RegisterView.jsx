@@ -10,15 +10,7 @@ const RegisterView = () => {
   return (
     <MainLayout>
       <div className={styles.mainContainer}>
-        {/* Lewa kolumna */}
-        <div className={styles.leftColumn}>
           <RegisterForm />
-        </div>
-
-        {/* Prawa kolumna */}
-        <div className={styles.rightColumn}>
-          <img src={bloodHand} alt="Blood Hand" />
-        </div>
       </div>
     </MainLayout>
   );
