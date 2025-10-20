@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import styles from "./CreateGameRoomForm.module.css";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -11,6 +12,8 @@ const CreateGameRoomForm = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(true);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,7 +50,7 @@ const CreateGameRoomForm = () => {
       } else {
         const errorText = await response.text();
         setError(
-          errorText || "Failed to create room. Status: " + response.status
+          errorText || "Failed to create room. Status: " + response.status,
         );
         setIsFormVisible(true);
       }
@@ -68,10 +71,10 @@ const CreateGameRoomForm = () => {
     return "";
   };
 
-  const handleCreateAnotherRoom = () => {
-    setIsFormVisible(true);
-    setCreatedRoomInfo(null);
-    setError("");
+  const handleJoinRoom = () => {
+    if (createdRoomInfo?.joinLinkPath && createdRoomInfo?.roomCode) {
+      navigate(`${createdRoomInfo.joinLinkPath}${createdRoomInfo.roomCode}`);
+    }
   };
 
   return (
@@ -94,7 +97,6 @@ const CreateGameRoomForm = () => {
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="maxPlayers">Max Players (2-20):</label>{" "}
-              {/* Zaktualizowano min z etykiety */}
               <input
                 type="number"
                 id="maxPlayers"
@@ -156,11 +158,11 @@ const CreateGameRoomForm = () => {
           </p>
           {!isFormVisible && (
             <button
-              onClick={handleCreateAnotherRoom}
+              onClick={handleJoinRoom}
               className={styles.submitButton}
               style={{ marginTop: "20px" }}
             >
-              Create Another Room
+              Join to the room
             </button>
           )}
         </div>

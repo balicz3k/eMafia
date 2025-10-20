@@ -148,19 +148,20 @@ erDiagram
     USERS }o--|| REFRESH_TOKENS : "owns"
 ```
 
-*Note: `game_room_status` is an ENUM ('WAITING_FOR_PLAYERS', 'IN_PROGRESS', 'FINISHED', 'ABANDONED'). `USER_ROLES` represents the roles assigned to a user (e.g., 'ROLE_USER', 'ROLE_ADMIN').*
+_Note: `game_room_status` is an ENUM ('WAITING_FOR_PLAYERS', 'IN_PROGRESS', 'FINISHED', 'ABANDONED'). `USER_ROLES` represents the roles assigned to a user (e.g., 'ROLE_USER', 'ROLE_ADMIN')._
 
 ### Layer Separation (Backend):
 
--   **Controllers**: Handle HTTP requests, input validation, and delegate to services.
--   **Services**: Contain business logic and orchestrate operations.
--   **Repositories**: Data access layer using Spring Data JPA.
--   **Security**: JWT-based authentication, authorization, CORS configuration.
--   **Messaging**: Asynchronous event processing via RabbitMQ.
+- **Controllers**: Handle HTTP requests, input validation, and delegate to services.
+- **Services**: Contain business logic and orchestrate operations.
+- **Repositories**: Data access layer using Spring Data JPA.
+- **Security**: JWT-based authentication, authorization, CORS configuration.
+- **Messaging**: Asynchronous event processing via RabbitMQ.
 
 ### Modularization (Backend):
 
 The backend follows a feature-driven package structure:
+
 ```
 backend/src/main/java/com/mafia/
 ├── components/        # JWT Provider, Security utility components
@@ -178,9 +179,9 @@ backend/src/main/java/com/mafia/
 
 ### Prerequisites
 
--   **Docker** >= 20.10
--   **Docker Compose** >= 2.0
--   **Git**
+- **Docker** >= 20.10
+- **Docker Compose** >= 2.0
+- **Git**
 
 ### 1. Cloning the Repository
 
@@ -205,11 +206,11 @@ docker-compose ps
 
 Once the services are up and running:
 
--   **Frontend Application**: [http://localhost:3000](http://localhost:3000)
--   **Backend API**: [http://localhost:8080](http://localhost:8080)
--   **API Documentation (Swagger UI)**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
--   **RabbitMQ Management Console**: [http://localhost:15672](http://localhost:15672) (Credentials: guest/guest)
--   **PostgreSQL Database**: Connect via `localhost:5432` (Database: `mafia`, User: `postgres`, Password: `postgres`)
+- **Frontend Application**: [http://localhost:3000](http://localhost:3000)
+- **Backend API**: [http://localhost:8080](http://localhost:8080)
+- **API Documentation (Swagger UI)**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **RabbitMQ Management Console**: [http://localhost:15672](http://localhost:15672) (Credentials: guest/guest)
+- **PostgreSQL Database**: Connect via `localhost:5432` (Database: `mafia`, User: `postgres`, Password: `postgres`)
 
 ### 4. Running Tests (via Docker Compose)
 
@@ -219,86 +220,87 @@ The project is configured to run backend tests in a dedicated Docker container u
 # Run all backend tests
 docker-compose --profile tests run --rm mafia-backend-tests
 ```
+
 This command utilizes the `tester_base` stage from the backend Dockerfile and the `test` Spring profile.
 
 ## 🛠️ Tech Stack
 
 ### Backend
 
-| Technology        | Version | Rationale                                                                  |
-| ----------------- | ------- | -------------------------------------------------------------------------- |
+| Technology        | Version | Rationale                                                                      |
+| ----------------- | ------- | ------------------------------------------------------------------------------ |
 | **Spring Boot**   | 3.3.0   | Modern framework with a rich ecosystem, auto-configuration, built-in security. |
-| **Java**          | 17      | LTS version, modern language features.                                     |
-| **PostgreSQL**    | 15      | Advanced relational database, excellent performance, full JSON support.      |
-| **RabbitMQ**      | 3.13    | Reliable message queuing for asynchronous event processing.                |
-| **JWT (jjwt)**    | 0.11.5  | Stateless, scalable, and standard for API authentication.                  |
-| **JPA/Hibernate** | -       | ORM with Spring Boot, schema management, relationship mapping.             |
-| **Maven**         | 3.9     | Dependency management and standard build tool for Java projects.           |
+| **Java**          | 17      | LTS version, modern language features.                                         |
+| **PostgreSQL**    | 15      | Advanced relational database, excellent performance, full JSON support.        |
+| **RabbitMQ**      | 3.13    | Reliable message queuing for asynchronous event processing.                    |
+| **JWT (jjwt)**    | 0.11.5  | Stateless, scalable, and standard for API authentication.                      |
+| **JPA/Hibernate** | -       | ORM with Spring Boot, schema management, relationship mapping.                 |
+| **Maven**         | 3.9     | Dependency management and standard build tool for Java projects.               |
 
 ### Frontend
 
 | Technology      | Version | Rationale                                                              |
 | --------------- | ------- | ---------------------------------------------------------------------- |
-| **React**       | 18+     | Leading UI library, component-based architecture, vast ecosystem.        |
-| **CSS Modules** | -       | Scoped styles, preventing CSS conflicts, promoting maintainable code.    |
+| **React**       | 18+     | Leading UI library, component-based architecture, vast ecosystem.      |
+| **CSS Modules** | -       | Scoped styles, preventing CSS conflicts, promoting maintainable code.  |
 | **Axios**       | -       | Promise-based HTTP client, interceptors, automatic JSON serialization. |
 
 ### DevOps & Infrastructure
 
-| Technology                 | Rationale                                                                      |
-| -------------------------- | ------------------------------------------------------------------------------ |
-| **Docker Compose**         | Easy management of multi-container environments, consistent dev/prod setup.    |
-| **Multi-stage Dockerfile** | Optimized image sizes, separation of build and runtime environments.           |
-| **Nginx**                  | Serving frontend static files, reverse proxy capabilities, production-grade.   |
+| Technology                 | Rationale                                                                    |
+| -------------------------- | ---------------------------------------------------------------------------- |
+| **Docker Compose**         | Easy management of multi-container environments, consistent dev/prod setup.  |
+| **Multi-stage Dockerfile** | Optimized image sizes, separation of build and runtime environments.         |
+| **Nginx**                  | Serving frontend static files, reverse proxy capabilities, production-grade. |
 
 ### Why This Stack?
 
--   **🔄 Modern & Robust**: Spring Boot 3.3 (Java 17) + React 18 offers cutting-edge technologies with long-term support.
--   **🏗️ Microservices Ready**: The architecture is designed with future scalability towards microservices in mind.
--   **📈 Scalability**: PostgreSQL and RabbitMQ provide a solid foundation for handling user growth and increased load.
--   **🔒 Security First**: Spring Security and JWT ensure enterprise-grade security for authentication and authorization.
--   **🚀 Developer Experience**: Docker Compose, multi-stage Dockerfiles, and features like hot-reloading (for frontend) contribute to an efficient development cycle.
+- **🔄 Modern & Robust**: Spring Boot 3.3 (Java 17) + React 18 offers cutting-edge technologies with long-term support.
+- **🏗️ Microservices Ready**: The architecture is designed with future scalability towards microservices in mind.
+- **📈 Scalability**: PostgreSQL and RabbitMQ provide a solid foundation for handling user growth and increased load.
+- **🔒 Security First**: Spring Security and JWT ensure enterprise-grade security for authentication and authorization.
+- **🚀 Developer Experience**: Docker Compose, multi-stage Dockerfiles, and features like hot-reloading (for frontend) contribute to an efficient development cycle.
 
 ## 📊 Features
 
 ### 🔐 Authentication & Authorization
 
--   [x] User registration with input validation.
--   [x] Secure login with JWT (Access & Refresh Tokens).
--   [x] Role-based access control (USER/ADMIN).
--   [x] Endpoint protection via Spring Security.
--   [x] Refresh token mechanism for extended sessions.
--   [ ] HttpOnly cookies for enhanced token security (Planned).
+- [x] User registration with input validation.
+- [x] Secure login with JWT (Access & Refresh Tokens).
+- [x] Role-based access control (USER/ADMIN).
+- [x] Endpoint protection via Spring Security.
+- [x] Refresh token mechanism for extended sessions.
+- [ ] HttpOnly cookies for enhanced token security (Planned).
 
 ### 🎮 Game Room Management
 
--   [x] Create game rooms with unique, shareable codes.
--   [x] Join existing rooms using their codes.
--   [x] Search for public game rooms.
--   [x] Leave game rooms.
--   [x] Room closure by the host.
--   [x] Real-time player list updates.
--   [ ] Game state management (e.g., night/day phases, voting).
+- [x] Create game rooms with unique, shareable codes.
+- [x] Join existing rooms using their codes.
+- [x] Search for public game rooms.
+- [x] Leave game rooms.
+- [x] Room closure by the host.
+- [x] Real-time player list updates.
+- [ ] Game state management (e.g., night/day phases, voting).
 
 ### 👤 User Profile Management
 
--   [x] Update username.
--   [x] Change email address.
--   [x] Securely update password.
--   [x] View a list of rooms the user is part of or has hosted.
+- [x] Update username.
+- [x] Change email address.
+- [x] Securely update password.
+- [x] View a list of rooms the user is part of or has hosted.
 
 ### 👑 Admin Panel
 
--   [x] View a list of all registered users.
--   [x] Manage user roles (promote/demote).
--   [x] Delete users.
--   [ ] System monitoring and statistics (Planned).
+- [x] View a list of all registered users.
+- [x] Manage user roles (promote/demote).
+- [x] Delete users.
+- [ ] System monitoring and statistics (Planned).
 
 ### 🔄 Asynchronous Processing
 
--   [x] Logging of room creation events via RabbitMQ.
--   [x] Foundation for an event-driven architecture.
--   [ ] Real-time notifications using WebSockets and RabbitMQ (Planned).
+- [x] Logging of room creation events via RabbitMQ.
+- [x] Foundation for an event-driven architecture.
+- [ ] Real-time notifications using WebSockets and RabbitMQ (Planned).
 
 ## 🧪 Testing
 
@@ -330,14 +332,15 @@ mvn test -Dtest="**/*ServiceTest"
 # Run tests and generate a code coverage report (Jacoco)
 mvn test jacoco:report
 ```
-*Ensure you have a local PostgreSQL and RabbitMQ instance running or configure the `application-test.properties` for an in-memory database like H2 if preferred for certain local test runs.*
+
+_Ensure you have a local PostgreSQL and RabbitMQ instance running or configure the `application-test.properties` for an in-memory database like H2 if preferred for certain local test runs._
 
 ### Test Coverage Highlights
 
--   ✅ **Controllers**: High endpoint coverage for REST APIs.
--   ✅ **Services**: Comprehensive unit tests for core business logic.
--   ✅ **Security**: Tests for authentication and authorization flows.
--   ✅ **Integration**: End-to-end tests verifying interactions between components.
+- ✅ **Controllers**: High endpoint coverage for REST APIs.
+- ✅ **Services**: Comprehensive unit tests for core business logic.
+- ✅ **Security**: Tests for authentication and authorization flows.
+- ✅ **Integration**: End-to-end tests verifying interactions between components.
 
 ## 📖 API Documentation
 
@@ -420,7 +423,8 @@ SPRING_RABBITMQ_PORT=5672
 SPRING_RABBITMQ_USERNAME=guest
 SPRING_RABBITMQ_PASSWORD=guest
 ```
-*Note: `application.properties` contains default values which might be suitable for local development outside Docker (e.g., `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mafia`).*
+
+_Note: `application.properties` contains default values which might be suitable for local development outside Docker (e.g., `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mafia`)._
 
 #### Frontend (typically in a `.env` file for React)
 
@@ -431,14 +435,14 @@ REACT_APP_WEBSOCKET_URL=ws://localhost:8080/ws
 
 ### Application Profiles (Spring Boot)
 
--   `default`: Active by default. Uses settings from `application.properties` (typically for development with local PostgreSQL).
--   `test`: Used for running tests. Configured in `application-test.properties` (e.g., uses H2 in-memory database, disables RabbitMQ auto-configuration).
--   `prod`: Intended for production deployments (configuration would typically be externalized or use different property files).
+- `default`: Active by default. Uses settings from `application.properties` (typically for development with local PostgreSQL).
+- `test`: Used for running tests. Configured in `application-test.properties` (e.g., uses H2 in-memory database, disables RabbitMQ auto-configuration).
+- `prod`: Intended for production deployments (configuration would typically be externalized or use different property files).
 
 ### Docker Compose Profiles
 
--   **default services**: Running `docker-compose up` starts the main application services (backend, frontend, db, rabbitmq).
--   **`tests` profile**: Running `docker-compose --profile tests up` (or `run`) includes services specifically for running tests, like `mafia-backend-tests`.
+- **default services**: Running `docker-compose up` starts the main application services (backend, frontend, db, rabbitmq).
+- **`tests` profile**: Running `docker-compose --profile tests up` (or `run`) includes services specifically for running tests, like `mafia-backend-tests`.
 
 ---
 

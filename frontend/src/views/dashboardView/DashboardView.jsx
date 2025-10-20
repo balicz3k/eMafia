@@ -66,9 +66,7 @@ const DashboardView = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/gamerooms/search?name=${encodeURIComponent(
-          searchTerm,
-        )}`,
+        `${API_BASE_URL}/api/gamerooms/search?name=${encodeURIComponent(searchTerm)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

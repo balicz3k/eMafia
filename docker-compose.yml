@@ -24,9 +24,9 @@ services:
       dockerfile: Dockerfile
       target: tester_base
     volumes:
-      - ./backend/src:/app/src:ro # read-only
-      - ./backend/pom.xml:/app/pom.xml:ro # read-only
-      - test-reports:/app/target/surefire-reports # named volume zamiast bind mount
+      - ./backend/src:/app/src:ro
+      - ./backend/pom.xml:/app/pom.xml:ro
+      - test-reports:/app/target/surefire-reports
     command: sh -c " \
       echo 'Starting integration tests with H2 database...' && \
       rm -rf /app/target/surefire-reports/* && \
@@ -81,4 +81,4 @@ services:
 volumes:
   postgres_data:
   rabbitmq_data:
-  test-reports: # Nowy named volume dla raportów testów
+  test-reports:

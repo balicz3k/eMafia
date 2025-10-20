@@ -16,7 +16,6 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Public routes - redirect to dashboard if authenticated */}
           <Route
             path="/"
             element={
@@ -42,7 +41,6 @@ function App() {
             }
           />
 
-          {/* Protected routes - require authentication */}
           <Route
             path="/dashboard"
             element={
@@ -84,7 +82,6 @@ function App() {
             }
           />
 
-          {/* Admin routes - require authentication + admin role */}
           <Route
             path="/admin"
             element={
@@ -94,7 +91,6 @@ function App() {
             }
           />
 
-          {/* Fallback route */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>

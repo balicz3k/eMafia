@@ -10,7 +10,7 @@ const LoginView = () => {
   return (
     <MainLayout>
       <div className={styles.mainContainer}>
-          <LoginForm />
+        <LoginForm />
       </div>
     </MainLayout>
   );

@@ -1,21 +1,21 @@
-.profileViewContainer { /* Zmieniona nazwa dla jasności, że to kontener widoku */
+.profileViewContainer {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centruje ProfileForm w poziomie */
-  justify-content: flex-start; /* Zaczyna od góry, ProfileForm sam zarządza swoją wysokością */
+  align-items: center;
+  justify-content: flex-start;
   flex: 1;
-  min-height: calc(100vh - 140px); /* Spójna minimalna wysokość */
+  min-height: calc(100vh - 140px);
   padding: 1.5rem;
   box-sizing: border-box;
-  font-family: "DM Sans", sans-serif; /* Ujednolicony font dla całego widoku */
+  font-family: "DM Sans", sans-serif;
   width: 100%;
 }
 
-.profileViewContainer h1 { /* Styl spójny z .formTitle w innych formularzach */
+.profileViewContainer h1 {
   font-size: 2rem;
   font-weight: 600;
   color: #000000;
   margin-bottom: 2rem;
   text-align: center;
-  font-family: "DM Sans", sans-serif; /* Upewnienie się co do fontu */
+  font-family: "DM Sans", sans-serif;
 }

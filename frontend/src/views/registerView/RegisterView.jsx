@@ -10,7 +10,7 @@ const RegisterView = () => {
   return (
     <MainLayout>
       <div className={styles.mainContainer}>
-          <RegisterForm />
+        <RegisterForm />
       </div>
     </MainLayout>
   );

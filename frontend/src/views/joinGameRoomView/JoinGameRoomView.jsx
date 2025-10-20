@@ -75,10 +75,10 @@ const JoinGameRoomView = () => {
               console.error(
                 "Error parsing WebSocket message:",
                 e,
-                message.body
+                message.body,
               );
             }
-          }
+          },
         );
       };
 
@@ -94,7 +94,7 @@ const JoinGameRoomView = () => {
 
       client.activate();
     },
-    [token]
+    [token],
   );
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const JoinGameRoomView = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         if (response.ok) {
           const data = await response.json();
@@ -134,7 +134,7 @@ const JoinGameRoomView = () => {
       } catch (err) {
         console.error("Error fetching room details:", err);
         setError(
-          "An error occurred while fetching room details. Please try again."
+          "An error occurred while fetching room details. Please try again.",
         );
       } finally {
         setIsLoading(false);
@@ -170,7 +170,7 @@ const JoinGameRoomView = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (response.ok) {
         const data = await response.json();
@@ -181,7 +181,8 @@ const JoinGameRoomView = () => {
           .json()
           .catch(() => ({ message: "Failed to join room." }));
         setError(
-          errorData.message || `Failed to join room. Status: ${response.status}`
+          errorData.message ||
+            `Failed to join room. Status: ${response.status}`,
         );
       }
     } catch (err) {
@@ -297,9 +298,6 @@ const JoinGameRoomView = () => {
         {isCurrentUserInRoom && roomDetails.status === "READY_TO_START" && (
           <p className={styles.infoMessage}>Room is ready to start!</p>
         )}
-        {/* {canStartGame && (
-                      <button className={styles.startButton}>Start Game</button>
-                  )} */}
       </div>
     </MainLayout>
   );
