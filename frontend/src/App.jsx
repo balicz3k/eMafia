@@ -10,6 +10,7 @@ import JoinRoomView from "./views/joinGameRoomView/JoinGameRoomView";
 import EnterRoomCodeView from "./views/enterRoomCodeView/EnterRoomCodeView";
 import AuthGuard from "./components/AuthGuard";
 import { AuthProvider } from "./components/AuthProvider";
+import GameView from "./views/gameView/GameView";
 
 function App() {
   return (
@@ -87,6 +88,15 @@ function App() {
             element={
               <AuthGuard requireAuth={true} requireAdmin={true}>
                 <AdminPanelView />
+              </AuthGuard>
+            }
+          />
+
+          <Route
+            path="/game/:roomCode"
+            element={
+              <AuthGuard requireAuth={true}>
+                <GameView />
               </AuthGuard>
             }
           />

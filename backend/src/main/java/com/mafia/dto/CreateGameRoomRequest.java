@@ -13,7 +13,7 @@ public class CreateGameRoomRequest {
 
     @Schema(description = "Maximum number of players allowed in the room", example = "8", minimum = "4", maximum = "20", required = true)
     @NotNull(message = "Max players is required")
-    @Min(value = 4, message = "Minimum 4 players required")
+    @Min(value = 2, message = "Minimum 4 players required")
     @Max(value = 20, message = "Maximum 20 players allowed")
     private Integer maxPlayers;
 

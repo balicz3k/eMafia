@@ -18,6 +18,7 @@ const JoinGameRoomView = () => {
   const stompClientRef = useRef(null);
   const token = localStorage.getItem("token");
   const [currentUser, setCurrentUser] = useState(null);
+  const [isStarting, setIsStarting] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -241,6 +242,35 @@ const JoinGameRoomView = () => {
     roomDetails.currentPlayers < roomDetails.maxPlayers &&
     !isCurrentUserInRoom;
 
+  const isHost = currentUser && roomDetails.hostId === currentUser.sub;
+
+  const handleStartGame = async () => {
+    if (!roomDetails?.players?.length) return;
+    setIsStarting(true);
+    setError("");
+    try {
+      const userIds = roomDetails.players.map((p) => p.userId);
+      const res = await fetch(`${API_BASE_URL}/api/game/${roomCode}/start`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(userIds),
+      });
+      if (!res.ok) {
+        const msg = await res.text().catch(() => "");
+        setError(msg || "Failed to start game.");
+      } else {
+        navigate(`/game/${roomCode}`);
+      }
+    } catch (e) {
+      setError("Network error while starting game.");
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
   return (
     <MainLayout>
       <div className={styles.viewContainer}>
@@ -280,6 +310,18 @@ const JoinGameRoomView = () => {
         ) : (
           <p>No players have joined yet.</p>
         )}
+        {isCurrentUserInRoom &&
+          isHost &&
+          roomDetails.status !== "IN_PROGRESS" && (
+            <button
+              onClick={handleStartGame}
+              disabled={isStarting || (roomDetails.players?.length || 0) < 2}
+              className={styles.joinButton}
+              style={{ marginTop: 12 }}
+            >
+              {isStarting ? "Starting..." : "Start Game"}
+            </button>
+          )}
         {canJoin && (
           <button
             onClick={handleJoinRoom}

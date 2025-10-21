@@ -7,7 +7,14 @@ const GameRoomItem = ({ room, currentUserId, onLeave, onEnd }) => {
   const isHost = room.hostId === currentUserId;
 
   const handleJoinRoom = () => {
-    navigate(`/join/${room.roomCode}`);
+    const inProgress =
+      typeof room.status === "string" &&
+      room.status.toUpperCase() === "IN_PROGRESS";
+    if (inProgress) {
+      navigate(`/game/${room.roomCode}`);
+    } else {
+      navigate(`/join/${room.roomCode}`);
+    }
   };
 
   const handleLeaveClick = (e) => {
