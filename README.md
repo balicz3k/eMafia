@@ -16,43 +16,44 @@
 
 - [🎯 About The Project](#-about-the-project)
 - [🏗️ Architecture](#️-architecture)
-  - [High-Level Overview](#high-level-overview)
-  - [Database Schema (ERD)](#database-schema-erd)
-  - [Layer Separation](#layer-separation)
-  - [Modularization (Backend)](#modularization-backend)
+    - [High-Level Overview](#high-level-overview)
+    - [Database Schema (ERD)](#database-schema-erd)
+    - [Layer Separation](#layer-separation)
+    - [Modularization (Backend)](#modularization-backend)
 - [🚀 Quick Start](#-quick-start)
-  - [Prerequisites](#prerequisites)
-  - [Cloning the Repository](#1-cloning-the-repository)
-  - [Running The Entire Application](#2-running-the-entire-application)
-  - [Accessing The Application](#3-accessing-the-application)
-  - [Running Tests (via Docker Compose)](#4-running-tests-via-docker-compose)
+    - [Prerequisites](#prerequisites)
+    - [Cloning the Repository](#1-cloning-the-repository)
+    - [Running The Entire Application](#2-running-the-entire-application)
+    - [Accessing The Application](#3-accessing-the-application)
+    - [Running Tests (via Docker Compose)](#4-running-tests-via-docker-compose)
 - [🛠️ Tech Stack](#️-tech-stack)
-  - [Backend](#backend)
-  - [Frontend](#frontend)
-  - [DevOps & Infrastructure](#devops--infrastructure)
-  - [Why This Stack?](#why-this-stack)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+    - [DevOps & Infrastructure](#devops--infrastructure)
+    - [Why This Stack?](#why-this-stack)
 - [📊 Features](#-features)
-  - [Authentication & Authorization](#-authentication--authorization)
-  - [Game Room Management](#-game-room-management)
-  - [User Profile Management](#-user-profile-management)
-  - [Admin Panel](#-admin-panel)
-  - [Asynchronous Processing](#-asynchronous-processing)
+    - [Authentication & Authorization](#-authentication--authorization)
+    - [Game Room Management](#-game-room-management)
+    - [User Profile Management](#-user-profile-management)
+    - [Admin Panel](#-admin-panel)
+    - [Asynchronous Processing](#-asynchronous-processing)
 - [🧪 Testing](#-testing)
-  - [Test Structure](#test-structure)
-  - [Running Tests Locally (Maven)](#running-tests-locally-maven)
-  - [Test Coverage Highlights](#test-coverage-highlights)
+    - [Test Structure](#test-structure)
+    - [Running Tests Locally (Maven)](#running-tests-locally-maven)
+    - [Test Coverage Highlights](#test-coverage-highlights)
 - [📖 API Documentation](#-api-documentation)
-  - [Accessing Swagger UI](#accessing-swagger-ui)
-  - [Main Endpoints](#main-endpoints)
-  - [Example Request](#example-request)
+    - [Accessing Swagger UI](#accessing-swagger-ui)
+    - [Main Endpoints](#main-endpoints)
+    - [Example Request](#example-request)
 - [🔧 Configuration](#-configuration)
-  - [Environment Variables](#environment-variables)
-  - [Application Profiles](#application-profiles)
-  - [Docker Compose Profiles](#docker-compose-profiles)
+    - [Environment Variables](#environment-variables)
+    - [Application Profiles](#application-profiles)
+    - [Docker Compose Profiles](#docker-compose-profiles)
 
 ## 🎯 About The Project
 
-**eMafia** is a contemporary web application designed for playing the classic Mafia game online. The platform provides an intuitive interface for creating game rooms, managing players, and engaging in real-time gameplay with friends.
+**eMafia** is a contemporary web application designed for playing the classic Mafia game online. The platform provides
+an intuitive interface for creating game rooms, managing players, and engaging in real-time gameplay with friends.
 
 ### Key Features:
 
@@ -148,7 +149,8 @@ erDiagram
     USERS }o--|| REFRESH_TOKENS : "owns"
 ```
 
-_Note: `game_room_status` is an ENUM ('WAITING_FOR_PLAYERS', 'IN_PROGRESS', 'FINISHED', 'ABANDONED'). `USER_ROLES` represents the roles assigned to a user (e.g., 'ROLE_USER', 'ROLE_ADMIN')._
+_Note: `game_room_status` is an ENUM ('WAITING_FOR_PLAYERS', 'IN_PROGRESS', 'FINISHED', 'ABANDONED'). `USER_ROLES`
+represents the roles assigned to a user (e.g., 'ROLE_USER', 'ROLE_ADMIN')._
 
 ### Layer Separation (Backend):
 
@@ -192,7 +194,8 @@ cd eMafia
 
 ### 2. Running The Entire Application
 
-This command will build the images (if they don't exist or if changes are detected) and start all services in detached mode.
+This command will build the images (if they don't exist or if changes are detected) and start all services in detached
+mode.
 
 ```bash
 # Start all services defined in docker-compose.yml
@@ -228,7 +231,7 @@ This command utilizes the `tester_base` stage from the backend Dockerfile and th
 ### Backend
 
 | Technology        | Version | Rationale                                                                      |
-| ----------------- | ------- | ------------------------------------------------------------------------------ |
+|-------------------|---------|--------------------------------------------------------------------------------|
 | **Spring Boot**   | 3.3.0   | Modern framework with a rich ecosystem, auto-configuration, built-in security. |
 | **Java**          | 17      | LTS version, modern language features.                                         |
 | **PostgreSQL**    | 15      | Advanced relational database, excellent performance, full JSON support.        |
@@ -240,7 +243,7 @@ This command utilizes the `tester_base` stage from the backend Dockerfile and th
 ### Frontend
 
 | Technology      | Version | Rationale                                                              |
-| --------------- | ------- | ---------------------------------------------------------------------- |
+|-----------------|---------|------------------------------------------------------------------------|
 | **React**       | 18+     | Leading UI library, component-based architecture, vast ecosystem.      |
 | **CSS Modules** | -       | Scoped styles, preventing CSS conflicts, promoting maintainable code.  |
 | **Axios**       | -       | Promise-based HTTP client, interceptors, automatic JSON serialization. |
@@ -248,7 +251,7 @@ This command utilizes the `tester_base` stage from the backend Dockerfile and th
 ### DevOps & Infrastructure
 
 | Technology                 | Rationale                                                                    |
-| -------------------------- | ---------------------------------------------------------------------------- |
+|----------------------------|------------------------------------------------------------------------------|
 | **Docker Compose**         | Easy management of multi-container environments, consistent dev/prod setup.  |
 | **Multi-stage Dockerfile** | Optimized image sizes, separation of build and runtime environments.         |
 | **Nginx**                  | Serving frontend static files, reverse proxy capabilities, production-grade. |
@@ -259,7 +262,8 @@ This command utilizes the `tester_base` stage from the backend Dockerfile and th
 - **🏗️ Microservices Ready**: The architecture is designed with future scalability towards microservices in mind.
 - **📈 Scalability**: PostgreSQL and RabbitMQ provide a solid foundation for handling user growth and increased load.
 - **🔒 Security First**: Spring Security and JWT ensure enterprise-grade security for authentication and authorization.
-- **🚀 Developer Experience**: Docker Compose, multi-stage Dockerfiles, and features like hot-reloading (for frontend) contribute to an efficient development cycle.
+- **🚀 Developer Experience**: Docker Compose, multi-stage Dockerfiles, and features like hot-reloading (for frontend)
+  contribute to an efficient development cycle.
 
 ## 📊 Features
 
@@ -333,7 +337,8 @@ mvn test -Dtest="**/*ServiceTest"
 mvn test jacoco:report
 ```
 
-_Ensure you have a local PostgreSQL and RabbitMQ instance running or configure the `application-test.properties` for an in-memory database like H2 if preferred for certain local test runs._
+_Ensure you have a local PostgreSQL and RabbitMQ instance running or configure the `application-test.properties` for an
+in-memory database like H2 if preferred for certain local test runs._
 
 ### Test Coverage Highlights
 
@@ -364,7 +369,7 @@ POST /api/auth/logout-all   # Log out from all devices (revokes all user's refre
 #### 🎮 Game Rooms
 
 ```
-POST   /api/gamerooms/create        # Create a new game room
+POST   /api/game_rooms/create        # Create a new game room
 POST   /api/gamerooms/{code}/join   # Join an existing game room
 GET    /api/gamerooms/my-rooms      # Get rooms associated with the current user
 GET    /api/gamerooms/search        # Search for game rooms by name
@@ -402,7 +407,8 @@ curl -X POST http://localhost:8080/api/auth/login \
 
 ### Environment Variables
 
-Key environment variables for configuring the application (primarily for Docker deployment). For local development outside Docker, these can be set in `application.properties`.
+Key environment variables for configuring the application (primarily for Docker deployment). For local development
+outside Docker, these can be set in `application.properties`.
 
 #### Backend (within `docker-compose.yml` or system environment)
 
@@ -424,7 +430,8 @@ SPRING_RABBITMQ_USERNAME=guest
 SPRING_RABBITMQ_PASSWORD=guest
 ```
 
-_Note: `application.properties` contains default values which might be suitable for local development outside Docker (e.g., `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mafia`)._
+_Note: `application.properties` contains default values which might be suitable for local development outside Docker (
+e.g., `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mafia`)._
 
 #### Frontend (typically in a `.env` file for React)
 
@@ -435,14 +442,19 @@ REACT_APP_WEBSOCKET_URL=ws://localhost:8080/ws
 
 ### Application Profiles (Spring Boot)
 
-- `default`: Active by default. Uses settings from `application.properties` (typically for development with local PostgreSQL).
-- `test`: Used for running tests. Configured in `application-test.properties` (e.g., uses H2 in-memory database, disables RabbitMQ auto-configuration).
-- `prod`: Intended for production deployments (configuration would typically be externalized or use different property files).
+- `default`: Active by default. Uses settings from `application.properties` (typically for development with local
+  PostgreSQL).
+- `test`: Used for running tests. Configured in `application-test.properties` (e.g., uses H2 in-memory database,
+  disables RabbitMQ auto-configuration).
+- `prod`: Intended for production deployments (configuration would typically be externalized or use different property
+  files).
 
 ### Docker Compose Profiles
 
-- **default services**: Running `docker-compose up` starts the main application services (backend, frontend, db, rabbitmq).
-- **`tests` profile**: Running `docker-compose --profile tests up` (or `run`) includes services specifically for running tests, like `mafia-backend-tests`.
+- **default services**: Running `docker-compose up` starts the main application services (backend, frontend, db,
+  rabbitmq).
+- **`tests` profile**: Running `docker-compose --profile tests up` (or `run`) includes services specifically for running
+  tests, like `mafia-backend-tests`.
 
 ---
 

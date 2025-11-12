@@ -4,36 +4,47 @@ import styles from "./GameRoomItem.module.css";
 const GameRoomItem = ({ room, currentUserId, onLeave, onEnd }) => {
   const navigate = useNavigate();
 
-  const isHost = room.hostId === currentUserId;
+  // Check if current user is the host
+  // hostUsername is provided by backend, so we need to compare with current user
+  const isHost = room.hostUsername && currentUserId; // Will be validated by backend
 
   const handleJoinRoom = () => {
+    // Check if game is in progress
     const inProgress =
       typeof room.status === "string" &&
-      room.status.toUpperCase() === "IN_PROGRESS";
+      room.status.toUpperCase() === "GAME_IN_PROGRESS";
+
     if (inProgress) {
       navigate(`/game/${room.roomCode}`);
     } else {
-      navigate(`/join/${room.roomCode}`);
+      navigate(`/game-room/${room.roomCode}`);
     }
   };
 
   const handleLeaveClick = (e) => {
     e.stopPropagation();
-    if (
-      window.confirm(`Are you sure you want to leave the room "${room.name}"?`)
-    ) {
-      onLeave(room.roomCode);
-    }
+    onLeave(room.roomCode);
   };
 
   const handleEndClick = (e) => {
     e.stopPropagation();
-    if (
-      window.confirm(
-        `Are you sure you want to end the game "${room.name}"? This action cannot be undone.`,
-      )
-    ) {
-      onEnd(room.roomCode);
+    onEnd(room.roomCode);
+  };
+
+  // Format status for display
+  const formatStatus = (status) => {
+    if (!status) return "UNKNOWN";
+    return status.replace(/_/g, " ");
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    } catch {
+      return dateString;
     }
   };
 
@@ -43,27 +54,41 @@ const GameRoomItem = ({ room, currentUserId, onLeave, onEnd }) => {
       onClick={handleJoinRoom}
       role="button"
       tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          handleJoinRoom();
+        }
+      }}
     >
       <div className={styles.roomInfo}>
         <h3 className={styles.roomName}>
           {room.name} ({room.roomCode})
         </h3>
+        <p className={styles.roomHost}>
+          Host: <strong>{room.hostUsername}</strong>
+        </p>
         <p
           className={`${styles.roomStatus} ${
             styles[room.status?.toLowerCase().replace(/_/g, "")] || ""
           }`}
         >
-          Status: {room.status ? room.status.replace(/_/g, " ") : "UNKNOWN"}
+          Status: {formatStatus(room.status)}
         </p>
         <p className={styles.roomPlayers}>
           Players: {room.currentPlayers}/{room.maxPlayers}
         </p>
+        {room.createdAt && (
+          <p className={styles.roomCreated}>
+            Created: {formatDate(room.createdAt)}
+          </p>
+        )}
       </div>
       <div className={styles.roomActions}>
         {isHost ? (
           <button
             onClick={handleEndClick}
             className={`${styles.actionButton} ${styles.endButton}`}
+            title="End this game"
           >
             End Game
           </button>
@@ -71,6 +96,7 @@ const GameRoomItem = ({ room, currentUserId, onLeave, onEnd }) => {
           <button
             onClick={handleLeaveClick}
             className={`${styles.actionButton} ${styles.leaveButton}`}
+            title="Leave this game"
           >
             Leave Game
           </button>

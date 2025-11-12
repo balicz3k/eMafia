@@ -1,11 +1,15 @@
 package com.mafia.integration;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mafia.config.TestApplicationConfig;
-import com.mafia.dto.AuthResponse;
-import com.mafia.dto.CreateGameRoomRequest;
-import com.mafia.dto.GameRoomResponse;
-import com.mafia.dto.RegistrationRequest;
+import com.mafia.dto.auth.AuthResp;
+import com.mafia.dto.auth.RegistrationReq;
+import com.mafia.dto.gameRoom.CreateGameRoomReq;
+import com.mafia.dto.gameRoom.CreateGameRoomResp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -29,70 +29,79 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestApplicationConfig.class)
 class GameRoomIntegrationTest {
 
-        @Autowired
-        private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-        @Autowired
-        private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-        private String authToken;
+  private String authToken;
 
-        @BeforeEach
-        void setUp() throws Exception {
-                RegistrationRequest registerRequest = new RegistrationRequest();
-                registerRequest.setUsername("gameUser");
-                registerRequest.setEmail("gameuser@example.com");
-                registerRequest.setPassword("Password123!");
+  @BeforeEach
+  void setUp() throws Exception {
+    RegistrationReq registerRequest = new RegistrationReq();
+    registerRequest.setUsername("gameUser");
+    registerRequest.setEmail("gameuser@example.com");
+    registerRequest.setPassword("Password123!");
 
-                MvcResult result = mockMvc.perform(post("/api/auth/register")
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(registerRequest)))
-                                .andExpect(status().isCreated())
-                                .andReturn();
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/auth/register")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(registerRequest)))
+            .andExpect(status().isCreated())
+            .andReturn();
 
-                AuthResponse authResponse = objectMapper.readValue(
-                                result.getResponse().getContentAsString(), AuthResponse.class);
+    AuthResp authResp =
+        objectMapper.readValue(result.getResponse().getContentAsString(), AuthResp.class);
 
-                this.authToken = authResponse.getToken();
-        }
+    this.authToken = authResp.getToken();
+  }
 
-        @Test
-        void gameRoomFlow_createRoom_success() throws Exception {
-                CreateGameRoomRequest createRequest = new CreateGameRoomRequest();
-                createRequest.setName("Integration Test Room");
-                createRequest.setMaxPlayers(6);
+  @Test
+  void gameRoomFlow_createRoom_success() throws Exception {
+    CreateGameRoomReq createRequest = new CreateGameRoomReq();
+    createRequest.setName("Integration Test Room");
+    createRequest.setMaxPlayers(6);
 
-                MvcResult createResult = mockMvc.perform(post("/api/gamerooms/create")
-                                .with(csrf())
-                                .header("Authorization", "Bearer " + authToken)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createRequest)))
-                                .andExpect(status().isCreated())
-                                .andExpect(jsonPath("$.name").value("Integration Test Room"))
-                                .andReturn();
+    MvcResult createResult =
+        mockMvc
+            .perform(
+                post("/api/gamerooms/create")
+                    .with(csrf())
+                    .header("Authorization", "Bearer " + authToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(createRequest)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.name").value("Integration Test Room"))
+            .andReturn();
 
-                GameRoomResponse gameRoom = objectMapper.readValue(
-                                createResult.getResponse().getContentAsString(), GameRoomResponse.class);
-                String roomCode = gameRoom.getRoomCode();
+    CreateGameRoomResp gameRoom =
+        objectMapper.readValue(
+            createResult.getResponse().getContentAsString(), CreateGameRoomResp.class);
+    String roomCode = gameRoom.getRoomCode();
 
-                mockMvc.perform(get("/api/gamerooms/{roomCode}", roomCode)
-                                .header("Authorization", "Bearer " + authToken))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.roomCode").value(roomCode))
-                                .andExpect(jsonPath("$.name").value("Integration Test Room"));
-        }
+    mockMvc
+        .perform(
+            get("/api/gamerooms/{roomCode}", roomCode)
+                .header("Authorization", "Bearer " + authToken))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.roomCode").value(roomCode))
+        .andExpect(jsonPath("$.name").value("Integration Test Room"));
+  }
 
-        @Test
-        void gameRoomFlow_unauthorizedAccess_shouldFail() throws Exception {
-                CreateGameRoomRequest createRequest = new CreateGameRoomRequest();
-                createRequest.setName("Unauthorized Test");
-                createRequest.setMaxPlayers(4);
+  @Test
+  void gameRoomFlow_unauthorizedAccess_shouldFail() throws Exception {
+    CreateGameRoomReq createRequest = new CreateGameRoomReq();
+    createRequest.setName("Unauthorized Test");
+    createRequest.setMaxPlayers(4);
 
-                mockMvc.perform(post("/api/gamerooms/create")
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createRequest)))
-                                .andExpect(status().isForbidden());
-        }
+    mockMvc
+        .perform(
+            post("/api/gamerooms/create")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
+        .andExpect(status().isForbidden());
+  }
 }

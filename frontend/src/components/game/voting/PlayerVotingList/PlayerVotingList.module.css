@@ -1,0 +1,160 @@
+.playerVotingList {
+  margin: 20px 0;
+}
+
+.listTitle {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.playerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.playerItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.playerItem:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(76, 175, 80, 0.5);
+  transform: translateX(5px);
+}
+
+.playerItem.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.playerInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.playerName {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.voteButton {
+  padding: 10px 25px;
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.voteButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #66BB6A, #81C784);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.5);
+}
+
+.voteButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+}
+
+.voteButton:disabled {
+  background: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.votedMessage {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 2px solid rgba(76, 175, 80, 0.5);
+  border-radius: 10px;
+  color: #4CAF50;
+  text-align: center;
+  font-weight: bold;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.infoMessage {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 152, 0, 0.2);
+  border: 2px solid rgba(255, 152, 0, 0.5);
+  border-radius: 10px;
+  color: #FF9800;
+  text-align: center;
+  font-weight: bold;
+}
+
+.emptyState {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .playerItem {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 15px;
+  }
+
+  .playerInfo {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .voteButton {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .playerName {
+    font-size: 1rem;
+  }
+}

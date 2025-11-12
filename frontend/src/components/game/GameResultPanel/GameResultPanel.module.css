@@ -1,0 +1,336 @@
+.gameResultPanel {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 50px 30px;
+  border-radius: 20px;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1), transparent);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.mafiaWin {
+  background: linear-gradient(135deg, #F44336, #D32F2F);
+  box-shadow: 0 10px 40px rgba(244, 67, 54, 0.5);
+}
+
+.citizensWin {
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
+  box-shadow: 0 10px 40px rgba(76, 175, 80, 0.5);
+}
+
+.winnerIcon {
+  font-size: 6rem;
+  margin-bottom: 20px;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.winnerTitle {
+  font-size: 3.5rem;
+  color: #fff;
+  margin: 0 0 15px 0;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.winnerSubtitle {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Stats Section */
+.statsSection {
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.statCard {
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.statCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(33, 150, 243, 0.5);
+  transform: translateY(-5px);
+}
+
+.statIcon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.statValue {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #4CAF50;
+  margin-bottom: 8px;
+}
+
+.statLabel {
+  font-size: 0.95rem;
+  color: #B0BEC5;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Players Section */
+.playersSection {
+  margin-bottom: 40px;
+}
+
+.teamSection {
+  margin-bottom: 30px;
+}
+
+.teamTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.teamIcon {
+  font-size: 1.8rem;
+}
+
+.playersList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.playerCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 25px;
+  border-radius: 12px;
+  border: 2px solid;
+  transition: all 0.3s ease;
+}
+
+.mafiaCard {
+  background: rgba(244, 67, 54, 0.1);
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.mafiaCard:hover {
+  background: rgba(244, 67, 54, 0.15);
+  border-color: rgba(244, 67, 54, 0.5);
+}
+
+.citizenCard {
+  background: rgba(33, 150, 243, 0.1);
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+.citizenCard:hover {
+  background: rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.5);
+}
+
+.playerCard.eliminated {
+  opacity: 0.6;
+}
+
+.playerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.playerName {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.playerRole {
+  font-size: 0.9rem;
+  color: #B0BEC5;
+}
+
+.playerStatus {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.survived {
+  color: #4CAF50;
+}
+
+.dead {
+  color: #F44336;
+}
+
+/* Actions Section */
+.actionsSection {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.primaryButton {
+  padding: 15px 40px;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+}
+
+.primaryButton:hover {
+  background: linear-gradient(135deg, #42A5F5, #2196F3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.6);
+}
+
+.secondaryButton {
+  padding: 15px 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .gameResultPanel {
+    padding: 20px 15px;
+  }
+
+  .header {
+    padding: 40px 20px;
+  }
+
+  .winnerIcon {
+    font-size: 4rem;
+  }
+
+  .winnerTitle {
+    font-size: 2.5rem;
+  }
+
+  .winnerSubtitle {
+    font-size: 1.1rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .statCard {
+    padding: 20px 15px;
+  }
+
+  .statIcon {
+    font-size: 2rem;
+  }
+
+  .statValue {
+    font-size: 2rem;
+  }
+
+  .playerCard {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    padding: 15px;
+  }
+
+  .actionsSection {
+    flex-direction: column;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+  }
+}

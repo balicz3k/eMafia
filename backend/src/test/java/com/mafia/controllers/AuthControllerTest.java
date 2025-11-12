@@ -1,11 +1,19 @@
 package com.mafia.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mafia.components.JwtTokenProvider;
 import com.mafia.config.TestApplicationConfig;
-import com.mafia.dto.AuthResponse;
-import com.mafia.dto.LoginRequest;
-import com.mafia.dto.LogoutRequest;
-import com.mafia.dto.RegistrationRequest;
+import com.mafia.dto.auth.AuthResp;
+import com.mafia.dto.auth.LoginReq;
+import com.mafia.dto.auth.LogoutReq;
+import com.mafia.dto.auth.RegistrationReq;
 import com.mafia.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import com.mafia.components.JwtTokenProvider;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -32,110 +32,118 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestApplicationConfig.class)
 public class AuthControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockBean
-    private UserService userService;
+  @MockBean private UserService userService;
 
-    @MockBean
-    private JwtTokenProvider jwtTokenProvider;
+  @MockBean private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-    private AuthResponse createSampleAuthResponse() {
-        return new AuthResponse("sample-jwt-token", "sample-refresh-token", 3600L);
-    }
+  private AuthResp createSampleAuthResponse() {
+    return new AuthResp("sample-jwt-token", "sample-refresh-token", 3600L);
+  }
 
-    @Test
-    void register_shouldReturnCreatedUser() throws Exception {
-        RegistrationRequest request = new RegistrationRequest();
-        request.setUsername("testuser");
-        request.setEmail("test@example.com");
-        request.setPassword("Password123!");
+  @Test
+  void register_shouldReturnCreatedUser() throws Exception {
+    RegistrationReq request = new RegistrationReq();
+    request.setUsername("testuser");
+    request.setEmail("test@example.com");
+    request.setPassword("Password123!");
 
-        AuthResponse response = createSampleAuthResponse();
-        when(userService.registerUser(any(RegistrationRequest.class))).thenReturn(response);
+    AuthResp response = createSampleAuthResponse();
+    when(userService.registerUser(any(RegistrationReq.class))).thenReturn(response);
 
-        mockMvc.perform(post("/api/auth/register")
+    mockMvc
+        .perform(
+            post("/api/auth/register")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.refreshToken").exists());
-    }
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.token").exists())
+        .andExpect(jsonPath("$.refreshToken").exists());
+  }
 
-    @Test
-    void register_withInvalidData_shouldReturnBadRequest() throws Exception {
-        RegistrationRequest request = new RegistrationRequest();
+  @Test
+  void register_withInvalidData_shouldReturnBadRequest() throws Exception {
+    RegistrationReq request = new RegistrationReq();
 
-        mockMvc.perform(post("/api/auth/register")
+    mockMvc
+        .perform(
+            post("/api/auth/register")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
-    }
+        .andExpect(status().isBadRequest());
+  }
 
-    @Test
-    void login_shouldReturnAuthenticatedUser() throws Exception {
-        LoginRequest request = new LoginRequest();
-        request.setEmail("test@example.com");
-        request.setPassword("Password123!");
+  @Test
+  void login_shouldReturnAuthenticatedUser() throws Exception {
+    LoginReq request = new LoginReq();
+    request.setEmail("test@example.com");
+    request.setPassword("Password123!");
 
-        AuthResponse response = createSampleAuthResponse();
-        when(userService.authenticateUser(any(LoginRequest.class))).thenReturn(response);
+    AuthResp response = createSampleAuthResponse();
+    when(userService.authenticateUser(any(LoginReq.class))).thenReturn(response);
 
-        mockMvc.perform(post("/api/auth/login")
+    mockMvc
+        .perform(
+            post("/api/auth/login")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.refreshToken").exists());
-    }
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.token").exists())
+        .andExpect(jsonPath("$.refreshToken").exists());
+  }
 
-    @Test
-    void login_withValidCredentials_shouldCallUserService() throws Exception {
-        LoginRequest request = new LoginRequest();
-        request.setEmail("test@example.com");
-        request.setPassword("Password123!");
+  @Test
+  void login_withValidCredentials_shouldCallUserService() throws Exception {
+    LoginReq request = new LoginReq();
+    request.setEmail("test@example.com");
+    request.setPassword("Password123!");
 
-        AuthResponse response = createSampleAuthResponse();
-        when(userService.authenticateUser(any(LoginRequest.class))).thenReturn(response);
+    AuthResp response = createSampleAuthResponse();
+    when(userService.authenticateUser(any(LoginReq.class))).thenReturn(response);
 
-        mockMvc.perform(post("/api/auth/login")
+    mockMvc
+        .perform(
+            post("/api/auth/login")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.refreshToken").exists());
-    }
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.token").exists())
+        .andExpect(jsonPath("$.refreshToken").exists());
+  }
 
-    @Test
-    void login_withInvalidData_shouldReturnBadRequest() throws Exception {
-        LoginRequest request = new LoginRequest();
+  @Test
+  void login_withInvalidData_shouldReturnBadRequest() throws Exception {
+    LoginReq request = new LoginReq();
 
-        mockMvc.perform(post("/api/auth/login")
+    mockMvc
+        .perform(
+            post("/api/auth/login")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
-    }
+        .andExpect(status().isBadRequest());
+  }
 
-    @Test
-    @WithMockUser
-    void logout_shouldReturnNoContent() throws Exception {
-        LogoutRequest logoutRequest = new LogoutRequest("sample-refresh-token-for-test");
+  @Test
+  @WithMockUser
+  void logout_shouldReturnNoContent() throws Exception {
+    LogoutReq logoutReq = new LogoutReq("sample-refresh-token-for-test");
 
-        doNothing().when(userService).logoutUser(logoutRequest.getRefreshToken());
+    doNothing().when(userService).logoutUser(logoutReq.getRefreshToken());
 
-        mockMvc.perform(post("/api/auth/logout")
+    mockMvc
+        .perform(
+            post("/api/auth/logout")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(logoutRequest)))
-                .andExpect(status().isNoContent());
-    }
+                .content(objectMapper.writeValueAsString(logoutReq)))
+        .andExpect(status().isNoContent());
+  }
 }

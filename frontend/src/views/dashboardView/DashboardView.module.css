@@ -54,6 +54,35 @@
   font-family: "DM Sans", sans-serif;
 }
 
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  border: 2px dashed #ddd;
+  min-height: 300px;
+}
+
+.emptyMessage {
+  font-size: 1.3rem;
+  color: #666;
+  margin: 0 0 15px 0;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+}
+
+.emptySubtext {
+  font-size: 1rem;
+  color: #999;
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 400;
+}
+
 @media (max-width: 600px) {
   .header {
     flex-direction: column;
@@ -63,5 +92,18 @@
   .newGameButton {
     width: 100%;
     margin-top: 10px;
+  }
+
+  .emptyState {
+    padding: 40px 15px;
+    min-height: 250px;
+  }
+
+  .emptyMessage {
+    font-size: 1.1rem;
+  }
+
+  .emptySubtext {
+    font-size: 0.9rem;
   }
 }

@@ -1,0 +1,360 @@
+.gameRoomSettings {
+  margin: 30px 0;
+  padding: 25px;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(63, 81, 181, 0.05));
+  border-radius: 15px;
+  border: 2px solid rgba(33, 150, 243, 0.3);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 1.8rem;
+  color: #2196F3;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #90CAF9;
+  margin: 0;
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.settingCard {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.settingCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(33, 150, 243, 0.3);
+  transform: translateY(-2px);
+}
+
+.settingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.settingLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.icon {
+  font-size: 1.3rem;
+}
+
+.settingValue {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #4CAF50;
+  padding: 4px 12px;
+  background: rgba(76, 175, 80, 0.2);
+  border-radius: 8px;
+}
+
+.settingDescription {
+  font-size: 0.9rem;
+  color: #B0BEC5;
+  margin-bottom: 15px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.optionButton {
+  flex: 1;
+  min-width: 50px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.optionButton:hover:not(:disabled) {
+  background: rgba(33, 150, 243, 0.3);
+  border-color: #2196F3;
+  transform: scale(1.05);
+}
+
+.optionButton.active {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  border-color: #2196F3;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+.optionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.selectInput {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+}
+
+.selectInput:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #2196F3;
+}
+
+.selectInput:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+}
+
+.selectInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.selectInput option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.settingHint {
+  font-size: 0.85rem;
+  color: #FFB74D;
+  font-style: italic;
+}
+
+/* Zaawansowane ustawienia */
+.advancedSection {
+  margin: 25px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.advancedToggle {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  color: #90CAF9;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.advancedToggle:hover:not(:disabled) {
+  color: #2196F3;
+}
+
+.advancedToggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.advancedContent {
+  margin-top: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.comingSoon {
+  color: #FFB74D;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.futureFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.futureFeatures li {
+  padding: 8px 0;
+  color: #B0BEC5;
+  font-size: 0.95rem;
+}
+
+/* Przycisk Start */
+.startSection {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.startButton {
+  padding: 18px 50px;
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.startButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #66BB6A, #81C784);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+}
+
+.startButton:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.startButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.startIcon {
+  font-size: 1.5rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.startHint {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #B0BEC5;
+}
+
+/* Podsumowanie */
+.summary {
+  margin-top: 25px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summaryTitle {
+  font-size: 1.1rem;
+  color: #90CAF9;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.summaryLabel {
+  font-size: 0.85rem;
+  color: #B0BEC5;
+  margin-bottom: 5px;
+}
+
+.summaryValue {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .gameRoomSettings {
+    padding: 20px 15px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .settingsGrid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .settingCard {
+    padding: 15px;
+  }
+
+  .buttonGroup {
+    gap: 8px;
+  }
+
+  .optionButton {
+    min-width: 45px;
+    padding: 10px;
+    font-size: 1rem;
+  }
+
+  .startButton {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

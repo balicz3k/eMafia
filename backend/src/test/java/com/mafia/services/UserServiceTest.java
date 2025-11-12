@@ -1,16 +1,22 @@
 package com.mafia.services;
 
-import com.mafia.components.JwtTokenProvider;
-import com.mafia.dto.AuthResponse;
-import com.mafia.dto.LoginRequest;
-import com.mafia.dto.RegistrationRequest;
-import com.mafia.dto.UserResponse;
-import com.mafia.exceptions.*;
-import com.mafia.models.RefreshToken;
-import com.mafia.models.Role;
-import com.mafia.models.User;
-import com.mafia.repositories.UserRepository;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.*;
 
+import com.mafia.components.JwtTokenProvider;
+import com.mafia.databaseModels.RefreshToken;
+import com.mafia.databaseModels.User;
+import com.mafia.dto.auth.AuthResp;
+import com.mafia.dto.auth.LoginReq;
+import com.mafia.dto.auth.RegistrationReq;
+import com.mafia.dto.auth.UserInfoResp;
+import com.mafia.enums.Role;
+import com.mafia.exceptions.*;
+import com.mafia.repositories.UserRepository;
+import java.time.LocalDateTime;
+import java.util.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,416 +31,415 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @Mock
-    private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
+  @Mock private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private JwtTokenProvider jwtTokenProvider;
+  @Mock private JwtTokenProvider jwtTokenProvider;
 
-    @Mock
-    private RefreshTokenService refreshTokenService;
+  @Mock private RefreshTokenService refreshTokenService;
 
-    @InjectMocks
-    private UserService userService;
+  @InjectMocks private UserService userService;
 
-    private MockedStatic<SecurityContextHolder> mockedSecurityContextHolder;
-    private SecurityContext securityContext;
-    private Authentication authentication;
+  private MockedStatic<SecurityContextHolder> mockedSecurityContextHolder;
+  private SecurityContext securityContext;
+  private Authentication authentication;
 
-    @BeforeEach
-    void setUp() {
-        mockedSecurityContextHolder = Mockito.mockStatic(SecurityContextHolder.class);
-        securityContext = mock(SecurityContext.class);
-        authentication = mock(Authentication.class);
+  @BeforeEach
+  void setUp() {
+    mockedSecurityContextHolder = Mockito.mockStatic(SecurityContextHolder.class);
+    securityContext = mock(SecurityContext.class);
+    authentication = mock(Authentication.class);
 
-        mockedSecurityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+    mockedSecurityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+  }
+
+  @AfterEach
+  void tearDown() {
+    if (mockedSecurityContextHolder != null) {
+      mockedSecurityContextHolder.close();
     }
-
-    @AfterEach
-    void tearDown() {
-        if (mockedSecurityContextHolder != null) {
-            mockedSecurityContextHolder.close();
-        }
-    }
-
-    private User setupAuthenticationPrincipal(UUID userId, String username, String email, String password) {
-        User principalUser = new User();
-        principalUser.setId(userId);
-        principalUser.setUsername(username);
-        principalUser.setEmail(email);
-        principalUser.setPassword(password);
-        principalUser.setRoles(Collections.singleton(Role.ROLE_USER));
-
-        when(authentication.isAuthenticated()).thenReturn(true);
-        when(authentication.getPrincipal()).thenReturn(principalUser);
-
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        return principalUser;
-    }
-
-    @Test
-    void registerUser_success() {
-        RegistrationRequest request = new RegistrationRequest("testuser", "test@example.com", "password");
-        User savedUser = new User();
-        savedUser.setId(UUID.randomUUID());
-        savedUser.setUsername(request.getUsername());
-        savedUser.setEmail(request.getEmail());
-        savedUser.setRoles(Collections.singleton(Role.ROLE_USER));
-
-        RefreshToken mockRefreshToken = new RefreshToken();
-        mockRefreshToken.setToken("sample-refresh-token");
-        mockRefreshToken.setUser(savedUser);
-        mockRefreshToken.setExpiresAt(LocalDateTime.now().plusDays(7));
-
-        when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
-        when(userRepository.existsByUsername(request.getUsername())).thenReturn(false);
-        when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
-        when(userRepository.save(any(User.class))).thenReturn(savedUser);
-        when(jwtTokenProvider.generateToken(savedUser)).thenReturn("testToken");
-        when(jwtTokenProvider.getExpirationTime()).thenReturn(3600L);
-        when(refreshTokenService.createRefreshToken(any(User.class), anyString())).thenReturn(mockRefreshToken);
-
-        AuthResponse response = userService.registerUser(request);
-
-        assertNotNull(response);
-        assertEquals("testToken", response.getToken());
-        assertEquals("sample-refresh-token", response.getRefreshToken());
-        verify(userRepository).save(argThat(user -> user.getUsername().equals(request.getUsername()) &&
-                user.getEmail().equals(request.getEmail()) &&
-                user.getPassword().equals("encodedPassword") &&
-                user.getRoles().contains(Role.ROLE_USER)));
-    }
-
-    @Test
-    void registerUser_emailAlreadyExists() {
-        RegistrationRequest request = new RegistrationRequest("testuser", "test@example.com", "password");
-        when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
-
-        assertThrows(EmailAlreadyExistsException.class, () -> userService.registerUser(request));
-        verify(userRepository, never()).save(any(User.class));
-    }
-
-    @Test
-    void registerUser_usernameAlreadyExists() {
-        RegistrationRequest request = new RegistrationRequest("testuser", "test@example.com", "password");
-        when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
-        when(userRepository.existsByUsername(request.getUsername())).thenReturn(true);
-
-        assertThrows(UsernameAlreadyExistsException.class, () -> userService.registerUser(request));
-        verify(userRepository, never()).save(any(User.class));
-    }
-
-    @Test
-    void authenticateUser_success() {
-        LoginRequest request = new LoginRequest("test@example.com", "password");
-        User user = new User();
-        user.setId(UUID.randomUUID());
-        user.setEmail(request.getEmail());
-        user.setPassword("encodedPassword");
-
-        RefreshToken mockRefreshToken = new RefreshToken();
-        mockRefreshToken.setToken("sample-refresh-token");
-        mockRefreshToken.setUser(user);
-        mockRefreshToken.setExpiresAt(LocalDateTime.now().plusDays(7));
-
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(request.getPassword(), "encodedPassword")).thenReturn(true);
-        when(jwtTokenProvider.generateToken(user)).thenReturn("testToken");
-        when(jwtTokenProvider.getExpirationTime()).thenReturn(3600L);
-        when(refreshTokenService.createRefreshToken(any(User.class), anyString())).thenReturn(mockRefreshToken);
-
-        AuthResponse response = userService.authenticateUser(request);
-
-        assertNotNull(response);
-        assertEquals("testToken", response.getToken());
-        assertEquals("sample-refresh-token", response.getRefreshToken());
-    }
-
-    @Test
-    void authenticateUser_userNotFound() {
-        LoginRequest request = new LoginRequest("test@example.com", "password");
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () -> userService.authenticateUser(request));
-    }
-
-    @Test
-    void authenticateUser_invalidPassword() {
-        LoginRequest request = new LoginRequest("test@example.com", "password");
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword("encodedPassword");
-
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(request.getPassword(), "encodedPassword")).thenReturn(false);
-
-        assertThrows(InvalidPasswordException.class, () -> userService.authenticateUser(request));
-    }
-
-    @Test
-    void searchUsers_success() {
-        String query = "test";
-        User user1 = new User();
-        user1.setId(UUID.randomUUID());
-        user1.setUsername("testuser1");
-        user1.setEmail("t1@e.com");
-        user1.setRoles(Collections.singleton(Role.ROLE_USER));
-        List<User> users = Collections.singletonList(user1);
-        when(userRepository.findByUsernameContainingIgnoreCase(query)).thenReturn(users);
-
-        List<UserResponse> responses = userService.searchUsers(query);
-
-        assertNotNull(responses);
-        assertEquals(1, responses.size());
-        assertEquals("testuser1", responses.get(0).getUsername());
-    }
-
-    @Test
-    void updateUsername_success() {
-        UUID userId = UUID.randomUUID();
-        setupAuthenticationPrincipal(userId, "oldUsername", "user@example.com", "encodedPass");
-
-        User userFromDb = new User();
-        userFromDb.setId(userId);
-        userFromDb.setUsername("oldUsername");
-        userFromDb.setEmail("user@example.com");
-        userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
-        String newUsername = "newUsername";
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(userRepository.existsByUsername(newUsername)).thenReturn(false);
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        UserResponse response = userService.updateUsername(newUsername);
-
-        assertEquals(newUsername, response.getUsername());
-        verify(userRepository).save(argThat(u -> u.getUsername().equals(newUsername)));
-    }
-
-    @Test
-    void updateUsername_success_sameUsername() {
-        UUID userId = UUID.randomUUID();
-        String currentUsername = "currentUsername";
-        setupAuthenticationPrincipal(userId, currentUsername, "user@example.com", "encodedPass");
-
-        User userFromDb = new User();
-        userFromDb.setId(userId);
-        userFromDb.setUsername(currentUsername);
-        userFromDb.setEmail("user@example.com");
-        userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        UserResponse response = userService.updateUsername(currentUsername);
-
-        assertEquals(currentUsername, response.getUsername());
-        verify(userRepository).save(userFromDb);
-    }
-
-    @Test
-    void updateUsername_usernameAlreadyTaken() {
-        UUID userId = UUID.randomUUID();
-        setupAuthenticationPrincipal(userId, "oldUsername", "user@example.com", "encodedPass");
-
-        User userFromDb = new User();
-        userFromDb.setId(userId);
-        userFromDb.setUsername("oldUsername");
-        String newUsername = "takenUsername";
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(userRepository.existsByUsername(newUsername)).thenReturn(true);
-
-        assertThrows(UsernameAlreadyExistsException.class, () -> userService.updateUsername(newUsername));
-    }
-
-    @Test
-    void updateUsername_whenAuthenticationIsNull_thenThrowsUserNotFoundException() {
-        when(securityContext.getAuthentication()).thenReturn(null);
-
-        assertThrows(UserNotFoundException.class, () -> userService.updateUsername("newUsername"));
-    }
-
-    @Test
-    void updateEmail_success() {
-        UUID userId = UUID.randomUUID();
-        setupAuthenticationPrincipal(userId, "testuser", "old@example.com", "encodedPass");
-        User userFromDb = new User();
-        userFromDb.setId(userId);
-        userFromDb.setUsername("testuser");
-        userFromDb.setEmail("old@example.com");
-        userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
-        String newEmail = "new@example.com";
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(userRepository.existsByEmail(newEmail)).thenReturn(false);
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        UserResponse response = userService.updateEmail(newEmail);
-
-        assertEquals(newEmail, response.getEmail());
-        verify(userRepository).save(argThat(u -> u.getEmail().equals(newEmail)));
-    }
-
-    @Test
-    void updateEmail_success_sameEmail() {
-        UUID userId = UUID.randomUUID();
-        String currentEmail = "current@example.com";
-        setupAuthenticationPrincipal(userId, "testuser", currentEmail, "encodedPass");
-        User userFromDb = new User();
-        userFromDb.setId(userId);
-        userFromDb.setUsername("testuser");
-        userFromDb.setEmail(currentEmail);
-        userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        UserResponse response = userService.updateEmail(currentEmail);
-
-        assertEquals(currentEmail, response.getEmail());
-        verify(userRepository).save(userFromDb);
-    }
-
-    @Test
-    void updateEmail_emailAlreadyRegistered() {
-        UUID userId = UUID.randomUUID();
-        setupAuthenticationPrincipal(userId, "testuser", "old@example.com", "encodedPass");
-        User userFromDb = new User();
-        userFromDb.setId(userId);
-        userFromDb.setEmail("old@example.com");
-        String newEmail = "taken@example.com";
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(userRepository.existsByEmail(newEmail)).thenReturn(true);
-
-        assertThrows(EmailAlreadyExistsException.class, () -> userService.updateEmail(newEmail));
-    }
-
-    @Test
-    void updatePassword_success() {
-        UUID userId = UUID.randomUUID();
-        String oldPassword = "oldPassword";
-        String newPassword = "newPassword";
-        String encodedOldPassword = "encodedOldPassword";
-        String encodedNewPassword = "encodedNewPassword";
-
-        setupAuthenticationPrincipal(userId, "testuser", "user@example.com", encodedOldPassword);
-        User userFromDb = new User();
-        userFromDb.setId(userId);
-        userFromDb.setPassword(encodedOldPassword);
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(passwordEncoder.matches(oldPassword, encodedOldPassword)).thenReturn(true);
-        when(passwordEncoder.encode(newPassword)).thenReturn(encodedNewPassword);
-
-        userService.updatePassword(oldPassword, newPassword);
-
-        verify(userRepository).save(argThat(u -> u.getPassword().equals(encodedNewPassword)));
-    }
-
-    @Test
-    void updatePassword_invalidOldPassword() {
-        UUID userId = UUID.randomUUID();
-        String oldPassword = "wrongOldPassword";
-        String newPassword = "newPassword";
-        String encodedPasswordInDb = "encodedCorrectOldPassword";
-
-        setupAuthenticationPrincipal(userId, "testuser", "user@example.com", encodedPasswordInDb);
-        User userFromDb = new User();
-        userFromDb.setId(userId);
-        userFromDb.setPassword(encodedPasswordInDb);
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
-        when(passwordEncoder.matches(oldPassword, encodedPasswordInDb)).thenReturn(false);
-
-        assertThrows(InvalidPasswordException.class, () -> userService.updatePassword(oldPassword, newPassword));
-        verify(userRepository, never()).save(any(User.class));
-    }
-
-    @Test
-    void updatePassword_userNotFoundInDb() {
-        UUID userId = UUID.randomUUID();
-        setupAuthenticationPrincipal(userId, "testuser", "user@example.com", "encodedPass");
-
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () -> userService.updatePassword("oldPass", "newPass"));
-    }
-
-    @Test
-    void adminGetAllUsers_success() {
-        User user1 = new User();
-        user1.setId(UUID.randomUUID());
-        user1.setUsername("u1");
-        user1.setEmail("u1@e.com");
-        user1.setRoles(Collections.singleton(Role.ROLE_USER));
-        User user2 = new User();
-        user2.setId(UUID.randomUUID());
-        user2.setUsername("u2");
-        user2.setEmail("u2@e.com");
-        user2.setRoles(Collections.singleton(Role.ROLE_ADMIN));
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
-
-        List<UserResponse> responses = userService.adminGetAllUsers();
-
-        assertEquals(2, responses.size());
-    }
-
-    @Test
-    void adminUpdateUserRoles_success() {
-        UUID userId = UUID.randomUUID();
-        User userToUpdate = new User();
-        userToUpdate.setId(userId);
-        userToUpdate.setRoles(Collections.singleton(Role.ROLE_USER));
-        Set<Role> newRoles = Collections.singleton(Role.ROLE_ADMIN);
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userToUpdate));
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        UserResponse response = userService.adminUpdateUserRoles(userId, newRoles);
-
-        assertEquals(newRoles, response.getRoles());
-        verify(userRepository).save(argThat(u -> u.getRoles().equals(newRoles)));
-    }
-
-    @Test
-    void adminUpdateUserRoles_userNotFound() {
-        UUID userId = UUID.randomUUID();
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class,
-                () -> userService.adminUpdateUserRoles(userId, Collections.emptySet()));
-    }
-
-    @Test
-    void adminDeleteUser_success() {
-        UUID userId = UUID.randomUUID();
-        when(userRepository.existsById(userId)).thenReturn(true);
-
-        userService.adminDeleteUser(userId);
-
-        verify(userRepository).deleteById(userId);
-    }
-
-    @Test
-    void adminDeleteUser_userNotFound() {
-        UUID userId = UUID.randomUUID();
-        when(userRepository.existsById(userId)).thenReturn(false);
-
-        assertThrows(UserNotFoundException.class, () -> userService.adminDeleteUser(userId));
-    }
+  }
+
+  private User setupAuthenticationPrincipal(
+      UUID userId, String username, String email, String password) {
+    User principalUser = new User();
+    principalUser.setId(userId);
+    principalUser.setUsername(username);
+    principalUser.setEmail(email);
+    principalUser.setPassword(password);
+    principalUser.setRoles(Collections.singleton(Role.ROLE_USER));
+
+    when(authentication.isAuthenticated()).thenReturn(true);
+    when(authentication.getPrincipal()).thenReturn(principalUser);
+
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    return principalUser;
+  }
+
+  @Test
+  void registerUser_success() {
+    RegistrationReq request = new RegistrationReq("testuser", "test@example.com", "password");
+    User savedUser = new User();
+    savedUser.setId(UUID.randomUUID());
+    savedUser.setUsername(request.getUsername());
+    savedUser.setEmail(request.getEmail());
+    savedUser.setRoles(Collections.singleton(Role.ROLE_USER));
+
+    RefreshToken mockRefreshToken = new RefreshToken();
+    mockRefreshToken.setToken("sample-refresh-token");
+    mockRefreshToken.setUser(savedUser);
+    mockRefreshToken.setExpiresAt(LocalDateTime.now().plusDays(7));
+
+    when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
+    when(userRepository.existsByUsername(request.getUsername())).thenReturn(false);
+    when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
+    when(userRepository.save(any(User.class))).thenReturn(savedUser);
+    when(jwtTokenProvider.generateToken(savedUser)).thenReturn("testToken");
+    when(jwtTokenProvider.getExpirationTime()).thenReturn(3600L);
+    when(refreshTokenService.createRefreshToken(any(User.class), anyString()))
+        .thenReturn(mockRefreshToken);
+
+    AuthResp response = userService.registerUser(request);
+
+    assertNotNull(response);
+    assertEquals("testToken", response.getToken());
+    assertEquals("sample-refresh-token", response.getRefreshToken());
+    verify(userRepository)
+        .save(
+            argThat(
+                user ->
+                    user.getUsername().equals(request.getUsername())
+                        && user.getEmail().equals(request.getEmail())
+                        && user.getPassword().equals("encodedPassword")
+                        && user.getRoles().contains(Role.ROLE_USER)));
+  }
+
+  @Test
+  void registerUser_emailAlreadyExists() {
+    RegistrationReq request = new RegistrationReq("testuser", "test@example.com", "password");
+    when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
+
+    assertThrows(EmailAlreadyExistsException.class, () -> userService.registerUser(request));
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void registerUser_usernameAlreadyExists() {
+    RegistrationReq request = new RegistrationReq("testuser", "test@example.com", "password");
+    when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
+    when(userRepository.existsByUsername(request.getUsername())).thenReturn(true);
+
+    assertThrows(UsernameAlreadyExistsException.class, () -> userService.registerUser(request));
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void authenticateUser_success() {
+    LoginReq request = new LoginReq("test@example.com", "password");
+    User user = new User();
+    user.setId(UUID.randomUUID());
+    user.setEmail(request.getEmail());
+    user.setPassword("encodedPassword");
+
+    RefreshToken mockRefreshToken = new RefreshToken();
+    mockRefreshToken.setToken("sample-refresh-token");
+    mockRefreshToken.setUser(user);
+    mockRefreshToken.setExpiresAt(LocalDateTime.now().plusDays(7));
+
+    when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(request.getPassword(), "encodedPassword")).thenReturn(true);
+    when(jwtTokenProvider.generateToken(user)).thenReturn("testToken");
+    when(jwtTokenProvider.getExpirationTime()).thenReturn(3600L);
+    when(refreshTokenService.createRefreshToken(any(User.class), anyString()))
+        .thenReturn(mockRefreshToken);
+
+    AuthResp response = userService.authenticateUser(request);
+
+    assertNotNull(response);
+    assertEquals("testToken", response.getToken());
+    assertEquals("sample-refresh-token", response.getRefreshToken());
+  }
+
+  @Test
+  void authenticateUser_userNotFound() {
+    LoginReq request = new LoginReq("test@example.com", "password");
+    when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class, () -> userService.authenticateUser(request));
+  }
+
+  @Test
+  void authenticateUser_invalidPassword() {
+    LoginReq request = new LoginReq("test@example.com", "password");
+    User user = new User();
+    user.setEmail(request.getEmail());
+    user.setPassword("encodedPassword");
+
+    when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(request.getPassword(), "encodedPassword")).thenReturn(false);
+
+    assertThrows(InvalidPasswordException.class, () -> userService.authenticateUser(request));
+  }
+
+  @Test
+  void searchUsers_success() {
+    String query = "test";
+    User user1 = new User();
+    user1.setId(UUID.randomUUID());
+    user1.setUsername("testuser1");
+    user1.setEmail("t1@e.com");
+    user1.setRoles(Collections.singleton(Role.ROLE_USER));
+    List<User> users = Collections.singletonList(user1);
+    when(userRepository.findByUsernameContainingIgnoreCase(query)).thenReturn(users);
+
+    List<UserInfoResp> responses = userService.searchUsers(query);
+
+    assertNotNull(responses);
+    assertEquals(1, responses.size());
+    assertEquals("testuser1", responses.get(0).getUsername());
+  }
+
+  @Test
+  void updateUsername_success() {
+    UUID userId = UUID.randomUUID();
+    setupAuthenticationPrincipal(userId, "oldUsername", "user@example.com", "encodedPass");
+
+    User userFromDb = new User();
+    userFromDb.setId(userId);
+    userFromDb.setUsername("oldUsername");
+    userFromDb.setEmail("user@example.com");
+    userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
+    String newUsername = "newUsername";
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+    when(userRepository.existsByUsername(newUsername)).thenReturn(false);
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    UserInfoResp response = userService.updateUsername(newUsername);
+
+    assertEquals(newUsername, response.getUsername());
+    verify(userRepository).save(argThat(u -> u.getUsername().equals(newUsername)));
+  }
+
+  @Test
+  void updateUsername_success_sameUsername() {
+    UUID userId = UUID.randomUUID();
+    String currentUsername = "currentUsername";
+    setupAuthenticationPrincipal(userId, currentUsername, "user@example.com", "encodedPass");
+
+    User userFromDb = new User();
+    userFromDb.setId(userId);
+    userFromDb.setUsername(currentUsername);
+    userFromDb.setEmail("user@example.com");
+    userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    UserInfoResp response = userService.updateUsername(currentUsername);
+
+    assertEquals(currentUsername, response.getUsername());
+    verify(userRepository).save(userFromDb);
+  }
+
+  @Test
+  void updateUsername_usernameAlreadyTaken() {
+    UUID userId = UUID.randomUUID();
+    setupAuthenticationPrincipal(userId, "oldUsername", "user@example.com", "encodedPass");
+
+    User userFromDb = new User();
+    userFromDb.setId(userId);
+    userFromDb.setUsername("oldUsername");
+    String newUsername = "takenUsername";
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+    when(userRepository.existsByUsername(newUsername)).thenReturn(true);
+
+    assertThrows(
+        UsernameAlreadyExistsException.class, () -> userService.updateUsername(newUsername));
+  }
+
+  @Test
+  void updateUsername_whenAuthenticationIsNull_thenThrowsUserNotFoundException() {
+    when(securityContext.getAuthentication()).thenReturn(null);
+
+    assertThrows(UserNotFoundException.class, () -> userService.updateUsername("newUsername"));
+  }
+
+  @Test
+  void updateEmail_success() {
+    UUID userId = UUID.randomUUID();
+    setupAuthenticationPrincipal(userId, "testuser", "old@example.com", "encodedPass");
+    User userFromDb = new User();
+    userFromDb.setId(userId);
+    userFromDb.setUsername("testuser");
+    userFromDb.setEmail("old@example.com");
+    userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
+    String newEmail = "new@example.com";
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+    when(userRepository.existsByEmail(newEmail)).thenReturn(false);
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    UserInfoResp response = userService.updateEmail(newEmail);
+
+    assertEquals(newEmail, response.getEmail());
+    verify(userRepository).save(argThat(u -> u.getEmail().equals(newEmail)));
+  }
+
+  @Test
+  void updateEmail_success_sameEmail() {
+    UUID userId = UUID.randomUUID();
+    String currentEmail = "current@example.com";
+    setupAuthenticationPrincipal(userId, "testuser", currentEmail, "encodedPass");
+    User userFromDb = new User();
+    userFromDb.setId(userId);
+    userFromDb.setUsername("testuser");
+    userFromDb.setEmail(currentEmail);
+    userFromDb.setRoles(Collections.singleton(Role.ROLE_USER));
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    UserInfoResp response = userService.updateEmail(currentEmail);
+
+    assertEquals(currentEmail, response.getEmail());
+    verify(userRepository).save(userFromDb);
+  }
+
+  @Test
+  void updateEmail_emailAlreadyRegistered() {
+    UUID userId = UUID.randomUUID();
+    setupAuthenticationPrincipal(userId, "testuser", "old@example.com", "encodedPass");
+    User userFromDb = new User();
+    userFromDb.setId(userId);
+    userFromDb.setEmail("old@example.com");
+    String newEmail = "taken@example.com";
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+    when(userRepository.existsByEmail(newEmail)).thenReturn(true);
+
+    assertThrows(EmailAlreadyExistsException.class, () -> userService.updateEmail(newEmail));
+  }
+
+  @Test
+  void updatePassword_success() {
+    UUID userId = UUID.randomUUID();
+    String oldPassword = "oldPassword";
+    String newPassword = "newPassword";
+    String encodedOldPassword = "encodedOldPassword";
+    String encodedNewPassword = "encodedNewPassword";
+
+    setupAuthenticationPrincipal(userId, "testuser", "user@example.com", encodedOldPassword);
+    User userFromDb = new User();
+    userFromDb.setId(userId);
+    userFromDb.setPassword(encodedOldPassword);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+    when(passwordEncoder.matches(oldPassword, encodedOldPassword)).thenReturn(true);
+    when(passwordEncoder.encode(newPassword)).thenReturn(encodedNewPassword);
+
+    userService.updatePassword(oldPassword, newPassword);
+
+    verify(userRepository).save(argThat(u -> u.getPassword().equals(encodedNewPassword)));
+  }
+
+  @Test
+  void updatePassword_invalidOldPassword() {
+    UUID userId = UUID.randomUUID();
+    String oldPassword = "wrongOldPassword";
+    String newPassword = "newPassword";
+    String encodedPasswordInDb = "encodedCorrectOldPassword";
+
+    setupAuthenticationPrincipal(userId, "testuser", "user@example.com", encodedPasswordInDb);
+    User userFromDb = new User();
+    userFromDb.setId(userId);
+    userFromDb.setPassword(encodedPasswordInDb);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userFromDb));
+    when(passwordEncoder.matches(oldPassword, encodedPasswordInDb)).thenReturn(false);
+
+    assertThrows(
+        InvalidPasswordException.class, () -> userService.updatePassword(oldPassword, newPassword));
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void updatePassword_userNotFoundInDb() {
+    UUID userId = UUID.randomUUID();
+    setupAuthenticationPrincipal(userId, "testuser", "user@example.com", "encodedPass");
+
+    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        UserNotFoundException.class, () -> userService.updatePassword("oldPass", "newPass"));
+  }
+
+  @Test
+  void adminGetAllUsers_success() {
+    User user1 = new User();
+    user1.setId(UUID.randomUUID());
+    user1.setUsername("u1");
+    user1.setEmail("u1@e.com");
+    user1.setRoles(Collections.singleton(Role.ROLE_USER));
+    User user2 = new User();
+    user2.setId(UUID.randomUUID());
+    user2.setUsername("u2");
+    user2.setEmail("u2@e.com");
+    user2.setRoles(Collections.singleton(Role.ROLE_ADMIN));
+    when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+
+    List<UserInfoResp> responses = userService.adminGetAllUsers();
+
+    assertEquals(2, responses.size());
+  }
+
+  @Test
+  void adminUpdateUserRoles_success() {
+    UUID userId = UUID.randomUUID();
+    User userToUpdate = new User();
+    userToUpdate.setId(userId);
+    userToUpdate.setRoles(Collections.singleton(Role.ROLE_USER));
+    Set<Role> newRoles = Collections.singleton(Role.ROLE_ADMIN);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(userToUpdate));
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    UserInfoResp response = userService.adminUpdateUserRoles(userId, newRoles);
+
+    assertEquals(newRoles, response.getRoles());
+    verify(userRepository).save(argThat(u -> u.getRoles().equals(newRoles)));
+  }
+
+  @Test
+  void adminUpdateUserRoles_userNotFound() {
+    UUID userId = UUID.randomUUID();
+    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        UserNotFoundException.class,
+        () -> userService.adminUpdateUserRoles(userId, Collections.emptySet()));
+  }
+
+  @Test
+  void adminDeleteUser_success() {
+    UUID userId = UUID.randomUUID();
+    when(userRepository.existsById(userId)).thenReturn(true);
+
+    userService.adminDeleteUser(userId);
+
+    verify(userRepository).deleteById(userId);
+  }
+
+  @Test
+  void adminDeleteUser_userNotFound() {
+    UUID userId = UUID.randomUUID();
+    when(userRepository.existsById(userId)).thenReturn(false);
+
+    assertThrows(UserNotFoundException.class, () -> userService.adminDeleteUser(userId));
+  }
 }

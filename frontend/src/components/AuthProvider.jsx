@@ -53,8 +53,11 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      if (isTokenExpired()) {
-        console.log("Token expired, attempting refresh...");
+      // Sprawdź czy token wygasł lub wygaśnie w ciągu 60 sekund (proaktywne odświeżanie)
+      const shouldRefresh = isTokenExpired() || isTokenExpiringWithin(60);
+
+      if (shouldRefresh) {
+        console.log("Token expired or expiring soon, attempting refresh...");
 
         const refreshToken = localStorage.getItem("refreshToken");
         if (refreshToken) {
@@ -99,6 +102,35 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Sprawdź czy token wygaśnie w ciągu N sekund
+  const isTokenExpiringWithin = (seconds) => {
+    const expiration = localStorage.getItem("tokenExpiration");
+    if (!expiration) {
+      const token = localStorage.getItem("token");
+      if (!token) return true;
+
+      try {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join("")
+        );
+        const decoded = JSON.parse(jsonPayload);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const timeUntilExpiry = decoded.exp - currentTime;
+        return timeUntilExpiry < seconds;
+      } catch {
+        return true;
+      }
+    }
+
+    const timeUntilExpiry = (parseInt(expiration) - Date.now()) / 1000;
+    return timeUntilExpiry < seconds;
+  };
+
   const initializeAuth = async () => {
     setIsLoading(true);
     await checkTokenAndRefresh();
@@ -116,7 +148,7 @@ export const AuthProvider = ({ children }) => {
         if (!isValid) {
           console.log("Token validation failed, user will be logged out");
         }
-      }, 30000);
+      }, 15000); // Zmniejszone z 30s na 15s dla szybszej reaktywności
 
       return () => clearInterval(interval);
     }

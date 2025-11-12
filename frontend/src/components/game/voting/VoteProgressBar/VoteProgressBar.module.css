@@ -1,0 +1,111 @@
+.voteProgressBar {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.progressLabel {
+  font-size: 0.9rem;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.progressCount {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.progressCount strong {
+  color: #4CAF50;
+  font-size: 1.2rem;
+}
+
+.progressBarContainer {
+  width: 100%;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #66BB6A);
+  border-radius: 15px;
+  transition: width 0.5s ease, background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
+.progressBarFill.complete {
+  background: linear-gradient(90deg, #2196F3, #42A5F5);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.6);
+  animation: completeGlow 1s ease-in-out;
+}
+
+.progressPercentage {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.completeMessage {
+  margin-top: 10px;
+  text-align: center;
+  color: #4CAF50;
+  font-weight: bold;
+  font-size: 0.95rem;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes completeGlow {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.6);
+  }
+  50% {
+    box-shadow: 0 2px 16px rgba(33, 150, 243, 1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .progressHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .progressBarContainer {
+    height: 25px;
+  }
+
+  .progressPercentage {
+    font-size: 0.75rem;
+  }
+}

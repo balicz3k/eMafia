@@ -1,0 +1,252 @@
+.voteVisualization {
+  margin: 30px 0;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.chartTitle {
+  font-size: 1.3rem;
+  color: #fff;
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chartRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.chartRow:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(5px);
+}
+
+.playerLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.position {
+  font-size: 1.2rem;
+  min-width: 25px;
+}
+
+.playerName {
+  flex: 1;
+}
+
+.barWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.barContainer {
+  flex: 1;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  min-width: 60px;
+}
+
+.barFill.animated {
+  animation: slideIn 0.8s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.voteCount {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  padding: 0 10px;
+}
+
+.noVotes {
+  color: #999;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-left: 10px;
+}
+
+.votersList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.votersLabel {
+  font-size: 0.85rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.voterBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.voterBadge {
+  padding: 4px 12px;
+  background: rgba(33, 150, 243, 0.3);
+  border: 1px solid rgba(33, 150, 243, 0.5);
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #64B5F6;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.voterBadge:hover {
+  background: rgba(33, 150, 243, 0.5);
+  transform: scale(1.05);
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.legendColor {
+  width: 30px;
+  height: 15px;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.emptyState {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+/* Animacje dla nowych głosów */
+@keyframes newVote {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.chartRow.newVote {
+  animation: newVote 0.5s ease-out;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .voteVisualization {
+    padding: 15px;
+  }
+
+  .chartTitle {
+    font-size: 1.1rem;
+  }
+
+  .chartRow {
+    padding: 12px;
+  }
+
+  .playerLabel {
+    font-size: 1rem;
+  }
+
+  .barContainer {
+    height: 35px;
+  }
+
+  .voteCount {
+    font-size: 0.8rem;
+  }
+
+  .legend {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .voterBadges {
+    justify-content: center;
+  }
+}
+
+/* Tryb ciemny - dodatkowe style */
+@media (prefers-color-scheme: dark) {
+  .voteVisualization {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .chartRow {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .chartRow:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}

@@ -1,94 +1,140 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./LoginForm.module.css";
-import { MdEmail, MdLock, MdPerson } from "react-icons/md";
+import { MdEmail, MdLock } from "react-icons/md";
+import { useFormValidation } from "../../hooks/useFormValidation";
+import FormMessage from "../formMessage/FormMessage";
+import FormInput from "../formInput/FormInput";
+import { handleFetchError } from "../../utils/apiErrorHandler";
+import { getEmailError } from "../../utils/validators";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const LoginForm = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
   const [remember, setRemember] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const {
+    formData,
+    loading,
+    error,
+    setError,
+    handleChange,
+    handleSubmit: handleFormSubmit,
+  } = useFormValidation({ email: "", password: "" }, async (data) => {
+    if (!validateForm(data)) {
+      throw new Error("");
+    }
+
+    const result = await handleFetchError(
+      fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
+      "Login failed. Please check your credentials.",
+    );
+
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+
+    const {
+      token,
+      refreshToken,
+      tokenType = "Bearer",
+      expiresIn,
+    } = result.data;
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem("tokenType", tokenType);
+    localStorage.setItem("expiresIn", expiresIn);
+
+    const expirationTime = Date.now() + expiresIn * 1000;
+    localStorage.setItem("tokenExpiration", expirationTime.toString());
+
+    if (remember) {
+      localStorage.setItem("rememberMe", "true");
+    } else {
+      localStorage.removeItem("rememberMe");
+    }
+
+    navigate("/dashboard");
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       navigate("/dashboard");
     }
-  }, [navigate]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Display success message from registration
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      setTimeout(() => setSuccessMessage(""), 5000);
+    }
+  }, [navigate, location]);
+
+  const validateForm = (data) => {
+    const emailError = getEmailError(data.email);
+    if (emailError) {
+      setError(emailError);
+      return false;
+    }
+
+    if (!data.password) {
+      setError("Password is required");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    try {
+      await handleFormSubmit(e);
+    } catch (err) {
+      if (err.message) {
+        setError(err.message);
+      }
+    }
   };
 
   const handleRememberChange = () => {
     setRemember(!remember);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        localStorage.setItem("expiresIn", data.expiresIn);
-        const expirationTime = Date.now() + data.expiresIn * 1000;
-        localStorage.setItem("tokenExpiration", expirationTime);
-        navigate("/dashboard");
-      } else {
-        const error = await response.text();
-        alert("Password or email is incorrect!");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("An error occurred!");
-    }
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.signinForm}>
         <h2 className={styles.formTitle}>Sign in</h2>
+        <FormMessage type="success" message={successMessage} />
+        <FormMessage type="error" message={error} />
         <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label htmlFor="email">
-              <MdEmail size={25} />
-            </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="Your Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <FormInput
+            label={<MdEmail size={25} />}
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="password">
-              <MdLock size={25} />
-            </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              autoCorrect="off"
-              autoCapitalize="none"
-              spellCheck="false"
-              data-private="true"
-            />
-          </div>
+          <FormInput
+            label={<MdLock size={25} />}
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
 
           <div className={styles.cleanFormGroup}>
             <div className={styles.rememberWrapper}>
@@ -99,6 +145,7 @@ const LoginForm = () => {
                 className={styles.agreeTerm}
                 checked={remember}
                 onChange={handleRememberChange}
+                disabled={loading}
               />
               <label htmlFor="remember-me" className={styles.rememberMe}>
                 Remember me
@@ -109,7 +156,9 @@ const LoginForm = () => {
             </Link>
           </div>
 
-          <button className={styles.loginButton}>Log in</button>
+          <button className={styles.loginButton} disabled={loading}>
+            {loading ? "Signing in..." : "Log in"}
+          </button>
         </form>
       </div>
       <Link to="/register" className={styles.signUpLink}>

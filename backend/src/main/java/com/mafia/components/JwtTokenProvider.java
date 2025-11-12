@@ -1,17 +1,16 @@
 package com.mafia.components;
 
-import com.mafia.models.Role;
-import com.mafia.models.User;
+import com.mafia.databaseModels.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +38,7 @@ public class JwtTokenProvider {
 
         Claims claims = Jwts.claims().setSubject(user.getId().toString());
         claims.put("username", user.getUsername());
-        claims.put("roles", user.getRoles().stream().map(Role::name).collect(Collectors.toList()));
+        claims.put("isAdmin", user.isAdmin());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -59,19 +58,18 @@ public class JwtTokenProvider {
 
         UUID userId = UUID.fromString(claims.getSubject());
         String username = claims.get("username", String.class);
+        Boolean isAdmin = claims.get("isAdmin", Boolean.class);
 
-        @SuppressWarnings("unchecked")
-        List<String> rolesStrings = claims.get("roles", List.class);
-        List<GrantedAuthority> authorities;
-        if (rolesStrings != null) {
-            authorities = rolesStrings.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        } else {
-            authorities = Collections.emptyList();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (isAdmin != null && isAdmin) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         User principalUser = new User();
         principalUser.setId(userId);
         principalUser.setUsername(username);
+        principalUser.setAdmin(isAdmin != null && isAdmin);
 
         return new UsernamePasswordAuthenticationToken(principalUser, "", authorities);
     }

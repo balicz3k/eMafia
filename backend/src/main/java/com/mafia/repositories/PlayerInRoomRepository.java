@@ -1,16 +1,17 @@
 package com.mafia.repositories;
 
-import com.mafia.models.GameRoom;
-import com.mafia.models.PlayerInRoom;
-import com.mafia.models.User;
-import java.util.Optional;
+import com.mafia.databaseModels.GameRoom;
+import com.mafia.databaseModels.PlayerInRoom;
+import com.mafia.databaseModels.User;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PlayerInRoomRepository extends JpaRepository<PlayerInRoom, UUID> {
-    boolean existsByUserAndGameRoom(User user, GameRoom gameRoom);
 
-    Optional<PlayerInRoom> findByUserAndGameRoom(User user, GameRoom gameRoom);
+  List<PlayerInRoom> findAllByUser(User user);
+
+  List<PlayerInRoom> findAllByGameRoom(GameRoom gameRoom);
 }

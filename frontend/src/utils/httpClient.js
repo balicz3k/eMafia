@@ -6,7 +6,7 @@ import {
 } from "./tokenUtils";
 
 const httpClient = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http:
+  baseURL: process.env.REACT_APP_API_BASE_URL || "",
 });
 
 
@@ -72,7 +72,8 @@ httpClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Obsługuj zarówno 401 (Unauthorized) jak i 403 (Forbidden) – mogą oznaczać wygasły token
+    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

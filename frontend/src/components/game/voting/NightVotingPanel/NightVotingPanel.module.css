@@ -1,0 +1,282 @@
+.nightVotingPanel {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(63, 81, 181, 0.2), rgba(25, 32, 72, 0.3));
+  border-radius: 15px;
+  border: 2px solid rgba(63, 81, 181, 0.4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border-left: 5px solid #3F51B5;
+}
+
+.phaseIcon {
+  font-size: 4rem;
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+  }
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-size: 2rem;
+  color: #7986CB;
+  margin: 0 0 5px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #9FA8DA;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Instrukcje dla Mafii */
+.mafiaInstructions {
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  background: rgba(244, 67, 54, 0.15);
+  border-left: 4px solid #F44336;
+  border-radius: 8px;
+}
+
+.mafiaTitle {
+  color: #FF5252 !important;
+  font-size: 1.1rem;
+  margin: 0 0 10px 0;
+}
+
+.mafiaInstructions p {
+  margin: 8px 0;
+  color: #FFCDD2;
+  line-height: 1.6;
+}
+
+.instructionHighlight {
+  color: #4CAF50 !important;
+  font-weight: bold;
+}
+
+/* Instrukcje dla Obywateli */
+.citizenInstructions {
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  background: rgba(63, 81, 181, 0.15);
+  border-left: 4px solid #3F51B5;
+  border-radius: 8px;
+}
+
+.citizenTitle {
+  color: #7986CB !important;
+  font-size: 1.1rem;
+  margin: 0 0 10px 0;
+}
+
+.citizenInstructions p {
+  margin: 8px 0;
+  color: #C5CAE9;
+  line-height: 1.6;
+}
+
+.deadNotice {
+  color: #F44336 !important;
+  font-weight: bold;
+}
+
+/* Obszar oczekiwania dla Obywateli */
+.waitingArea {
+  margin: 30px 0;
+  padding: 60px 40px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+.sleepingIcon {
+  font-size: 5rem;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.waitingText {
+  font-size: 1.3rem;
+  color: #9FA8DA;
+  margin: 15px 0;
+  font-weight: 500;
+}
+
+.waitingSubtext {
+  font-size: 1rem;
+  color: #7986CB;
+  margin: 10px 0;
+  font-style: italic;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.star {
+  font-size: 1.5rem;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.star:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.star:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+.star:nth-child(4) {
+  animation-delay: 1.2s;
+}
+
+.star:nth-child(5) {
+  animation-delay: 1.6s;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+}
+
+/* Informacje o zasadach */
+.rulesInfo {
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rulesInfo h4 {
+  color: #7986CB;
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+}
+
+.rulesInfo ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rulesInfo li {
+  padding: 8px 0;
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.rulesInfo li::before {
+  content: '• ';
+  color: #7986CB;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.rulesInfo strong {
+  color: #9FA8DA;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .nightVotingPanel {
+    padding: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    text-align: center;
+    padding: 15px;
+  }
+
+  .phaseIcon {
+    font-size: 3rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .mafiaInstructions,
+  .citizenInstructions {
+    padding: 12px 15px;
+  }
+
+  .waitingArea {
+    padding: 40px 20px;
+  }
+
+  .sleepingIcon {
+    font-size: 4rem;
+  }
+
+  .waitingText {
+    font-size: 1.1rem;
+  }
+
+  .stars {
+    gap: 15px;
+  }
+
+  .star {
+    font-size: 1.2rem;
+  }
+
+  .rulesInfo {
+    padding: 15px;
+  }
+
+  .rulesInfo h4 {
+    font-size: 1rem;
+  }
+
+  .rulesInfo li {
+    font-size: 0.9rem;
+  }
+}

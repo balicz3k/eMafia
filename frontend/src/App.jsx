@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import LoginView from "./views/loginView/LoginView";
 import RegisterView from "./views/registerView/RegisterView";
 import DashboardView from "./views/dashboardView/DashboardView";
@@ -9,8 +9,9 @@ import CreateRoomView from "./views/createGameRoomView/CreateGameRoomView";
 import JoinRoomView from "./views/joinGameRoomView/JoinGameRoomView";
 import EnterRoomCodeView from "./views/enterRoomCodeView/EnterRoomCodeView";
 import AuthGuard from "./components/AuthGuard";
-import { AuthProvider } from "./components/AuthProvider";
+import {AuthProvider} from "./components/AuthProvider";
 import GameView from "./views/gameView/GameView";
+import GameRoomView from "./views/gameRoomView/GameRoomView";
 
 function App() {
   return (
@@ -79,6 +80,15 @@ function App() {
             element={
               <AuthGuard requireAuth={true}>
                 <JoinRoomView />
+              </AuthGuard>
+            }
+          />
+
+          <Route
+            path="/game-room/:roomCode"
+            element={
+              <AuthGuard requireAuth={true}>
+                <GameRoomView />
               </AuthGuard>
             }
           />

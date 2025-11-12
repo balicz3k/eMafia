@@ -1,7 +1,7 @@
 package com.mafia.repositories;
 
-import com.mafia.models.RefreshToken;
-import com.mafia.models.User;
+import com.mafia.databaseModels.RefreshToken;
+import com.mafia.databaseModels.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

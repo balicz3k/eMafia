@@ -1,29 +1,87 @@
-.viewContainer {
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 80vh;
+}
+
+.loading,
+.error,
+.noData {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 900px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 1.5rem;
-  box-sizing: border-box;
-  font-family: "DM Sans", sans-serif;
-  min-height: calc(100vh - 140px);
-}
-
-.section {
-  width: 100%;
-  max-width: 800px;
-  margin-top: 1.25rem;
-}
-
-.errorMessage {
-  color: #b00020;
+  justify-content: center;
+  min-height: 400px;
   text-align: center;
 }
 
-.playerList {
-  list-style: none;
-  padding: 0;
-  margin: 0.75rem 0 0;
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading p,
+.error p,
+.noData p {
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 10px 0;
+}
+
+.error h2 {
+  color: #F44336;
+  margin-bottom: 15px;
+}
+
+.error p {
+  color: #FFCDD2;
+}
+
+.backButton {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  background: linear-gradient(135deg, #42A5F5, #2196F3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  .loading,
+  .error,
+  .noData {
+    min-height: 300px;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+  }
 }

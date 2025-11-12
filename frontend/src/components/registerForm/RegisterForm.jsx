@@ -1,136 +1,156 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./RegisterForm.module.css";
 import { MdEmail, MdLock, MdPerson } from "react-icons/md";
+import { useFormValidation } from "../../hooks/useFormValidation";
+import FormMessage from "../formMessage/FormMessage";
+import FormInput from "../formInput/FormInput";
+import { handleFetchError } from "../../utils/apiErrorHandler";
+import {
+  getEmailError,
+  getPasswordError,
+  getUsernameError,
+} from "../../utils/validators";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const RegisterForm = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
   const [agreeTerms, setAgreeTerms] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const {
+    formData,
+    loading,
+    error,
+    setError,
+    handleChange,
+    handleSubmit: handleFormSubmit,
+  } = useFormValidation(
+    { username: "", email: "", password: "", confirmPassword: "" },
+    async (data) => {
+      if (!validateForm(data)) {
+        throw new Error("");
+      }
+
+      const result = await handleFetchError(
+        fetch(`${API_BASE_URL}/api/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: data.username,
+            email: data.email,
+            password: data.password,
+          }),
+        }),
+        "An error occurred during registration",
+      );
+
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+
+      navigate("/login", {
+        state: { message: "Registration successful! Please log in." },
+      });
+    },
+  );
+
+  const validateForm = (data) => {
+    const usernameError = getUsernameError(data.username);
+    if (usernameError) {
+      setError(usernameError);
+      return false;
+    }
+
+    const emailError = getEmailError(data.email);
+    if (emailError) {
+      setError(emailError);
+      return false;
+    }
+
+    const passwordError = getPasswordError(data.password);
+    if (passwordError) {
+      setError(passwordError);
+      return false;
+    }
+
+    if (data.password !== data.confirmPassword) {
+      setError("Passwords do not match");
+      return false;
+    }
+
+    if (!agreeTerms) {
+      setError("You must agree to the Terms of Use and Privacy Policy");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    try {
+      await handleFormSubmit(e);
+    } catch (err) {
+      if (err.message) {
+        setError(err.message);
+      }
+    }
   };
 
   const handleAgreeTermsChange = () => {
     setAgreeTerms(!agreeTerms);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    if (!agreeTerms) {
-      alert("You must agree to the Terms of Use and Privacy Policy");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-      if (response.ok) {
-        alert("Registration successful!");
-        navigate("/login");
-      } else {
-        const error = await response.text();
-        alert(error || "An error occurred!");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("An error occurred!");
-    }
+    setError("");
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.signupForm}>
         <h2 className={styles.formTitle}>Create Account</h2>
+        <FormMessage type="error" message={error} />
         <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label htmlFor="username">
-              <MdPerson size={25} />
-            </label>
-            <input
-              type="text"
-              name="username"
-              id="username"
-              placeholder="Your Username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <FormInput
+            label={<MdPerson size={25} />}
+            type="text"
+            name="username"
+            placeholder="Your Username (3-20 characters)"
+            value={formData.username}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="email">
-              <MdEmail size={25} />
-            </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="Your Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <FormInput
+            label={<MdEmail size={25} />}
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="password">
-              <MdLock size={25} />
-            </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              autoCorrect="off"
-              autoCapitalize="none"
-              spellCheck="false"
-              data-private="true"
-            />
-          </div>
+          <FormInput
+            label={<MdLock size={25} />}
+            type="password"
+            name="password"
+            placeholder="Password (min 8 chars, uppercase, lowercase, digit)"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="confirmPassword">
-              <MdLock size={25} />
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              id="confirmPassword"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              autoCorrect="off"
-              autoCapitalize="none"
-              spellCheck="false"
-              data-private="true"
-            />
-          </div>
+          <FormInput
+            label={<MdLock size={25} />}
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            disabled={loading}
+            required
+          />
 
           <div className={styles.cleanFormGroup}>
             <div className={styles.termsWrapper}>
@@ -141,6 +161,7 @@ const RegisterForm = () => {
                 className={styles.agreeTerm}
                 checked={agreeTerms}
                 onChange={handleAgreeTermsChange}
+                disabled={loading}
                 required
               />
               <label htmlFor="agree-terms" className={styles.termsText}>
@@ -156,7 +177,9 @@ const RegisterForm = () => {
             </div>
           </div>
 
-          <button className={styles.registerButton}>Sign up</button>
+          <button className={styles.registerButton} disabled={loading}>
+            {loading ? "Creating Account..." : "Sign up"}
+          </button>
         </form>
       </div>
       <Link to="/login" className={styles.signInLink}>

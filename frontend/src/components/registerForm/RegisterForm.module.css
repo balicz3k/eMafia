@@ -170,10 +170,16 @@
   font-weight: 500;
   cursor: pointer;
   margin-top: 1rem;
+  transition: opacity 0.2s ease;
 }
 
-.registerButton:hover {
+.registerButton:hover:not(:disabled) {
   opacity: 0.8;
+}
+
+.registerButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .signInLink {

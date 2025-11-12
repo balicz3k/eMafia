@@ -1,171 +1,107 @@
-.viewContainer {
-  align-items: center;
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: calc(100vh - 140px);
+  font-family: "DM Sans", sans-serif;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  max-width: 700px;
+  justify-content: center;
+}
+
+.title {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.roomInfo {
+  background: #f9f9f9;
+  border-radius: 12px;
   padding: 1.5rem;
-  font-family: "DM Sans", sans-serif;
-  min-height: calc(100vh - 140px);
-  box-sizing: border-box;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 1.5rem;
+  border: 1px solid #eee;
 }
 
-.viewContainer h2 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #000000;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.viewContainer h3 {
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 0.5rem;
-  font-size: 1.25rem;
-  font-weight: 600;
-  width: 100%;
-  max-width: 600px;
-  text-align: left;
-}
-
-.viewContainer p {
+.roomInfo p {
+  margin: 0.5rem 0;
   font-size: 1rem;
+  color: #555;
+}
+
+.roomInfo strong {
   color: #333;
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
-  width: 100%;
-  max-width: 600px;
-  text-align: left;
 }
 
-.errorMessage {
-  color: #cc0404;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-size: 0.875rem;
-  width: 100%;
-  max-width: 450px;
-}
-
-.infoMessage {
-  color: #007bff;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-size: 0.875rem;
-  width: 100%;
-  max-width: 450px;
-}
-
-.playerList {
-  list-style-type: none;
-  padding-left: 0;
-  width: 100%;
-  max-width: 500px;
-  margin-top: 1rem;
-}
-
-.playerList li {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  padding: 12px 18px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  font-size: 1rem;
+.actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  flex-direction: column;
+  gap: 10px;
 }
 
-.hostLabel {
-  font-size: 0.85em;
-  font-style: italic;
-  color: #666;
-}
-
-.joinButton,
-.startButton {
-  display: flex;
-  width: 100%;
-  max-width: 350px;
-  padding: 12px 20px;
-  margin: 1.5rem auto 1rem;
+.primaryBtn {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  color: #fff;
+  background: #cc0404;
+  cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
-  color: white;
-  background-color: #cc0404;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.2s ease;
+  font-family: "DM Sans", sans-serif;
 }
 
-.joinButton:hover,
-.startButton:hover {
-  opacity: 0.8;
-}
-
-.joinButton:disabled,
-.startButton:disabled {
-  background-color: #ccc;
-  opacity: 0.7;
+.primaryBtn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.status {
-  font-weight: bold;
-  padding: 5px 12px;
-  border-radius: 15px;
-  color: white;
-  font-size: 0.9em;
-  text-transform: capitalize;
+.primaryBtn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.secondaryBtn {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.2s ease;
   font-family: "DM Sans", sans-serif;
-  margin-left: 10px;
+  color: #333;
 }
 
-.status.waitingforplayers {
-  background-color: #f0ad4e;
-}
-.status.readytostart {
-  background-color: #5bc0de;
-}
-.status.inprogress {
-  background-color: #337ab7;
-}
-.status.paused {
-  background-color: #777;
-}
-.status.finished {
-  background-color: #d9534f;
-}
-.status.abandoned {
-  background-color: #333;
+.secondaryBtn:hover {
+  background: #f5f5f5;
 }
 
-.detailsSection {
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 1.5rem;
-  text-align: left;
+.info {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
 }
 
-.detailsSection p strong {
-  color: #111;
+.error {
+  text-align: center;
+  color: #cc0404;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .roomInfo {
+    padding: 1rem;
+  }
 }

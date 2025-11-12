@@ -1,156 +1,119 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layouts/mainLayout/MainLayout";
 import SearchGameRoomBar from "../../components/searchGameRoomBar/SearchGameRoomBar";
 import GameRoomList from "../../components/gameRoomList/GameRoomList";
 import styles from "./DashboardView.module.css";
-import { decodeJwt } from "../../utils/decodeJwt";
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+import { useAuth } from "../../components/AuthProvider";
+import { useGameRooms } from "../../hooks/useGameRooms";
+import httpClient from "../../utils/httpClient";
 
 const DashboardView = () => {
-  const [userGames, setUserGames] = useState([]);
+  const { user } = useAuth();
+  const { rooms, loading, error, fetchMyRooms } = useGameRooms();
   const [searchResults, setSearchResults] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [currentUser, setCurrentUser] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState("");
   const navigate = useNavigate();
 
+  // Fetch user's rooms on component mount
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    if (user?.id) {
+      fetchMyRooms();
+    }
+  }, [user?.id, fetchMyRooms]);
+
+  const handleSearch = useCallback(
+    async (searchTerm) => {
+      if (!searchTerm.trim()) {
+        setSearchResults(null);
+        setSearchError("");
+        return;
+      }
+
+      setSearchLoading(true);
+      setSearchError("");
+
       try {
-        const decoded = decodeJwt(token);
-        setCurrentUser(decoded);
-      } catch (e) {
-        console.error("Failed to decode JWT", e);
+        const response = await httpClient.get("/api/game_rooms/search", {
+          params: { name: searchTerm },
+        });
+        setSearchResults(response.data || []);
+      } catch (err) {
+        console.error("Error searching games:", err);
+        const msg = err?.response?.data?.message || err?.message || "Could not perform search.";
+        setSearchError(msg);
+        setSearchResults([]);
+      } finally {
+        setSearchLoading(false);
       }
-    }
-  }, []);
+    },
+    []
+  );
 
-  const fetchUserGames = useCallback(async () => {
-    if (!currentUser) return;
-    setIsLoading(true);
-    setError("");
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/gamerooms/my-rooms`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch user games");
-      }
-      const data = await response.json();
-      setUserGames(data);
-    } catch (err) {
-      console.error("Error fetching user games:", err);
-      setError(err.message || "Could not fetch your games.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    fetchUserGames();
-  }, [fetchUserGames]);
-
-  const handleSearch = async (searchTerm) => {
-    if (!searchTerm.trim()) {
-      setSearchResults(null);
-      return;
-    }
-    setIsLoading(true);
-    setError("");
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/gamerooms/search?name=${encodeURIComponent(searchTerm)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        throw new Error("Failed to search games");
-      }
-      const data = await response.json();
-      setSearchResults(data);
-    } catch (err) {
-      console.error("Error searching games:", err);
-      setError(err.message || "Could not perform search.");
-      setSearchResults([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleLeaveRoom = async (roomCode) => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/gamerooms/${roomCode}/leave`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: "Failed to leave room." }));
-        throw new Error(errorData.message);
-      }
-      fetchUserGames();
-      if (searchResults) {
-        const updatedResults = searchResults.filter(
-          (room) => room.roomCode !== roomCode,
-        );
-        setSearchResults(updatedResults);
-      }
-    } catch (err) {
-      console.error("Error leaving room:", err);
-      alert(`Error: ${err.message}`);
-    }
-  };
-
-  const handleEndRoom = async (roomCode) => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/gamerooms/${roomCode}/end`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: "Failed to end game." }));
-        throw new Error(errorData.message);
+  const handleLeaveRoom = useCallback(
+    async (roomCode) => {
+      if (!window.confirm("Are you sure you want to leave this room?")) {
+        return;
       }
 
-      fetchUserGames();
-      if (searchResults) {
-        const updatedResults = searchResults.filter(
-          (room) => room.roomCode !== roomCode,
-        );
-        setSearchResults(updatedResults);
-      }
-    } catch (err) {
-      console.error("Error ending room:", err);
-      alert(`Error: ${err.message}`);
-    }
-  };
+      try {
+        await httpClient.post(`/api/game_rooms/leave/${roomCode}`, { roomCode });
 
-  const gamesToDisplay = searchResults !== null ? searchResults : userGames;
+        // Refresh rooms after leaving
+        await fetchMyRooms();
+
+        // Update search results if they exist
+        if (searchResults) {
+          const updatedResults = searchResults.filter(
+            (room) => room.roomCode !== roomCode
+          );
+          setSearchResults(updatedResults);
+        }
+      } catch (err) {
+        console.error("Error leaving room:", err);
+        const msg = err?.response?.data?.message || err?.message || "Could not leave room";
+        alert(`Error: ${msg}`);
+      }
+    },
+    [fetchMyRooms, searchResults]
+  );
+
+  const handleEndRoom = useCallback(
+    async (roomCode) => {
+      if (
+        !window.confirm(
+          "Are you sure you want to end this game? This action cannot be undone."
+        )
+      ) {
+        return;
+      }
+
+      try {
+        await httpClient.post(`/api/game_rooms/leave/${roomCode}`, { roomCode });
+
+        // Refresh rooms after ending
+        await fetchMyRooms();
+
+        // Update search results if they exist
+        if (searchResults) {
+          const updatedResults = searchResults.filter(
+            (room) => room.roomCode !== roomCode
+          );
+          setSearchResults(updatedResults);
+        }
+      } catch (err) {
+        console.error("Error ending room:", err);
+        const msg = err?.response?.data?.message || err?.message || "Could not end room";
+        alert(`Error: ${msg}`);
+      }
+    },
+    [fetchMyRooms, searchResults]
+  );
+
+  const gamesToDisplay = searchResults !== null ? searchResults : rooms;
+  const isLoading = searchResults !== null ? searchLoading : loading;
+  const displayError = searchResults !== null ? searchError : error;
 
   return (
     <MainLayout>
@@ -166,17 +129,32 @@ const DashboardView = () => {
         </header>
 
         {isLoading && <p className={styles.loadingMessage}>Loading games...</p>}
-        {error && <p className={styles.errorMessage}>{error}</p>}
+        {displayError && <p className={styles.errorMessage}>{displayError}</p>}
 
-        {!isLoading && !error && (
+        {!isLoading && !displayError && (
           <section>
             <h2>{searchResults !== null ? "Search Results" : "Your Games"}</h2>
-            <GameRoomList
-              rooms={gamesToDisplay}
-              currentUserId={currentUser?.sub}
-              onLeaveRoom={handleLeaveRoom}
-              onEndRoom={handleEndRoom}
-            />
+            {gamesToDisplay.length === 0 ? (
+              <div className={styles.emptyState}>
+                <p className={styles.emptyMessage}>
+                  {searchResults !== null
+                    ? "No games match your search."
+                    : "You are not currently participating in any games."}
+                </p>
+                {searchResults === null && (
+                  <p className={styles.emptySubtext}>
+                    Create a new game or search for existing ones to join!
+                  </p>
+                )}
+              </div>
+            ) : (
+              <GameRoomList
+                rooms={gamesToDisplay}
+                currentUserId={user?.id}
+                onLeaveRoom={handleLeaveRoom}
+                onEndRoom={handleEndRoom}
+              />
+            )}
           </section>
         )}
       </div>

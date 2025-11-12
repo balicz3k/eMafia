@@ -1,0 +1,76 @@
+.votingTimer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.timerDisplay {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s ease;
+}
+
+.timerIcon {
+  font-size: 2rem;
+  animation: pulse 2s infinite;
+}
+
+.timerText {
+  letter-spacing: 2px;
+}
+
+.timerNormal {
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.timerWarning {
+  text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+  animation: pulse 1s infinite;
+}
+
+.timerDanger {
+  text-shadow: 0 0 15px rgba(244, 67, 54, 0.7);
+  animation: pulse 0.5s infinite;
+}
+
+.timerLabel {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .timerDisplay {
+    font-size: 2rem;
+  }
+
+  .timerIcon {
+    font-size: 1.5rem;
+  }
+
+  .timerLabel {
+    font-size: 0.8rem;
+  }
+}

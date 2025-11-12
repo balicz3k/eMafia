@@ -1,0 +1,61 @@
+.formGroup {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  transform: none;
+  color: black;
+  padding: 0 0 5px 0;
+  margin-bottom: 2rem;
+  font-family: DM Sans, sans-serif;
+}
+
+.formGroup::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: -20px;
+  height: 1px;
+  background-color: #9c9797;
+  max-width: 350px;
+}
+
+.formGroup input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 10px 0 7px 30px;
+  font-size: 16px;
+}
+
+.formGroup label {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  height: 25px;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border: none;
+}
+
+.formGroup input::placeholder {
+  font-family: DM Sans, sans-serif;
+}
+
+.formGroup input:focus::placeholder {
+  color: black;
+}
+
+.formGroup:focus-within::after {
+  background-color: black;
+}
+
+.formGroup input:-webkit-autofill,
+.formGroup input:-webkit-autofill:hover,
+.formGroup input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: #000000;
+}

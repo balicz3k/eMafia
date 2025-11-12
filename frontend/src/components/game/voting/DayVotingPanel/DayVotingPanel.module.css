@@ -1,0 +1,154 @@
+.dayVotingPanel {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.05));
+  border-radius: 15px;
+  border: 2px solid rgba(255, 193, 7, 0.3);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border-left: 5px solid #FFC107;
+}
+
+.phaseIcon {
+  font-size: 4rem;
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-size: 2rem;
+  color: #FFC107;
+  margin: 0 0 5px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #FFD54F;
+  margin: 0;
+  font-weight: 500;
+}
+
+.instructions {
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  background: rgba(33, 150, 243, 0.1);
+  border-left: 4px solid #2196F3;
+  border-radius: 8px;
+}
+
+.instructions p {
+  margin: 8px 0;
+  color: #E3F2FD;
+  line-height: 1.6;
+}
+
+.instructionHighlight {
+  color: #4CAF50 !important;
+  font-weight: bold;
+}
+
+.deadNotice {
+  color: #F44336 !important;
+  font-weight: bold;
+}
+
+.rulesInfo {
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rulesInfo h4 {
+  color: #FFC107;
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+}
+
+.rulesInfo ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rulesInfo li {
+  padding: 8px 0;
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.rulesInfo li::before {
+  content: '• ';
+  color: #FFC107;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.rulesInfo strong {
+  color: #FFD54F;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .dayVotingPanel {
+    padding: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    text-align: center;
+    padding: 15px;
+  }
+
+  .phaseIcon {
+    font-size: 3rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .instructions {
+    padding: 12px 15px;
+  }
+
+  .rulesInfo {
+    padding: 15px;
+  }
+
+  .rulesInfo h4 {
+    font-size: 1rem;
+  }
+
+  .rulesInfo li {
+    font-size: 0.9rem;
+  }
+}

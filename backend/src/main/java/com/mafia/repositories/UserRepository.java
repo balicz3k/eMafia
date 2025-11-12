@@ -1,6 +1,6 @@
 package com.mafia.repositories;
 
-import com.mafia.models.User;
+import com.mafia.databaseModels.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
