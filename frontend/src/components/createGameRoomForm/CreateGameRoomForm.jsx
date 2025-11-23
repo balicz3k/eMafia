@@ -26,8 +26,9 @@ const CreateGameRoomForm = () => {
       // CreateGameRoomResp { roomCode, name }
       const data = resp.data;
 
-      // Navigate directly to the room view (poczekalnia)
-      navigate(`/room/${data.roomCode}`);
+      // Navigate directly to the room view
+      console.info(`✅ Game room: ${data.roomCode} created successfully.`);
+      navigate(`/game-room/${data.roomCode}`);
     } catch (err) {
       console.error("Error creating room:", err);
       const msg =

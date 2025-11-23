@@ -20,6 +20,7 @@ const GameRoomView = () => {
   const [copied, setCopied] = useState(false);
   const [joining, setJoining] = useState(false);
   const [starting, setStarting] = useState(false);
+  const [gameReady, setGameReady] = useState(false);
 
   const stompRef = useRef(null);
 
@@ -54,23 +55,47 @@ const GameRoomView = () => {
         heartbeatOutgoing: 4000,
       });
       client.onConnect = () => {
-        console.log("WebSocket connected for room:", roomCode);
+        console.log("🟢 WebSocket connected for room:", roomCode);
+        
+        // Subskrypcja na aktualizacje pokoju
         client.subscribe(`/topic/game/${roomCode}/updated`, (message) => {
           try {
             const payload = JSON.parse(message.body);
-            console.log("Received WS update:", payload);
+            console.log("🔔 Received WS update:", payload);
+            
             // Precyzyjny merge GameRoomUpdateDto
             setRoom((prev) => {
-              if (!prev) return prev;
-              return {
+              if (!prev) {
+                console.log("⚠️ No previous room state, skipping update");
+                return prev;
+              }
+              
+              console.log("📊 Previous status:", prev.status, "| New status:", payload.status);
+              
+              const updated = {
                 ...prev,
                 currentPlayers: payload.currentPlayers ?? prev.currentPlayers,
                 status: payload.status ?? prev.status,
+                gameRoomStatus: payload.status ?? prev.gameRoomStatus,
                 players: payload.players ?? prev.players,
               };
+              
+              console.log("✅ Room state updated:", updated);
+              return updated;
             });
           } catch (e) {
-            console.warn("WS parse error:", e);
+            console.error("❌ WS parse error:", e);
+          }
+        });
+
+        // Subskrypcja na "game_ready" - gra w pełni gotowa
+        client.subscribe(`/topic/game/${roomCode}/ready`, (message) => {
+          try {
+            const payload = JSON.parse(message.body);
+            console.log("🎮 GAME READY received:", payload);
+            setGameReady(true);
+          } catch (e) {
+            console.error("❌ WS parse error (ready):", e);
           }
         });
       };
@@ -139,21 +164,25 @@ const GameRoomView = () => {
     setStarting(true);
     setError("");
     try {
+      console.log("🎮 Starting game with settings:", settings);
+      
       // Nowy endpoint z konfiguracją
       await httpClient.post(`/api/games/start`, {
         roomId: room.id,
         mafiaCount: settings.mafiaCount,
         discussionTimeSeconds: settings.discussionTimeSeconds
       });
-      // Backend przekieruje lub wyśle WS update
-      await fetchRoom();
+      
+      console.log("✅ Game start request successful - waiting for game_ready event");
+      // NIE nawiguj tutaj! Czekamy na WebSocket "game_ready"
+      // await fetchRoom(); - też nie potrzebne, WS zaktualizuje stan
     } catch (err) {
-      console.error("Start failed:", err);
+      console.error("❌ Start failed:", err);
       const msg = err?.response?.data?.message || err?.message || "Failed to start game";
       setError(msg);
-    } finally {
-      setStarting(false);
+      setStarting(false); // Tylko przy błędzie
     }
+    // NIE rób setStarting(false) tutaj - zostaw "Starting..." aż przyjdzie game_ready
   };
 
   // Derived flags
@@ -186,11 +215,13 @@ const GameRoomView = () => {
   const isHost = !!room?.hostId && String(room.hostId) === String(currentUserId);
   const canStart = isHost && players.length >= 2 && String(status) !== "IN_PROGRESS";
 
+  // Nawigacja do gry TYLKO po otrzymaniu "game_ready"
   useEffect(() => {
-    if (String(status) === "IN_PROGRESS" && isInRoom) {
+    if (gameReady && isInRoom) {
+      console.log("🚀 GAME READY - Navigating to game view:", `/game/${roomCode}`);
       navigate(`/game/${roomCode}`);
     }
-  }, [status, isInRoom, roomCode, navigate]);
+  }, [gameReady, isInRoom, roomCode, navigate]);
 
   if (loading) {
     return (

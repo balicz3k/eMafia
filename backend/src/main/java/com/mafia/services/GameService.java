@@ -27,6 +27,7 @@ public class GameService {
   private final GamePlayerRepository gamePlayerRepository;
   private final PlayerInRoomRepository playerInRoomRepository;
   private final VotingSessionService votingSessionService;
+  private final org.springframework.messaging.simp.SimpMessagingTemplate messagingTemplate;
 
   @Transactional
   public GameStateResponse startGame(StartGameRequest request) {
@@ -75,7 +76,10 @@ public class GameService {
     room.setMafiaCount(mafiaCount);
     room.setDiscussionTimeSeconds(request.getDiscussionTimeSeconds());
     room.setGameRoomStatus(GameRoomStatus.GAME_IN_PROGRESS);
-    gameRoomRepository.save(room);
+    GameRoom savedRoom = gameRoomRepository.save(room);
+
+    // Broadcast zmiany statusu pokoju przez WebSocket
+    broadcastRoomStatusUpdate(savedRoom);
 
     // Utwórz grę
     Game game = new Game();
@@ -100,6 +104,9 @@ public class GameService {
       log.error("Error starting voting session", e);
       throw new IllegalStateException("Failed to start voting session: " + e.getMessage());
     }
+
+    // Broadcast "game_ready" - gra jest w pełni gotowa
+    broadcastGameReady(savedRoom, savedGame);
 
     return toResponse(savedGame);
   }
@@ -313,5 +320,66 @@ public class GameService {
         game.getCreatedAt(),
         game.getStartedAt(),
         game.getEndedAt());
+  }
+
+  /**
+   * Broadcast zmiany statusu pokoju przez WebSocket
+   * Używa tego samego formatu co GameRoomService dla spójności
+   */
+  private void broadcastRoomStatusUpdate(GameRoom room) {
+    try {
+      List<PlayerInRoom> playersInRoom = playerInRoomRepository.findAllByGameRoom(room);
+      
+      // Przygotuj listę graczy
+      List<Map<String, Object>> players = playersInRoom.stream()
+          .map(p -> {
+            Map<String, Object> playerMap = new HashMap<>();
+            playerMap.put("userId", p.getUser().getId());
+            playerMap.put("username", p.getUser().getUsername());
+            playerMap.put("isHost", p.getUser().getId().equals(room.getHost().getId()));
+            playerMap.put("joinedAt", p.getJoinedAt());
+            return playerMap;
+          })
+          .collect(Collectors.toList());
+      
+      // Przygotuj update w tym samym formacie co GameRoomService
+      Map<String, Object> update = new HashMap<>();
+      update.put("status", room.getGameRoomStatus());
+      update.put("roomCode", room.getRoomCode());
+      update.put("currentPlayers", playersInRoom.size());
+      update.put("players", players);
+      
+      String topic = "/topic/game/" + room.getRoomCode() + "/updated";
+      messagingTemplate.convertAndSend(topic, update);
+      
+      log.info("Broadcast room status update to topic: {} with status: {}", topic, room.getGameRoomStatus());
+    } catch (Exception e) {
+      log.error("Error broadcasting room status update for room: {}", room.getRoomCode(), e);
+    }
+  }
+
+  /**
+   * Broadcast "game_ready" - informuje klientów że gra jest w pełni gotowa
+   * (role przydzielone, sesja głosowania uruchomiona)
+   */
+  private void broadcastGameReady(GameRoom room, Game game) {
+    try {
+      String roomCode = room.getRoomCode();
+      
+      Map<String, Object> payload = new HashMap<>();
+      payload.put("type", "game_ready");
+      payload.put("roomCode", roomCode);
+      payload.put("gameId", game.getId());
+      payload.put("phase", game.getCurrentPhase().name());
+      payload.put("dayNumber", game.getCurrentDayNumber());
+      payload.put("status", game.getStatus().name());
+      
+      String topic = "/topic/game/" + roomCode + "/ready";
+      messagingTemplate.convertAndSend(topic, payload);
+      
+      log.info("Broadcast GAME_READY to topic: {} for game {}", topic, game.getId());
+    } catch (Exception e) {
+      log.warn("Failed to broadcast GAME_READY for room: {}", room.getRoomCode(), e);
+    }
   }
 }

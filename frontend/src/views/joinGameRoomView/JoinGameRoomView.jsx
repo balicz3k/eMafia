@@ -39,9 +39,9 @@ const JoinGameRoomView = () => {
     setJoining(true);
     setError("");
     try {
-      await httpClient.post(`/api/game_rooms/join/${roomCode}`, { roomCode });
+      await httpClient.post(`/api/game_rooms/join/${roomCode}`);
       // Po sukcesie nawiguj do widoku pokoju
-      navigate(`/room/${roomCode}`);
+      navigate(`/game-room/${roomCode}`);
     } catch (err) {
       console.error("Join failed:", err);
       const msg = err?.response?.data?.message || err?.message || "Failed to join room";
