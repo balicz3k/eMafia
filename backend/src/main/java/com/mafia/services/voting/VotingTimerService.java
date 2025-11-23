@@ -69,6 +69,7 @@ public class VotingTimerService {
    * Broadcast do wszystkich aktywnych sesji
    */
   @Scheduled(fixedDelay = 1000)
+  @Transactional(readOnly = true)
   public void broadcastRemainingTime() {
     try {
       List<VotingSession> activeSessions = votingSessionRepository.findByStatus(VotingStatus.ACTIVE);

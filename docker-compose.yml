@@ -10,6 +10,11 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      # Czyta z .env (automatycznie z HOST_IP)
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+    volumes:
+      # Montuj katalog logs z kontenera do hosta
+      - ./backend/logs:/app/logs
     depends_on:
       db:
         condition: service_healthy
@@ -39,7 +44,12 @@ services:
       - SPRING_PROFILES_ACTIVE=test
 
   mafia-frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Czyta z .env (automatycznie z HOST_IP)
+        - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL:-http://localhost:8080}
     ports:
       - "3000:80"
     depends_on:

@@ -1,0 +1,16 @@
+# ===================================
+# eMafia - Environment Configuration
+# ===================================
+
+# ===================================
+# Fill host IP with IP of your host.
+# You can check your IP by running ip config in your console 
+# ===================================
+
+HOST_IP=YourHostIP 
+
+# Frontend URL
+FRONTEND_URL=http://${HOST_IP}:3000
+
+# Backend URL
+REACT_APP_API_BASE_URL=http://${HOST_IP}:8080
