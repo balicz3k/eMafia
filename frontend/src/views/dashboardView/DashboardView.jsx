@@ -10,18 +10,18 @@ import httpClient from "../../utils/httpClient";
 
 const DashboardView = () => {
   const { user } = useAuth();
-  const { rooms, loading, error, fetchMyRooms } = useGameRooms();
+  const { rooms, loading, error, fetchRoomsByUserId } = useGameRooms();
   const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState("");
   const navigate = useNavigate();
 
-  // Fetch user's rooms on component mount
+  // Fetch user's rooms on component mount and when user changes
   useEffect(() => {
     if (user?.id) {
-      fetchMyRooms();
+      fetchRoomsByUserId(user.id);
     }
-  }, [user?.id, fetchMyRooms]);
+  }, [user?.id, fetchRoomsByUserId]);
 
   const handleSearch = useCallback(
     async (searchTerm) => {
@@ -61,7 +61,9 @@ const DashboardView = () => {
         await httpClient.post(`/api/game_rooms/leave/${roomCode}`, { roomCode });
 
         // Refresh rooms after leaving
-        await fetchMyRooms();
+        if (user?.id) {
+          await fetchRoomsByUserId(user.id);
+        }
 
         // Update search results if they exist
         if (searchResults) {
@@ -76,7 +78,7 @@ const DashboardView = () => {
         alert(`Error: ${msg}`);
       }
     },
-    [fetchMyRooms, searchResults]
+    [fetchRoomsByUserId, searchResults, user?.id]
   );
 
   const handleEndRoom = useCallback(
@@ -93,7 +95,9 @@ const DashboardView = () => {
         await httpClient.post(`/api/game_rooms/leave/${roomCode}`, { roomCode });
 
         // Refresh rooms after ending
-        await fetchMyRooms();
+        if (user?.id) {
+          await fetchRoomsByUserId(user.id);
+        }
 
         // Update search results if they exist
         if (searchResults) {
@@ -108,7 +112,7 @@ const DashboardView = () => {
         alert(`Error: ${msg}`);
       }
     },
-    [fetchMyRooms, searchResults]
+    [fetchRoomsByUserId, searchResults, user?.id]
   );
 
   const gamesToDisplay = searchResults !== null ? searchResults : rooms;
