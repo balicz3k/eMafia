@@ -1,18 +1,115 @@
-.secondaryButton {
-  background: #f0f0f0;
-  color: #111;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 8px 12px;
+/* RolePanel - Mobile-First, wzorowany na LoginView */
+
+.rolePanel {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: var(--spacing-md) auto;
+}
+
+.checkRoleButton {
+  position: relative;
+  display: flex;
+  width: 100%;
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-primary);
+  opacity: 1;
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
+  align-items: center;
+  border: none;
+  padding: 12px 0;
+  justify-content: center;
+  font-size: var(--font-size-base);
+  transition: opacity var(--transition-base);
 }
+
+.checkRoleButton:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.checkRoleButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .error {
-  color: #b00020;
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-sm);
+  text-align: center;
+  font-family: var(--font-family);
 }
-.roleBox {
-  margin-top: 10px;
-  padding: 10px 14px;
-  border: 1px dashed #bbb;
-  border-radius: 8px;
-  background: #fafafa;
+
+.roleCard {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--color-bg);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  animation: slideDown 0.3s ease;
+  text-align: center;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.roleIcon {
+  font-size: var(--icon-size-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.roleInfo {
+  margin-bottom: var(--spacing-sm);
+}
+
+.roleTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xs) 0;
+  font-family: var(--font-family);
+}
+
+.roleName {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin: 0;
+  font-family: var(--font-family);
+}
+
+.deadBadge {
+  font-size: var(--font-size-sm);
+  color: var(--role-dead);
+  margin: var(--spacing-xs) 0 0 0;
+  font-family: var(--font-family);
+}
+
+.autoHideHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin: var(--spacing-sm) 0 0 0;
+  font-style: italic;
+  font-family: var(--font-family);
+}
+
+/* Tablet+ */
+@media (min-width: 768px) {
+  .roleIcon {
+    font-size: 5rem;
+  }
+  
+  .roleName {
+    font-size: var(--font-size-3xl);
+  }
 }

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './PlayerVotingList.module.css';
 
 /**
  * Komponent wyświetlający listę graczy z możliwością głosowania
+ * Dwuetapowy proces: wybór gracza → submit vote
  */
 const PlayerVotingList = ({ 
   players, 
@@ -11,6 +12,8 @@ const PlayerVotingList = ({
   canVote, 
   currentUserId 
 }) => {
+  const [selectedPlayerId, setSelectedPlayerId] = useState(null);
+
   if (!players || players.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -19,25 +22,37 @@ const PlayerVotingList = ({
     );
   }
 
-  const handleVote = (targetUserId) => {
+  const handleSelectPlayer = (playerId) => {
     if (!canVote || hasVoted) return;
-    onVote(targetUserId);
+    setSelectedPlayerId(playerId);
+  };
+
+  const handleSubmitVote = () => {
+    if (!selectedPlayerId || !canVote || hasVoted) return;
+    onVote(selectedPlayerId);
+    setSelectedPlayerId(null);
   };
 
   return (
     <div className={styles.playerVotingList}>
-      <h3 className={styles.listTitle}>Select a player to vote</h3>
+      <h3 className={styles.listTitle}>Select a player</h3>
       
       <ul className={styles.playerList}>
         {players.map((player) => {
+          const isSelected = selectedPlayerId === player.userId;
           const isCurrentUser = String(player.userId) === String(currentUserId);
-          const isAlive = player.isAlive !== false; // Default to true if not specified
+          const isAlive = player.isAlive !== false;
           const isDisabled = !canVote || hasVoted || isCurrentUser || !isAlive;
 
           return (
             <li 
               key={player.userId} 
-              className={`${styles.playerItem} ${isDisabled ? styles.disabled : ''}`}
+              className={`
+                ${styles.playerItem} 
+                ${isSelected ? styles.selected : ''}
+                ${isDisabled ? styles.disabled : ''}
+              `}
+              onClick={() => handleSelectPlayer(player.userId)}
             >
               <div className={styles.playerInfo}>
                 <span className={styles.playerName}>
@@ -45,45 +60,33 @@ const PlayerVotingList = ({
                 </span>
                 
                 {isCurrentUser && (
-                  <span className={styles.badge} style={{ background: '#2196F3' }}>
-                    You
-                  </span>
+                  <span className={styles.badge}>You</span>
                 )}
                 
                 {!isAlive && (
-                  <span className={styles.badge} style={{ background: '#666' }}>
-                    💀 Dead
-                  </span>
-                )}
-                
-                {player.isHost && (
-                  <span className={styles.badge} style={{ background: '#FF9800' }}>
-                    👑 Host
-                  </span>
+                  <span className={styles.badge}>💀</span>
                 )}
               </div>
 
-              <button
-                className={styles.voteButton}
-                onClick={() => handleVote(player.userId)}
-                disabled={isDisabled}
-              >
-                {hasVoted ? '✓ Voted' : isCurrentUser ? 'You' : 'Vote'}
-              </button>
+              {isSelected && <span className={styles.selectedIcon}>✓</span>}
             </li>
           );
         })}
       </ul>
 
-      {hasVoted && (
-        <div className={styles.votedMessage}>
-          ✓ You have cast your vote. Waiting for other players...
-        </div>
+      {!hasVoted && selectedPlayerId && (
+        <button
+          className={styles.submitButton}
+          onClick={handleSubmitVote}
+          disabled={!canVote}
+        >
+          Submit Vote
+        </button>
       )}
 
-      {!canVote && !hasVoted && (
-        <div className={styles.infoMessage}>
-          You cannot vote at this time
+      {hasVoted && (
+        <div className={styles.successMessage}>
+          ✓ Vote submitted successfully
         </div>
       )}
     </div>

@@ -2,14 +2,15 @@ import React from 'react';
 import VotingTimer from '../VotingTimer/VotingTimer';
 import VoteProgressBar from '../VoteProgressBar/VoteProgressBar';
 import PlayerVotingList from '../PlayerVotingList/PlayerVotingList';
+import RolePanel from '../../panel/rolePanel/RolePanel';
 import styles from './NightVotingPanel.module.css';
 
 /**
  * Panel głosowania nocnego (Mafia)
- * - Wszyscy widzą timer, ale tylko Mafia może głosować
- * - Głosy są tajne (nie widać kto na kogo głosował)
- * - Liczą się tylko głosy Mafii
- * - Remis = losowy wybór
+ * - WSZYSCY widzą tę samą listę graczy
+ * - WSZYSCY mogą głosować (backend liczy tylko głosy mafii)
+ * - Rola ukryta za przyciskiem "Check My Role"
+ * - Głosy są tajne
  */
 const NightVotingPanel = ({ 
   session, 
@@ -24,59 +25,37 @@ const NightVotingPanel = ({
     p => String(p.userId) === String(currentUser?.id)
   );
   
-  const isMafia = currentPlayer?.role === 'MAFIA' || currentPlayer?.assignedRole === 'MAFIA';
   const isAlive = currentPlayer?.isAlive !== false;
-  const canVote = isMafia && isAlive && !hasVoted && session?.status === 'ACTIVE';
+  const canVote = isAlive && !hasVoted && session?.status === 'ACTIVE';
 
-  // Filtruj graczy - Mafia nie może głosować na siebie nawzajem
+  // WSZYSCY widzą WSZYSTKICH żywych graczy (oprócz siebie)
   const votablePlayers = players?.filter(p => {
-    const playerRole = p.role || p.assignedRole;
-    return playerRole !== 'MAFIA';
+    return p.isAlive !== false && String(p.userId) !== String(currentUser?.id);
   }) || [];
 
   return (
     <div className={styles.nightVotingPanel}>
-      {/* Header */}
+      {/* Header - jednolity dla wszystkich */}
       <div className={styles.header}>
         <div className={styles.phaseIcon}>🌙</div>
-        <div className={styles.headerContent}>
-          <h2 className={styles.title}>Night {session.dayNumber}</h2>
-          <p className={styles.subtitle}>Mafia Vote - Choose Your Target</p>
-        </div>
+        <h2 className={styles.title}>Night {session.dayNumber}</h2>
+        <p className={styles.subtitle}>Cast Your Vote</p>
       </div>
 
-      {/* Instrukcje - różne dla Mafii i Obywateli */}
-      {isMafia && isAlive ? (
-        <div className={styles.mafiaInstructions}>
-          <p className={styles.mafiaTitle}>
-            <strong>🎭 You are Mafia!</strong>
+      {/* Instrukcje - jednolite */}
+      <div className={styles.instructions}>
+        <p>
+          The night has fallen. Each player must cast their vote. Choose wisely - your decision matters.
+        </p>
+        {!isAlive && (
+          <p className={styles.deadNotice}>
+            💀 You are eliminated. You can observe but cannot vote.
           </p>
-          <p>
-            Choose a citizen to eliminate. Your vote counts towards the Mafia's decision.
-            {session.totalEligibleVoters > 1 && (
-              <> Coordinate with your fellow Mafia members.</>
-            )}
-          </p>
-          <p className={styles.instructionHighlight}>
-            ✓ You can vote. Choose your target wisely!
-          </p>
-        </div>
-      ) : (
-        <div className={styles.citizenInstructions}>
-          <p className={styles.citizenTitle}>
-            <strong>🌙 The town is asleep...</strong>
-          </p>
-          <p>
-            While the citizens sleep, the Mafia is choosing their next victim.
-            Wait for the night to pass and the results to be revealed.
-          </p>
-          {!isAlive && (
-            <p className={styles.deadNotice}>
-              💀 You are dead. You can observe but cannot participate.
-            </p>
-          )}
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* RolePanel - ukryta za przyciskiem */}
+      <RolePanel roomCode={session.roomCode} />
 
       {/* Timer */}
       <VotingTimer remainingSeconds={remainingTime} />
@@ -87,47 +66,24 @@ const NightVotingPanel = ({
         totalVoters={session.totalEligibleVoters}
       />
 
-      {/* Zawartość - różna dla Mafii i Obywateli */}
-      {isMafia && isAlive ? (
-        <>
-          {/* Lista graczy do głosowania - tylko dla Mafii */}
-          <PlayerVotingList
-            players={votablePlayers}
-            onVote={onVote}
-            hasVoted={hasVoted}
-            canVote={canVote}
-            currentUserId={currentUser?.id}
-          />
+      {/* Lista graczy - WSZYSCY widzą tę samą listę */}
+      <PlayerVotingList
+        players={votablePlayers}
+        onVote={onVote}
+        hasVoted={hasVoted}
+        canVote={canVote}
+        currentUserId={currentUser?.id}
+      />
 
-          {/* Informacje o zasadach */}
-          <div className={styles.rulesInfo}>
-            <h4>📋 Night Voting Rules:</h4>
-            <ul>
-              <li>Only Mafia members can vote</li>
-              <li>Votes are secret - nobody sees who voted for whom</li>
-              <li>Only Mafia votes count towards elimination</li>
-              <li><strong>In case of a tie, one player is randomly selected</strong></li>
-            </ul>
-          </div>
-        </>
-      ) : (
-        <div className={styles.waitingArea}>
-          <div className={styles.sleepingIcon}>😴</div>
-          <p className={styles.waitingText}>
-            The citizens are sleeping peacefully...
-          </p>
-          <p className={styles.waitingSubtext}>
-            Waiting for the night to pass
-          </p>
-          <div className={styles.stars}>
-            <span className={styles.star}>⭐</span>
-            <span className={styles.star}>✨</span>
-            <span className={styles.star}>⭐</span>
-            <span className={styles.star}>✨</span>
-            <span className={styles.star}>⭐</span>
-          </div>
-        </div>
-      )}
+      {/* Zasady - uproszczone */}
+      <div className={styles.rulesInfo}>
+        <h4>📋 Night Voting Rules:</h4>
+        <ul>
+          <li>All players cast their votes</li>
+          <li>Votes are secret</li>
+          <li>Results revealed at dawn</li>
+        </ul>
+      </div>
     </div>
   );
 };

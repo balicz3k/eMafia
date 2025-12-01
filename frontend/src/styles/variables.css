@@ -1,0 +1,116 @@
+/**
+ * Wspólne zmienne CSS dla całej aplikacji eMafia
+ * Mobile-first design, wzorowane na LoginView/RegisterView
+ */
+
+:root {
+  /* ===== KOLORY ===== */
+  /* Główne kolory aplikacji */
+  --color-primary: #cc0404; /* Czerwony - główny akcent (przyciski, checkboxy) */
+  --color-primary-hover: rgba(204, 4, 4, 0.8); /* Hover na primary */
+  --color-text: #000000; /* Czarny - główny tekst */
+  --color-text-secondary: #9c9797; /* Szary - secondary text, linie */
+  --color-bg: #ffffff; /* Białe tło */
+  --color-bg-secondary: #f5f5f5; /* Jasnoszare tło (dla kart, sekcji) */
+  
+  /* Kolory statusów */
+  --color-success: #27ae60; /* Zielony - sukces */
+  --color-danger: #cc0404; /* Czerwony - błąd/niebezpieczeństwo */
+  --color-warning: #f39c12; /* Pomarańczowy - ostrzeżenie */
+  --color-info: #3498db; /* Niebieski - informacja */
+  
+  /* Kolory UI */
+  --color-border: #9c9797; /* Szary - obramowania */
+  --color-disabled: rgba(0, 0, 0, 0.3); /* Disabled elements */
+  --color-overlay: rgba(0, 0, 0, 0.5); /* Overlay/backdrop */
+
+  /* ===== TYPOGRAPHY ===== */
+  --font-family: 'DM Sans', sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 32px;
+  --font-size-title: 2rem; /* 32px - tytuły główne */
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ===== SPACING (Mobile-First) ===== */
+  --spacing-xs: 0.5rem;   /* 8px */
+  --spacing-sm: 1rem;     /* 16px */
+  --spacing-md: 1.5rem;   /* 24px */
+  --spacing-lg: 2rem;     /* 32px */
+  --spacing-xl: 3rem;     /* 48px */
+  --spacing-2xl: 4rem;    /* 64px */
+
+  /* ===== BORDER RADIUS ===== */
+  --radius-sm: 3px;
+  --radius-md: 8px;
+  --radius-lg: 15px; /* Jak w LoginButton */
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* ===== SHADOWS ===== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  /* ===== TRANSITIONS ===== */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* ===== LAYOUT (Mobile-First) ===== */
+  --container-max-width: 350px; /* Jak w LoginForm */
+  --container-padding: 1rem;
+  --header-height: 70px;
+  --footer-height: 70px;
+  
+  /* ===== Z-INDEX ===== */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* ===== GAME SPECIFIC ===== */
+  /* Ikony faz */
+  --icon-size-sm: 2rem;
+  --icon-size-md: 3rem;
+  --icon-size-lg: 4rem;
+  
+  /* Kolory ról */
+  --role-mafia: #8b0000; /* Ciemny czerwony */
+  --role-citizen: #2c3e50; /* Ciemny niebieski */
+  --role-dead: #666666; /* Szary */
+  
+  /* Kolory faz */
+  --phase-night: #2c3e50; /* Ciemny niebieski */
+  --phase-day: #f39c12; /* Pomarańczowy/złoty */
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+/* Mobile-first: domyślnie style dla mobile */
+/* Tablet: 768px+ */
+/* Desktop: 1024px+ */
+
+@media (min-width: 768px) {
+  :root {
+    --container-max-width: 500px;
+    --font-size-title: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --container-max-width: 600px;
+  }
+}
