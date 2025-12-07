@@ -41,7 +41,8 @@ const PlayerVotingList = ({
         {players.map((player) => {
           const isSelected = selectedPlayerId === player.userId;
           const isCurrentUser = String(player.userId) === String(currentUserId);
-          const isAlive = player.isAlive !== false;
+          // Obsługa obu formatów z backendu (isAlive lub alive)
+          const isAlive = player.isAlive !== undefined ? player.isAlive === true : player.alive === true;
           const isDisabled = !canVote || hasVoted || isCurrentUser || !isAlive;
 
           return (

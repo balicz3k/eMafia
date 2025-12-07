@@ -2,6 +2,7 @@ package com.mafia.services;
 
 import com.mafia.databaseModels.*;
 import com.mafia.dto.GameStateResponse;
+import com.mafia.dto.PlayerRoleDto;
 import com.mafia.dto.StartGameRequest;
 import com.mafia.enums.GamePhase;
 import com.mafia.enums.GameRole;
@@ -245,6 +246,46 @@ public class GameService {
     gameRoomRepository.save(room);
 
     log.info("Game {} ended. Winner: {}", game.getId(), winner);
+  }
+
+  /**
+   * Pobiera rolę gracza w aktywnej grze dla danego pokoju
+   */
+  @Transactional(readOnly = true)
+  public PlayerRoleDto getPlayerRole(String roomCode, UUID userId) {
+    log.info("Getting player role for user {} in room {}", userId, roomCode);
+
+    GameRoom room =
+        gameRoomRepository
+            .findByRoomCode(roomCode)
+            .orElseThrow(() -> new GameRoomNotFoundException("Room not found: " + roomCode));
+
+    // Znajdź aktywną grę (lub ostatnią zakończoną)
+    List<Game> games = gameRepository.findByRoom_IdAndStatus(room.getId(), GameStatus.IN_PROGRESS);
+    
+    if (games.isEmpty()) {
+      // Sprawdź czy jest zakończona gra
+      games = gameRepository.findByRoom_IdAndStatus(room.getId(), GameStatus.FINISHED);
+      if (games.isEmpty()) {
+        throw new IllegalStateException("No game found for room: " + roomCode);
+      }
+    }
+
+    Game game = games.get(0);
+    
+    // Znajdź gracza w grze
+    GamePlayer gamePlayer = gamePlayerRepository.findByGameAndUser_Id(game, userId)
+        .orElseThrow(() -> new IllegalStateException("Player not found in game"));
+
+    PlayerRoleDto dto = new PlayerRoleDto();
+    dto.setUserId(gamePlayer.getUser().getId());
+    dto.setUsername(gamePlayer.getUser().getUsername());
+    dto.setRole(gamePlayer.getAssignedRole());
+    dto.setAlive(gamePlayer.isAlive());
+    dto.setGameNick(gamePlayer.getGameNick());
+
+    log.info("Player {} has role {} in room {}", userId, dto.getRole(), roomCode);
+    return dto;
   }
 
   /**

@@ -7,6 +7,7 @@ import FormMessage from "../formMessage/FormMessage";
 import FormInput from "../formInput/FormInput";
 import { handleFetchError } from "../../utils/apiErrorHandler";
 import { getEmailError } from "../../utils/validators";
+import { useAuth } from "../AuthProvider";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -15,6 +16,7 @@ const LoginForm = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const { refreshAuthState } = useAuth();
 
   const {
     formData,
@@ -61,6 +63,9 @@ const LoginForm = () => {
     } else {
       localStorage.removeItem("rememberMe");
     }
+
+    // Zaktualizuj stan auth w AuthProvider przed nawigacją
+    await refreshAuthState();
 
     navigate("/dashboard");
   });

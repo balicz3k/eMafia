@@ -164,6 +164,27 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated,
     setIsAdmin,
     setUser,
+    // Funkcja do wywołania po zalogowaniu - aktualizuje stan auth natychmiast
+    refreshAuthState: async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const decodedToken = decodeJwt(token);
+          setIsAuthenticated(true);
+          setIsAdmin(decodedToken.roles?.includes("ROLE_ADMIN") || false);
+          setUser({
+            id: decodedToken.sub,
+            username: decodedToken.username,
+            roles: decodedToken.roles,
+          });
+          return true;
+        } catch (error) {
+          console.error("Failed to decode token after login:", error);
+          return false;
+        }
+      }
+      return false;
+    },
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

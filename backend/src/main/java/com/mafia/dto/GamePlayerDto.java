@@ -1,5 +1,6 @@
 package com.mafia.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mafia.enums.GameRole;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,10 @@ public class GamePlayerDto {
   private String username;
   private String gameNick;
   private GameRole assignedRole; // null jeśli nie jest właścicielem lub gra nie zakończona
+  
+  @JsonProperty("isAlive")
   private boolean isAlive;
+  
+  @JsonProperty("isCurrentUser")
   private boolean isCurrentUser;
 }

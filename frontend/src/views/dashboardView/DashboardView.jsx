@@ -9,19 +9,21 @@ import { useGameRooms } from "../../hooks/useGameRooms";
 import httpClient from "../../utils/httpClient";
 
 const DashboardView = () => {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { rooms, loading, error, fetchRoomsByUserId } = useGameRooms();
   const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState("");
   const navigate = useNavigate();
 
-  // Fetch user's rooms on component mount and when user changes
+  // Fetch user's rooms when auth is ready and user is available
   useEffect(() => {
-    if (user?.id) {
+    // Czekaj aż auth się załaduje i user będzie dostępny
+    if (!authLoading && user?.id) {
+      console.log("Auth ready, fetching rooms for user:", user.id);
       fetchRoomsByUserId(user.id);
     }
-  }, [user?.id, fetchRoomsByUserId]);
+  }, [authLoading, user?.id, fetchRoomsByUserId]);
 
   const handleSearch = useCallback(
     async (searchTerm) => {
@@ -116,7 +118,8 @@ const DashboardView = () => {
   );
 
   const gamesToDisplay = searchResults !== null ? searchResults : rooms;
-  const isLoading = searchResults !== null ? searchLoading : loading;
+  // Pokaż loading gdy: auth się ładuje LUB (nie ma search results I rooms się ładują)
+  const isLoading = authLoading || (searchResults !== null ? searchLoading : loading);
   const displayError = searchResults !== null ? searchError : error;
 
   return (

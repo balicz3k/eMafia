@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import MainLayout from "../../layouts/mainLayout/MainLayout";
 import styles from "./GameRoomView.module.css";
 import httpClient from "../../utils/httpClient";
@@ -7,12 +7,14 @@ import { QRCodeSVG } from "qrcode.react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import GameRoomSettings from "../../components/gameRoomSettings/GameRoomSettings";
+import toast from "../../utils/notifications";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 const GameRoomView = () => {
   const { roomCode } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,6 +22,7 @@ const GameRoomView = () => {
   const [copied, setCopied] = useState(false);
   const [joining, setJoining] = useState(false);
   const [starting, setStarting] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [gameReady, setGameReady] = useState(false);
 
   const stompRef = useRef(null);
@@ -32,6 +35,9 @@ const GameRoomView = () => {
     try {
       const resp = await httpClient.get(`/api/game_rooms/${roomCode}`);
       setRoom(resp.data);
+      // Reset gameReady gdy wracamy z zakończonej gry
+      setGameReady(false);
+      setStarting(false);
     } catch (err) {
       console.error("Failed to fetch room:", err);
       const msg = err?.response?.data?.message || err?.message || "Failed to load room";
@@ -40,6 +46,14 @@ const GameRoomView = () => {
       setLoading(false);
     }
   }, [roomCode]);
+
+  // Odśwież dane gdy wracamy z ekranu wyników gry
+  useEffect(() => {
+    if (location.state?.fromGameResult) {
+      console.log("🔄 Returning from game result - refreshing room data");
+      fetchRoom();
+    }
+  }, [location.state?.fromGameResult, location.state?.timestamp, fetchRoom]);
 
   useEffect(() => {
     fetchRoom();
@@ -62,6 +76,13 @@ const GameRoomView = () => {
           try {
             const payload = JSON.parse(message.body);
             console.log("🔔 Received WS update:", payload);
+            
+            // Jeśli pokój wraca do stanu OPEN (po zakończeniu gry), zresetuj gameReady
+            if (payload.status === "OPEN" || payload.type === "room_status_changed") {
+              console.log("🔄 Room status changed to OPEN - resetting gameReady state");
+              setGameReady(false);
+              setStarting(false);
+            }
             
             // Precyzyjny merge GameRoomUpdateDto
             setRoom((prev) => {
@@ -98,6 +119,13 @@ const GameRoomView = () => {
             console.error("❌ WS parse error (ready):", e);
           }
         });
+
+        // Subskrypcja na usunięcie pokoju przez hosta
+        client.subscribe(`/topic/game/${roomCode}/roomDeleted`, (message) => {
+          console.log("🗑️ Room deleted by host:", message.body);
+          toast.info("Room has been deleted by the host");
+          navigate("/dashboard");
+        });
       };
       client.onStompError = (frame) => {
         console.error("STOMP error:", frame.headers["message"], frame.body);
@@ -116,7 +144,7 @@ const GameRoomView = () => {
       console.warn("WS connect error:", e);
       return () => {};
     }
-  }, [roomCode]);
+  }, [roomCode, navigate]);
 
   useEffect(() => {
     const cleanup = connectWs();
@@ -185,6 +213,32 @@ const GameRoomView = () => {
     // NIE rób setStarting(false) tutaj - zostaw "Starting..." aż przyjdzie game_ready
   };
 
+  const handleLeaveRoom = async () => {
+    const isHostLeaving = isHost;
+    const confirmMessage = isHostLeaving 
+      ? "As the host, leaving will delete this room for everyone. Are you sure?"
+      : "Are you sure you want to leave this room?";
+    
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setLeaving(true);
+    setError("");
+    try {
+      await httpClient.post(`/api/game_rooms/leave/${roomCode}`);
+      toast.success(isHostLeaving ? "Room deleted successfully" : "Left room successfully");
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Leave room failed:", err);
+      const msg = err?.response?.data?.message || err?.message || "Failed to leave room";
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setLeaving(false);
+    }
+  };
+
   // Derived flags
   const status = room?.status || room?.gameRoomStatus || "UNKNOWN";
   const players = Array.isArray(room?.players) ? room.players : [];
@@ -213,7 +267,8 @@ const GameRoomView = () => {
   const isInRoom = players.some((p) => String(p.userId) === String(currentUserId));
   const canJoin = !isInRoom && currentPlayers < maxPlayers && ["WAITING_FOR_PLAYERS", "READY_TO_START", "OPEN"].includes(String(status));
   const isHost = !!room?.hostId && String(room.hostId) === String(currentUserId);
-  const canStart = isHost && players.length >= 2 && String(status) !== "IN_PROGRESS";
+  const isGameInProgress = String(status) === "GAME_IN_PROGRESS" || String(status) === "IN_PROGRESS";
+  const canStart = isHost && players.length >= 2 && !isGameInProgress;
 
   // Nawigacja do gry TYLKO po otrzymaniu "game_ready"
   useEffect(() => {
@@ -310,6 +365,20 @@ const GameRoomView = () => {
             isStarting={starting}
             minPlayers={3}
           />
+        )}
+
+        {/* Przycisk Leave/Delete Room dla członków pokoju */}
+        {isInRoom && (
+          <div className={styles.btnRow}>
+            <button 
+              className={`${styles.dangerBtn} ${isHost ? styles.deleteBtn : ''}`} 
+              onClick={handleLeaveRoom} 
+              disabled={leaving || isGameInProgress}
+              title={isGameInProgress ? "Cannot leave during active game" : ""}
+            >
+              {leaving ? "Leaving..." : (isHost ? "Delete Room" : "Leave Room")}
+            </button>
+          </div>
         )}
       </div>
     </MainLayout>

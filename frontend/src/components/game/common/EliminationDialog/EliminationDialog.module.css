@@ -1,0 +1,220 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dialog {
+  background: linear-gradient(145deg, #1a1a2e, #16213e);
+  border-radius: 20px;
+  padding: 40px 50px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.4s ease-out;
+  border: 2px solid;
+  position: relative;
+}
+
+/* Przycisk zamknięcia X */
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.nightDialog {
+  border-color: rgba(103, 58, 183, 0.5);
+  box-shadow: 0 20px 60px rgba(103, 58, 183, 0.3);
+}
+
+.dayDialog {
+  border-color: rgba(255, 193, 7, 0.5);
+  box-shadow: 0 20px 60px rgba(255, 193, 7, 0.2);
+}
+
+.iconContainer {
+  margin-bottom: 20px;
+}
+
+.icon {
+  font-size: 5rem;
+  display: block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.title {
+  font-size: 2rem;
+  color: #fff;
+  margin: 0 0 25px 0;
+  font-weight: 700;
+}
+
+.eliminationInfo {
+  margin-bottom: 20px;
+}
+
+.eliminationLabel {
+  font-size: 1.1rem;
+  color: #b0bec5;
+  margin: 0 0 12px 0;
+}
+
+.eliminatedPlayer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px;
+  background: rgba(244, 67, 54, 0.15);
+  border: 2px solid rgba(244, 67, 54, 0.4);
+  border-radius: 12px;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.skull {
+  font-size: 2.5rem;
+}
+
+.playerName {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #F44336;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.message {
+  font-size: 1.15rem;
+  color: #B0BEC5;
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+}
+
+.tieNote {
+  font-size: 0.95rem;
+  color: #FFC107;
+  font-style: italic;
+  margin: 0 0 20px 0;
+}
+
+.okButton {
+  padding: 15px 60px;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+  margin-top: 10px;
+}
+
+.okButton:hover {
+  background: linear-gradient(135deg, #42A5F5, #2196F3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.6);
+}
+
+.okButton:active {
+  transform: translateY(0);
+}
+
+/* Responsywność */
+@media (max-width: 480px) {
+  .dialog {
+    padding: 30px 25px;
+  }
+
+  .icon {
+    font-size: 4rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .playerName {
+    font-size: 1.4rem;
+  }
+
+  .skull {
+    font-size: 2rem;
+  }
+
+  .message {
+    font-size: 1rem;
+  }
+
+  .okButton {
+    padding: 12px 50px;
+    font-size: 1.1rem;
+  }
+}

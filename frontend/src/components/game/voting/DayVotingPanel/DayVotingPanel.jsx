@@ -19,17 +19,25 @@ const DayVotingPanel = ({
   players,
   remainingTime 
 }) => {
+  // Helper funkcja sprawdzająca czy gracz żyje (obsługuje oba formaty z backendu)
+  const checkIsAlive = (player) => {
+    if (player === null || player === undefined) return false;
+    // Backend może wysyłać 'isAlive' lub 'alive' w zależności od konfiguracji Jackson
+    const alive = player.isAlive !== undefined ? player.isAlive : player.alive;
+    return alive === true;
+  };
+
   // Znajdź aktualnego gracza
   const currentPlayer = players?.find(
     p => String(p.userId) === String(currentUser?.id)
   );
   
-  const isAlive = currentPlayer?.isAlive !== false;
+  const isAlive = checkIsAlive(currentPlayer);
   const canVote = isAlive && !hasVoted && session?.status === 'ACTIVE';
 
-  // Wszyscy widzą wszystkich żywych graczy (oprócz siebie)
+  // Wszyscy widzą tylko żywych graczy (oprócz siebie)
   const votablePlayers = players?.filter(p => {
-    return p.isAlive !== false && String(p.userId) !== String(currentUser?.id);
+    return checkIsAlive(p) && String(p.userId) !== String(currentUser?.id);
   }) || [];
 
   return (

@@ -142,3 +142,35 @@
 .error {
   color: #cc0404;
 }
+
+.dangerBtn {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.dangerBtn:hover:not(:disabled) {
+  background: #dc3545;
+  color: #fff;
+}
+
+.dangerBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deleteBtn {
+  background: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  background: #c82333;
+  border-color: #c82333;
+}

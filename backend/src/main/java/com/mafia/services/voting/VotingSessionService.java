@@ -255,7 +255,8 @@ public class VotingSessionService {
   }
 
   /**
-   * Sprawdza warunki wygranej i kończy grę jeśli spełnione
+   * Sprawdza warunki wygranej i kończy grę jeśli spełnione.
+   * Jeśli gra trwa dalej, rozpoczyna następną fazę.
    */
   private void checkGameEndConditions(Game game) {
     try {
@@ -293,15 +294,80 @@ public class VotingSessionService {
         game.setEndedAt(LocalDateTime.now());
         gameRepository.save(game);
 
+        // Aktualizuj status pokoju na OPEN (gotowy do nowej gry)
+        GameRoom room = game.getRoom();
+        room.setGameRoomStatus(com.mafia.enums.GameRoomStatus.OPEN);
+
         // Broadcast game over
         broadcastGameOver(game, winner);
 
-        log.info("Game {} ended. Winner: {}", game.getId(), winner);
+        // Broadcast room status update - pokój wraca do stanu OPEN
+        broadcastRoomStatusAfterGameEnd(room);
+
+        log.info("Game {} ended. Winner: {}. Room {} status set to OPEN", 
+            game.getId(), winner, room.getRoomCode());
       } else {
-        log.info("Game {} continues", game.getId());
+        // Gra trwa dalej - rozpocznij następną fazę
+        log.info("Game {} continues - starting next phase", game.getId());
+        startNextPhase(game);
       }
     } catch (Exception e) {
       log.error("Error checking game end conditions", e);
+    }
+  }
+
+  /**
+   * Rozpoczyna następną fazę gry.
+   * NIGHT_VOTE → DAY_VOTE �� NIGHT_VOTE → ...
+   * 
+   * Numerowanie dni:
+   * - Gra zaczyna się od NIGHT_VOTE dzień 1
+   * - Po NIGHT_VOTE dzień 1 → DAY_VOTE dzień 1 (ten sam dzień)
+   * - Po DAY_VOTE dzień 1 → NIGHT_VOTE dzień 2 (nowy dzień)
+   */
+  private void startNextPhase(Game game) {
+    GamePhase currentPhase = game.getCurrentPhase();
+    GamePhase nextPhase;
+    
+    if (currentPhase == GamePhase.NIGHT_VOTE) {
+      // Po nocy przechodzi dzień (ten sam numer dnia)
+      nextPhase = GamePhase.DAY_VOTE;
+      log.info("Transitioning to DAY_VOTE, day {} (same day)", game.getCurrentDayNumber());
+    } else {
+      // Po dniu przechodzi noc (nowy dzień)
+      nextPhase = GamePhase.NIGHT_VOTE;
+      game.setCurrentDayNumber(game.getCurrentDayNumber() + 1);
+      log.info("Transitioning to NIGHT_VOTE, day {} (new day)", game.getCurrentDayNumber());
+    }
+    
+    game.setCurrentPhase(nextPhase);
+    gameRepository.save(game);
+    
+    // Broadcast zmianę fazy
+    broadcastPhaseChange(game, nextPhase);
+    
+    // Rozpocznij nową sesję głosowania
+    int discussionTime = game.getRoom().getDiscussionTimeSeconds();
+    startVotingSession(game, nextPhase, discussionTime);
+  }
+
+  /**
+   * Broadcast zmiany fazy gry
+   */
+  private void broadcastPhaseChange(Game game, GamePhase newPhase) {
+    try {
+      Map<String, Object> payload = new HashMap<>();
+      payload.put("type", "phase_change");
+      payload.put("gameId", game.getId());
+      payload.put("phase", newPhase.name());
+      payload.put("dayNumber", game.getCurrentDayNumber());
+      
+      String topic = "/topic/game/" + game.getRoom().getRoomCode() + "/phase/change";
+      messagingTemplate.convertAndSend(topic, payload);
+      
+      log.info("Broadcast phase change to {}: {}", topic, newPhase);
+    } catch (Exception e) {
+      log.error("Error broadcasting phase change", e);
     }
   }
 
@@ -344,22 +410,35 @@ public class VotingSessionService {
 
   /**
    * Wygaśnięcie sesji (timeout)
+   * Zawsze przechodzi do następnej fazy - niezależnie czy były głosy czy nie.
    */
   @Transactional
   public void expireSession(VotingSession session) {
     log.info("Expiring voting session {}", session.getId());
 
+    // Sprawdź czy sesja nie została już przetworzona
+    if (session.getStatus() != VotingStatus.ACTIVE) {
+      log.warn("Session {} already processed with status {}", session.getId(), session.getStatus());
+      return;
+    }
+
     session.setStatus(VotingStatus.EXPIRED);
     votingSessionRepository.save(session);
 
-    // Jeśli były jakieś głosy, przetwórz je
+    // Jeśli były jakieś głosy, przetwórz je normalnie
     long voteCount = gameVoteRepository.countByVotingSession(session);
     if (voteCount > 0) {
       log.info("Processing {} votes before expiration", voteCount);
+      // completeVoting już obsługuje przejście do następnej fazy
       completeVoting(session);
     } else {
-      // Brak głosów - broadcast expired
+      // Brak głosów - broadcast expired i przejdź do następnej fazy
+      log.info("No votes cast - proceeding to next phase");
       broadcastVotingExpired(session);
+      
+      // Przejdź do następnej fazy (bez eliminacji)
+      Game game = session.getGame();
+      checkGameEndConditions(game);
     }
   }
 
@@ -529,6 +608,28 @@ public class VotingSessionService {
       log.info("Broadcast voting expired to topic: {}", topic);
     } catch (Exception e) {
       log.error("Error broadcasting voting expired", e);
+    }
+  }
+
+  /**
+   * Broadcast zmiany statusu pokoju po zakończeniu gry
+   * Informuje wszystkich graczy, że pokój wrócił do stanu OPEN
+   */
+  private void broadcastRoomStatusAfterGameEnd(GameRoom room) {
+    try {
+      Map<String, Object> update = new HashMap<>();
+      update.put("type", "room_status_changed");
+      update.put("roomCode", room.getRoomCode());
+      update.put("status", room.getGameRoomStatus().name());
+      update.put("message", "Game ended. Room is now open for a new game.");
+
+      String topic = "/topic/game/" + room.getRoomCode() + "/updated";
+      messagingTemplate.convertAndSend(topic, update);
+
+      log.info("Broadcast room status update after game end to topic: {} with status: {}", 
+          topic, room.getGameRoomStatus());
+    } catch (Exception e) {
+      log.error("Error broadcasting room status after game end for room: {}", room.getRoomCode(), e);
     }
   }
 }

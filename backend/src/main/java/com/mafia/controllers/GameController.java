@@ -3,6 +3,7 @@ package com.mafia.controllers;
 import com.mafia.databaseModels.User;
 import com.mafia.dto.GameStateResponse;
 import com.mafia.dto.GameWithPlayersDto;
+import com.mafia.dto.PlayerRoleDto;
 import com.mafia.dto.StartGameRequest;
 import com.mafia.services.GameService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,5 +76,23 @@ public class GameController {
     
     GameWithPlayersDto game = gameService.getActiveGameByRoomCode(roomCode, currentUser.getId());
     return ResponseEntity.ok(game);
+  }
+
+  @GetMapping("/rooms/{roomCode}/me/role")
+  @PreAuthorize("isAuthenticated()")
+  @Operation(summary = "Get current player's role in the game")
+  @ApiResponse(
+      responseCode = "200",
+      description = "Player role found",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerRoleDto.class)))
+  @ApiResponse(
+      responseCode = "404",
+      description = "Player not found in game or no active game")
+  public ResponseEntity<PlayerRoleDto> getMyRole(@PathVariable String roomCode) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    User currentUser = (User) authentication.getPrincipal();
+    
+    PlayerRoleDto role = gameService.getPlayerRole(roomCode, currentUser.getId());
+    return ResponseEntity.ok(role);
   }
 }

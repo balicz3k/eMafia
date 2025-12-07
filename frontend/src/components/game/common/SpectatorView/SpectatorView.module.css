@@ -1,0 +1,296 @@
+.spectatorView {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 20px;
+  margin-bottom: 25px;
+  position: relative;
+  overflow: hidden;
+}
+
+.nightHeader {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 2px solid rgba(103, 58, 183, 0.5);
+  box-shadow: 0 10px 40px rgba(103, 58, 183, 0.3);
+}
+
+.dayHeader {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  border: 2px solid rgba(255, 193, 7, 0.5);
+  box-shadow: 0 10px 40px rgba(255, 193, 7, 0.2);
+}
+
+.ghostIcon {
+  font-size: 4rem;
+  margin-bottom: 15px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.title {
+  font-size: 2rem;
+  color: #fff;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #b0bec5;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Cards */
+.messageCard,
+.gameStateCard,
+.playersCard,
+.eliminationCard {
+  background: linear-gradient(145deg, #1a1a2e, #16213e);
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.cardIcon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  color: #fff;
+  text-align: center;
+  margin: 0 0 15px 0;
+}
+
+.cardText {
+  color: #b0bec5;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+.hopeMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px;
+  background: rgba(76, 175, 80, 0.15);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 10px;
+}
+
+.hopeIcon {
+  font-size: 1.5rem;
+}
+
+.hopeMessage p {
+  margin: 0;
+  color: #81c784;
+  font-size: 0.95rem;
+}
+
+/* Section title */
+.sectionTitle {
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Phase info */
+.phaseInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.phaseLabel {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #ffc107;
+}
+
+.phaseDescription {
+  color: #90a4ae;
+  font-style: italic;
+}
+
+/* Players stats */
+.playersStats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statNumber {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  color: #90a4ae;
+  text-transform: uppercase;
+}
+
+/* Players list */
+.playersList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.playerItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.playerItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.deadPlayer {
+  opacity: 0.6;
+}
+
+.currentPlayer {
+  border: 1px solid rgba(33, 150, 243, 0.5);
+  background: rgba(33, 150, 243, 0.1);
+}
+
+.playerStatus {
+  font-size: 1rem;
+}
+
+.playerName {
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+/* Elimination card */
+.eliminationText {
+  text-align: center;
+  color: #b0bec5;
+  margin: 0;
+}
+
+.eliminatedName {
+  color: #f44336;
+  font-weight: bold;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px;
+}
+
+.footerText {
+  color: #78909c;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Scrollbar */
+.playersList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.playersList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.playersList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.playersList::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .spectatorView {
+    padding: 15px;
+  }
+
+  .header {
+    padding: 30px 15px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .ghostIcon {
+    font-size: 3rem;
+  }
+
+  .messageCard,
+  .gameStateCard,
+  .playersCard,
+  .eliminationCard {
+    padding: 20px;
+  }
+
+  .playersStats {
+    gap: 25px;
+  }
+
+  .statNumber {
+    font-size: 1.5rem;
+  }
+}

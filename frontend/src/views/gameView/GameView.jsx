@@ -54,20 +54,27 @@ const GameView = () => {
       setGameData(response.data);
       
       // Sprawdź czy gra się zakończyła
-      if (response.data.currentPhase === 'GAME_OVER') {
-        console.log('Game has ended, waiting for gameOver event');
-        toast.info('Game has ended');
+      if (response.data.currentPhase === 'GAME_OVER' || response.data.status === 'FINISHED') {
+        console.log('Game has ended, showing results or redirecting to lobby');
+        // Jeśli gra jest zakończona ale nie mamy jeszcze wyników, przekieruj do lobby
+        if (!gameResult) {
+          toast.info('Game has ended. Returning to lobby...');
+          setTimeout(() => navigate(`/room/${roomCode}`), 2000);
+        }
       }
     } catch (err) {
       console.error('Error fetching active game:', err);
       const msg = err?.response?.data?.message || err?.message || 'Failed to load game';
-      setError(msg);
       
-      // Jeśli nie ma aktywnej gry, wróć do pokoju
+      // Jeśli nie ma aktywnej gry, wróć do pokoju (nie pokazuj błędu)
       if (err?.response?.status === 404 || err?.response?.status === 400) {
-        toast.error('No active game found');
-        setTimeout(() => navigate(`/room/${roomCode}`), 2000);
+        console.log('No active game found, redirecting to room lobby');
+        toast.info('No active game. Returning to lobby...');
+        setTimeout(() => navigate(`/room/${roomCode}`), 1500);
+        return; // Nie ustawiaj błędu
       }
+      
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -80,27 +87,47 @@ const GameView = () => {
     const client = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
-        console.log('STOMP Debug:', str);
+        // Tylko loguj ważne wiadomości
+        if (!str.includes('PING') && !str.includes('PONG')) {
+          console.log('STOMP GameView:', str);
+        }
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       onConnect: () => {
-        console.log('WebSocket connected for game');
+        console.log('🟢 WebSocket connected for GameView');
 
-        // Subscribe to game over
+        // Subscribe to game over - NAJWAŻNIEJSZE!
         client.subscribe(`/topic/game/${roomCode}/gameOver`, (message) => {
           const result = JSON.parse(message.body);
-          console.log('Game over received:', result);
+          console.log('🏆 GAME OVER received:', result);
           setGameResult(result);
         });
 
-        // Subscribe to phase changes (opcjonalne - dla przyszłych rozszerzeń)
-        client.subscribe(`/topic/game/${roomCode}/phaseChange`, (message) => {
+        // Subscribe to phase changes
+        client.subscribe(`/topic/game/${roomCode}/phase/change`, (message) => {
           const phaseData = JSON.parse(message.body);
           console.log('Phase changed:', phaseData);
           // Odśwież dane gry
           fetchActiveGame();
+        });
+
+        // Subscribe to room status updates (np. gdy pokój wraca do OPEN po zakończeniu gry)
+        client.subscribe(`/topic/game/${roomCode}/updated`, (message) => {
+          try {
+            const payload = JSON.parse(message.body);
+            console.log('Room update received in GameView:', payload);
+            
+            // Jeśli pokój wrócił do stanu OPEN i nie mamy wyników gry, przekieruj do lobby
+            if ((payload.status === 'OPEN' || payload.type === 'room_status_changed') && !gameResult) {
+              console.log('Room status changed to OPEN - but waiting for game result first');
+              // Nie przekierowuj od razu - poczekaj na gameOver
+              // setTimeout(() => navigate(`/room/${roomCode}`), 1500);
+            }
+          } catch (e) {
+            console.error('Error parsing room update:', e);
+          }
         });
       },
       onStompError: (frame) => {

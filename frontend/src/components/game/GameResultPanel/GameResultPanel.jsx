@@ -18,9 +18,14 @@ const GameResultPanel = ({ gameResult, roomCode }) => {
 
   const handleBackToLobby = () => {
     if (roomCode) {
-      navigate(`/room/${roomCode}`);
+      // Użyj replace aby nie móc wrócić do ekranu wyników przyciskiem "wstecz"
+      // Dodaj timestamp jako state aby wymusić odświeżenie danych w GameRoomView
+      navigate(`/room/${roomCode}`, { 
+        replace: true,
+        state: { fromGameResult: true, timestamp: Date.now() }
+      });
     } else {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     }
   };
 
