@@ -5,6 +5,7 @@ import com.mafia.dto.voting.*;
 import com.mafia.enums.GamePhase;
 import com.mafia.enums.VotingStatus;
 import com.mafia.repositories.*;
+import com.mafia.services.GameEventPublisher;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -37,6 +38,7 @@ public class VotingSessionService {
   private final SimpMessagingTemplate messagingTemplate;
   private final VotingStrategyFactory votingStrategyFactory;
   private final GameRepository gameRepository;
+  private final GameEventPublisher eventPublisher;
 
   /**
    * Rozpoczyna nową sesję głosowania
@@ -148,6 +150,21 @@ public class VotingSessionService {
 
     gameVoteRepository.save(vote);
     log.info("Vote saved: {}", vote.getId());
+
+    // Publikuj zdarzenie głosu do RabbitMQ
+    User voterUser = voter.getUser();
+    User targetUser = userRepository.findById(targetUserId).orElse(null);
+    if (targetUser != null) {
+      eventPublisher.publishVoteCast(
+          session.getGame(),
+          voterUser,
+          voter.getAssignedRole().name(),
+          targetUser,
+          session.getPhase().name(),
+          session.getVotesReceived() + 1,
+          session.getTotalEligibleVoters()
+      );
+    }
 
     // Aktualizuj licznik
     session.setVotesReceived(session.getVotesReceived() + 1);

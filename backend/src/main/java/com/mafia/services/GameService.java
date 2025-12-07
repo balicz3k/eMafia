@@ -29,6 +29,7 @@ public class GameService {
   private final PlayerInRoomRepository playerInRoomRepository;
   private final VotingSessionService votingSessionService;
   private final org.springframework.messaging.simp.SimpMessagingTemplate messagingTemplate;
+  private final GameEventPublisher eventPublisher;
 
   @Transactional
   public GameStateResponse startGame(StartGameRequest request) {
@@ -95,6 +96,10 @@ public class GameService {
 
     // Przydziel role graczom
     assignRolesToPlayers(savedGame, playersInRoom, mafiaCount);
+    
+    // Pobierz graczy i opublikuj zdarzenie do RabbitMQ
+    List<GamePlayer> gamePlayers = gamePlayerRepository.findAllByGameId(savedGame.getId());
+    eventPublisher.publishGameStarted(savedGame, gamePlayers);
 
     // Rozpocznij pierwszą sesję głosowania (NIGHT_VOTE)
     try {

@@ -1,6 +1,7 @@
 package com.mafia.orchestration;
 
 import com.mafia.databaseModels.*;
+import com.mafia.services.GameEventPublisher;
 import com.mafia.services.voting.VotingResult;
 import com.mafia.services.voting.VotingSessionService;
 import com.mafia.enums.GamePhase;
@@ -46,6 +47,7 @@ public class GameOrchestrator {
     private final GamePlayerRepository gamePlayerRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final VotingSessionService votingSessionService;
+    private final GameEventPublisher eventPublisher;
     
     // Używamy @Lazy aby uniknąć circular dependency
     public GameOrchestrator(
@@ -54,13 +56,15 @@ public class GameOrchestrator {
             GameRoomRepository gameRoomRepository,
             GamePlayerRepository gamePlayerRepository,
             SimpMessagingTemplate messagingTemplate,
-            @Lazy VotingSessionService votingSessionService) {
+            @Lazy VotingSessionService votingSessionService,
+            GameEventPublisher eventPublisher) {
         this.phaseStateMachine = phaseStateMachine;
         this.gameRepository = gameRepository;
         this.gameRoomRepository = gameRoomRepository;
         this.gamePlayerRepository = gamePlayerRepository;
         this.messagingTemplate = messagingTemplate;
         this.votingSessionService = votingSessionService;
+        this.eventPublisher = eventPublisher;
     }
     
     /**
@@ -201,6 +205,12 @@ public class GameOrchestrator {
         game.setEndedAt(LocalDateTime.now());
         gameRepository.save(game);
         
+        // Pobierz graczy dla zdarzenia
+        List<GamePlayer> players = gamePlayerRepository.findAllByGameId(game.getId());
+        
+        // Publikuj zdarzenie zakończenia gry do RabbitMQ
+        eventPublisher.publishGameEnded(game, winResult.getWinner(), winResult.message(), players);
+        
         // Zaktualizuj status pokoju
         GameRoom room = game.getRoom();
         room.setGameRoomStatus(GameRoomStatus.OPEN);
@@ -231,6 +241,32 @@ public class GameOrchestrator {
         try {
             String roomCode = game.getRoom().getRoomCode();
             
+            // Publikuj zdarzenie eliminacji do RabbitMQ (jeśli ktoś został wyeliminowany)
+            if (result.getEliminatedUser() != null) {
+                GamePlayer eliminatedPlayer = gamePlayerRepository
+                    .findByGameAndUser(game, result.getEliminatedUser())
+                    .orElse(null);
+                
+                String role = eliminatedPlayer != null 
+                    ? eliminatedPlayer.getAssignedRole().name() 
+                    : "UNKNOWN";
+                
+                // Pobierz liczbę głosów z topVotedPlayers
+                int votesReceived = result.getTopVotedPlayers().stream()
+                    .filter(vr -> vr.getTargetUser().getId().equals(result.getEliminatedUser().getId()))
+                    .findFirst()
+                    .map(vr -> vr.getVoteCount())
+                    .orElse(0);
+                    
+                eventPublisher.publishPlayerEliminated(
+                    game, 
+                    result.getEliminatedUser(),
+                    role,
+                    game.getCurrentPhase().name(),
+                    votesReceived
+                );
+            }
+            
             Map<String, Object> payload = new HashMap<>();
             payload.put("type", "voting_result");
             payload.put("gameId", game.getId());
@@ -255,6 +291,11 @@ public class GameOrchestrator {
     private void broadcastPhaseChange(Game game, GamePhaseState newState) {
         try {
             String roomCode = game.getRoom().getRoomCode();
+            
+            // Publikuj zdarzenie do RabbitMQ
+            String previousPhase = game.getCurrentPhase() != null ? game.getCurrentPhase().name() : "NONE";
+            String newPhaseName = phaseStateMachine.mapToGamePhase(newState).name();
+            eventPublisher.publishPhaseChanged(game, previousPhase, newPhaseName);
             
             Map<String, Object> payload = new HashMap<>();
             payload.put("type", "phase_change");

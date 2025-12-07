@@ -36,6 +36,7 @@ public class GameRoomService {
   private final SimpMessagingTemplate messagingTemplate;
   private final RabbitTemplate rabbitTemplate;
   private final PlayerInRoomService playerInRoomService;
+  private final GameEventPublisher eventPublisher;
 
   private static final String ROOM_CODE_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   private static final int ROOM_CODE_LENGTH = 6;
@@ -288,6 +289,10 @@ public class GameRoomService {
       }
 
       playerInRoomService.addPlayerToGameRoom(currentUser, gameRoom);
+
+      // Publikuj zdarzenie dołączenia do RabbitMQ
+      int currentPlayerCount = playerInRoomRepository.findAllByGameRoom(gameRoom).size();
+      eventPublisher.publishPlayerJoinedRoom(gameRoom, currentUser, currentPlayerCount);
 
       var resp = prepareJoinResp(gameRoom);
 
