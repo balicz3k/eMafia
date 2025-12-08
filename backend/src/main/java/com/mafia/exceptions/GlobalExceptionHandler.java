@@ -50,42 +50,6 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
 
-        @ExceptionHandler(EmailAlreadyExistsException.class)
-        public ResponseEntity<ErrorResponse> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex,
-                        HttpServletRequest request) {
-                ErrorResponse errorResponse = new ErrorResponse(
-                                LocalDateTime.now(),
-                                HttpStatus.CONFLICT.value(),
-                                "Email Conflict",
-                                ex.getMessage(),
-                                request.getRequestURI());
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-        }
-
-        @ExceptionHandler(UsernameAlreadyExistsException.class)
-        public ResponseEntity<ErrorResponse> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex,
-                        HttpServletRequest request) {
-                ErrorResponse errorResponse = new ErrorResponse(
-                                LocalDateTime.now(),
-                                HttpStatus.CONFLICT.value(),
-                                "Username Conflict",
-                                ex.getMessage(),
-                                request.getRequestURI());
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-        }
-
-        @ExceptionHandler(InvalidPasswordException.class)
-        public ResponseEntity<ErrorResponse> handleInvalidPasswordException(InvalidPasswordException ex,
-                        HttpServletRequest request) {
-                ErrorResponse errorResponse = new ErrorResponse(
-                                LocalDateTime.now(),
-                                HttpStatus.UNAUTHORIZED.value(),
-                                "Authentication Error",
-                                ex.getMessage(),
-                                request.getRequestURI());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
-
         @ExceptionHandler(UserNotFoundException.class)
         public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex,
                         HttpServletRequest request) {
@@ -168,42 +132,6 @@ public class GlobalExceptionHandler {
                                 ex.getMessage(),
                                 request.getRequestURI());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-        }
-
-        @ExceptionHandler(TokenExpiredException.class)
-        public ResponseEntity<ErrorResponse> handleTokenExpired(TokenExpiredException ex, HttpServletRequest request) {
-
-                ErrorResponse errorResponse = new ErrorResponse(
-                                LocalDateTime.now(),
-                                HttpStatus.UNAUTHORIZED.value(),
-                                "Token Expired",
-                                ex.getMessage() + " Consider refreshing the token.",
-                                request.getRequestURI());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
-
-        @ExceptionHandler(TokenNotFoundException.class)
-        public ResponseEntity<ErrorResponse> handleTokenNotFound(TokenNotFoundException ex,
-                        HttpServletRequest request) {
-                ErrorResponse errorResponse = new ErrorResponse(
-                                LocalDateTime.now(),
-                                HttpStatus.UNAUTHORIZED.value(),
-                                "Token Not Found",
-                                ex.getMessage() + " Please login.",
-                                request.getRequestURI());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
-
-        @ExceptionHandler(InvalidRefreshTokenException.class)
-        public ResponseEntity<ErrorResponse> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex,
-                        HttpServletRequest request) {
-                ErrorResponse errorResponse = new ErrorResponse(
-                                LocalDateTime.now(),
-                                HttpStatus.UNAUTHORIZED.value(),
-                                "Invalid Refresh Token",
-                                ex.getMessage(),
-                                request.getRequestURI());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
 
         @ExceptionHandler(Exception.class)

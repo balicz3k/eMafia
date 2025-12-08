@@ -1,5 +1,37 @@
 services:
-  mafia-backend:
+  # ============================================
+  # AUTH SERVICE - Mikroserwis autentykacji
+  # ============================================
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+    volumes:
+      - ./auth-service/logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
+
+  # ============================================
+  # GAME SERVICE - Mikroserwis gry
+  # ============================================
+  game-service:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -10,16 +42,24 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mafia
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      # Czyta z .env (automatycznie z HOST_IP)
+      - SPRING_RABBITMQ_HOST=rabbitmq
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      - AUTH_SERVICE_URL=http://auth-service:8081
     volumes:
-      # Montuj katalog logs z kontenera do hosta
       - ./backend/logs:/app/logs
     depends_on:
       db:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
 
   mafia-backend-tests:
     profiles:
@@ -43,17 +83,20 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=test
 
-  mafia-frontend:
+  # ============================================
+  # FRONTEND - React + Nginx
+  # ============================================
+  frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        # Czyta z .env (automatycznie z HOST_IP)
-        - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL:-http://localhost:8080}
+        - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL:-http://localhost:3000}
     ports:
       - "3000:80"
     depends_on:
-      - mafia-backend
+      - game-service
+      - auth-service
 
   db:
     image: postgres:15-alpine

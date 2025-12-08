@@ -66,7 +66,9 @@ an intuitive interface for creating game rooms, managing players, and engaging i
 
 ## 🏗️ Architecture
 
-### High-Level Overview
+### Microservices Architecture
+
+The application follows a **microservices architecture** with two main services:
 
 ```mermaid
 graph TB
@@ -75,30 +77,56 @@ graph TB
         A --> C[Axios HTTP Client]
     end
 
-    subgraph "Backend Layer"
-        D[Spring Boot 3.3.0] --> E[REST Controllers]
-        D --> F[Service Layer]
-        D --> G[Repository Layer]
-        D --> H[Security Layer]
+    subgraph "Nginx Proxy"
+        N[Nginx] --> |/api/auth, /api/users, /api/admin| AUTH[Auth Service :8081]
+        N --> |/api/*, /ws| GAME[Game Service :8080]
+        N --> |static files| A
     end
 
-    subgraph "Data Layer"
-        I[PostgreSQL] --> J[JPA/Hibernate]
-        K[RabbitMQ] --> L[Message Queues]
+    subgraph "Auth Service"
+        AUTH --> AS[Authentication]
+        AUTH --> US[User Management]
+        AUTH --> AD[Admin Panel]
+    end
+
+    subgraph "Game Service"
+        GAME --> GR[Game Rooms]
+        GAME --> GP[Gameplay]
+        GAME --> WS[WebSocket]
+        GAME --> VT[Voting]
+    end
+
+    subgraph "Shared Data Layer"
+        DB[PostgreSQL] --> |users, game_rooms, etc.| AUTH
+        DB --> GAME
+        RMQ[RabbitMQ] --> AUTH
+        RMQ --> GAME
     end
 
     subgraph "Infrastructure"
-        M[Docker Compose] --> N[Backend Container]
-        M --> O[Frontend Container]
-        M --> P[Database Container]
-        M --> Q[RabbitMQ Container]
+        M[Docker Compose] --> AUTH
+        M --> GAME
+        M --> N
+        M --> DB
+        M --> RMQ
     end
-
-    A --> D
-    F --> J
-    F --> L
-    J --> I
 ```
+
+### Services Overview
+
+| Service | Port | Responsibility |
+|---------|------|----------------|
+| **auth-service** | 8081 | Authentication, user management, JWT tokens, admin panel |
+| **game-service** | 8080 | Game rooms, gameplay, voting, WebSocket communication |
+| **frontend** | 3000 | React SPA with Nginx reverse proxy |
+| **db** | 5432 | PostgreSQL database (shared) |
+| **rabbitmq** | 5672/15672 | Message broker for async events |
+### Shared Data Layer
+
+Both services share a single PostgreSQL database (`mafia`) for data consistency. 
+They communicate through:
+- **Shared JWT Secret** - Same secret for token validation
+- **RabbitMQ** - Event-driven communication between services
 
 ### Database Schema (ERD)
 
