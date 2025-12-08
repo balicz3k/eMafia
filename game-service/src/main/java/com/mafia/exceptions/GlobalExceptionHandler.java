@@ -39,8 +39,8 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(MissingServletRequestParameterException.class)
         public ResponseEntity<ErrorResponse> handleMissingServletRequestParameter(
                         MissingServletRequestParameterException ex, HttpServletRequest request) {
-                String message = String.format("Required request parameter '%s' of type %s is not present.",
-                                ex.getParameterName(), ex.getParameterType());
+                String message = "Required request parameter '%s' of type %s is not present.".formatted(
+                    ex.getParameterName(), ex.getParameterType());
                 ErrorResponse errorResponse = new ErrorResponse(
                                 LocalDateTime.now(),
                                 HttpStatus.BAD_REQUEST.value(),

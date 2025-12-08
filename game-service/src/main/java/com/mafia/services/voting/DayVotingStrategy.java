@@ -74,7 +74,7 @@ public class DayVotingStrategy implements VotingStrategy {
     }
 
     // Jeden zwyci��zca - zostaje wyeliminowany
-    VoteResult winner = topVoted.get(0);
+    VoteResult winner = topVoted.getFirst();
     log.info(
         "Player {} eliminated with {} votes",
         winner.getTargetUser().getUsername(),

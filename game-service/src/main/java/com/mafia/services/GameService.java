@@ -276,7 +276,7 @@ public class GameService {
       }
     }
 
-    Game game = games.get(0);
+    Game game = games.getFirst();
     
     // Znajdź gracza w grze
     GamePlayer gamePlayer = gamePlayerRepository.findByGameAndUser_Id(game, userId)
@@ -312,7 +312,7 @@ public class GameService {
       throw new IllegalStateException("No active game found for room: " + roomCode);
     }
 
-    Game game = activeGames.get(0);
+    Game game = activeGames.getFirst();
     
     // Pobierz graczy
     List<GamePlayer> gamePlayers = gamePlayerRepository.findByGame(game);

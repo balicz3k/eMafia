@@ -117,7 +117,7 @@ public class NightVotingStrategy implements VotingStrategy {
     }
 
     // Jeden zwycięzca - zostaje wyeliminowany
-    VoteResult winner = topVoted.get(0);
+    VoteResult winner = topVoted.getFirst();
     log.info(
         "Player {} eliminated with {} mafia votes",
         winner.getTargetUser().getUsername(),
