@@ -90,3 +90,10 @@ docker-compose.override.yml
 .classpath
 .factorypath
 frontend/package-lock.json
+
+# LaTeX documents
+doc.tex
+*.aux
+*.out
+*.toc
+*.synctex.gz

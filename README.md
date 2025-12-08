@@ -4,7 +4,7 @@
 
 **A modern online Mafia game platform with a room system, authentication, and player management.**
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.0-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.0-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
 [![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.13-orange.svg)](https://www.rabbitmq.com/)
@@ -19,7 +19,7 @@
     - [High-Level Overview](#high-level-overview)
     - [Database Schema (ERD)](#database-schema-erd)
     - [Layer Separation](#layer-separation)
-    - [Modularization (Backend)](#modularization-backend)
+    - [Modularization (Services)](#modularization-services)
 - [🚀 Quick Start](#-quick-start)
     - [Prerequisites](#prerequisites)
     - [Cloning the Repository](#1-cloning-the-repository)
@@ -27,7 +27,7 @@
     - [Accessing The Application](#3-accessing-the-application)
     - [Running Tests (via Docker Compose)](#4-running-tests-via-docker-compose)
 - [🛠️ Tech Stack](#️-tech-stack)
-    - [Backend](#backend)
+    - [Services (Java)](#services-java)
     - [Frontend](#frontend)
     - [DevOps & Infrastructure](#devops--infrastructure)
     - [Why This Stack?](#why-this-stack)
@@ -180,7 +180,7 @@ erDiagram
 _Note: `game_room_status` is an ENUM ('WAITING_FOR_PLAYERS', 'IN_PROGRESS', 'FINISHED', 'ABANDONED'). `USER_ROLES`
 represents the roles assigned to a user (e.g., 'ROLE_USER', 'ROLE_ADMIN')._
 
-### Layer Separation (Backend):
+### Layer Separation:
 
 - **Controllers**: Handle HTTP requests, input validation, and delegate to services.
 - **Services**: Contain business logic and orchestrate operations.
@@ -188,18 +188,27 @@ represents the roles assigned to a user (e.g., 'ROLE_USER', 'ROLE_ADMIN')._
 - **Security**: JWT-based authentication, authorization, CORS configuration.
 - **Messaging**: Asynchronous event processing via RabbitMQ.
 
-### Modularization (Backend):
+### Modularization (Services):
 
-The backend follows a feature-driven package structure:
+The services follow a feature-driven package structure:
 
 ```
-backend/src/main/java/com/mafia/
+game-service/src/main/java/com/mafia/
 ├── components/        # JWT Provider, Security utility components
 ├── config/           # RabbitMQ, Security, Web configurations
 ├── consumers/        # RabbitMQ message consumers
-├── controllers/      # REST API endpoints
+├── controllers/      # REST API endpoints (game rooms, games)
 ├── dto/             # Data Transfer Objects
 ├── exceptions/      # Custom exception classes and global handler
+├── models/          # JPA Entity classes
+├── repositories/    # Spring Data JPA repositories
+└── services/        # Business logic layer
+
+auth-service/src/main/java/com/mafia/
+├── config/           # Security, Web configurations
+├── controllers/      # REST API endpoints (auth, users, admin)
+├── dto/             # Data Transfer Objects
+├── exceptions/      # Custom exception classes
 ├── models/          # JPA Entity classes
 ├── repositories/    # Spring Data JPA repositories
 └── services/        # Business logic layer
@@ -238,30 +247,31 @@ docker-compose ps
 Once the services are up and running:
 
 - **Frontend Application**: [http://localhost:3000](http://localhost:3000)
-- **Backend API**: [http://localhost:8080](http://localhost:8080)
+- **Auth Service API**: [http://localhost:8081](http://localhost:8081) - Authentication, users, admin
+- **Game Service API**: [http://localhost:8080](http://localhost:8080) - Game rooms, games, voting
 - **API Documentation (Swagger UI)**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 - **RabbitMQ Management Console**: [http://localhost:15672](http://localhost:15672) (Credentials: guest/guest)
 - **PostgreSQL Database**: Connect via `localhost:5432` (Database: `mafia`, User: `postgres`, Password: `postgres`)
 
 ### 4. Running Tests (via Docker Compose)
 
-The project is configured to run backend tests in a dedicated Docker container using a specific profile.
+The project is configured to run game-service tests in a dedicated Docker container using a specific profile.
 
 ```bash
-# Run all backend tests
-docker-compose --profile tests run --rm mafia-backend-tests
+# Run all game-service tests
+docker-compose --profile tests run --rm game-service-tests
 ```
 
-This command utilizes the `tester_base` stage from the backend Dockerfile and the `test` Spring profile.
+This command utilizes the `tester_base` stage from the game-service Dockerfile and the `test` Spring profile.
 
 ## 🛠️ Tech Stack
 
-### Backend
+### Services (Java)
 
 | Technology        | Version | Rationale                                                                      |
 |-------------------|---------|--------------------------------------------------------------------------------|
-| **Spring Boot**   | 3.3.0   | Modern framework with a rich ecosystem, auto-configuration, built-in security. |
-| **Java**          | 17      | LTS version, modern language features.                                         |
+| **Spring Boot**   | 3.5.0   | Modern framework with a rich ecosystem, auto-configuration, built-in security. |
+| **Java**          | 21      | LTS version, modern language features, virtual threads support.                |
 | **PostgreSQL**    | 15      | Advanced relational database, excellent performance, full JSON support.        |
 | **RabbitMQ**      | 3.13    | Reliable message queuing for asynchronous event processing.                    |
 | **JWT (jjwt)**    | 0.11.5  | Stateless, scalable, and standard for API authentication.                      |
@@ -336,15 +346,15 @@ This command utilizes the `tester_base` stage from the backend Dockerfile and th
 
 ## 🧪 Testing
 
-The project includes an extensive test suite (30+ tests) covering various layers of the backend application.
+The project includes an extensive test suite covering various layers of the services.
 
-### Test Structure (Backend)
+### Test Structure (Game Service)
 
 ```
-src/test/java/com/mafia/
-├── controllers/      # Integration tests for REST API endpoints (e.g., AuthControllerTest)
-├── services/         # Unit tests for business logic (e.g., UserServiceTest)
-└── integration/      # End-to-end integration tests (e.g., AuthIntegrationTest)
+game-service/src/test/java/com/mafia/
+├── controllers/      # Integration tests for REST API endpoints
+├── services/         # Unit tests for business logic
+└── integration/      # End-to-end integration tests
 ```
 
 ### Running Tests Locally (Maven)
@@ -379,7 +389,7 @@ in-memory database like H2 if preferred for certain local test runs._
 
 ### Accessing Swagger UI
 
-Interactive API documentation is available via Swagger UI when the backend application is running:
+Interactive API documentation is available via Swagger UI when the services are running:
 **[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)**
 
 ### Main Endpoints
@@ -438,7 +448,7 @@ curl -X POST http://localhost:8080/api/auth/login \
 Key environment variables for configuring the application (primarily for Docker deployment). For local development
 outside Docker, these can be set in `application.properties`.
 
-#### Backend (within `docker-compose.yml` or system environment)
+#### Services (within `docker-compose.yml` or system environment)
 
 ```bash
 # Database (when running in Docker, 'db' is the service name)
@@ -479,10 +489,10 @@ REACT_APP_WEBSOCKET_URL=ws://localhost:8080/ws
 
 ### Docker Compose Profiles
 
-- **default services**: Running `docker-compose up` starts the main application services (backend, frontend, db,
+- **default services**: Running `docker-compose up` starts the main application services (auth-service, game-service, frontend, db,
   rabbitmq).
 - **`tests` profile**: Running `docker-compose --profile tests up` (or `run`) includes services specifically for running
-  tests, like `mafia-backend-tests`.
+  tests, like `game-service-tests`.
 
 ---
 

@@ -33,7 +33,7 @@ services:
   # ============================================
   game-service:
     build:
-      context: ./backend
+      context: ./game-service
       dockerfile: Dockerfile
       target: runtime
     ports:
@@ -46,7 +46,7 @@ services:
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
       - AUTH_SERVICE_URL=http://auth-service:8081
     volumes:
-      - ./backend/logs:/app/logs
+      - ./game-service/logs:/app/logs
     depends_on:
       db:
         condition: service_healthy
@@ -61,16 +61,16 @@ services:
       start_period: 120s
       retries: 3
 
-  mafia-backend-tests:
+  game-service-tests:
     profiles:
       - tests
     build:
-      context: ./backend
+      context: ./game-service
       dockerfile: Dockerfile
       target: tester_base
     volumes:
-      - ./backend/src:/app/src:ro
-      - ./backend/pom.xml:/app/pom.xml:ro
+      - ./game-service/src:/app/src:ro
+      - ./game-service/pom.xml:/app/pom.xml:ro
       - test-reports:/app/target/surefire-reports
     command: sh -c " \
       echo 'Starting integration tests with H2 database...' && \
