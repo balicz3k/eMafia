@@ -91,7 +91,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL:-http://localhost:3000}
+        # Pusty string = relative URLs, nginx proxy przekieruje do odpowiednich serwisów
+        - REACT_APP_API_BASE_URL=
     ports:
       - "3000:80"
     depends_on:

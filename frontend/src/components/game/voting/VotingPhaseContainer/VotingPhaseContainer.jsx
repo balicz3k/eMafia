@@ -84,7 +84,8 @@ const VotingPhaseContainer = ({ gameId, roomCode, currentUser, players: initialP
    * Łączy się z WebSocket
    */
   const connectWebSocket = () => {
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+    // Pusty string = relative URLs (nginx proxy)
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
     const socket = new SockJS(`${API_BASE_URL}/ws`);
     
     const client = new Client({
