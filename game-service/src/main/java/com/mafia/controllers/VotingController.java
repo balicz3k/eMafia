@@ -7,6 +7,7 @@ import com.mafia.dto.voting.CastVoteRequest;
 import com.mafia.dto.voting.CastVoteResponse;
 import com.mafia.dto.voting.VoteResultDto;
 import com.mafia.dto.voting.VotingSessionDto;
+import com.mafia.exceptions.GameNotFoundException;
 import com.mafia.repositories.GameRepository;
 import com.mafia.services.voting.VotingSessionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,7 +77,7 @@ public class VotingController {
     Game game =
         gameRepository
             .findById(gameId)
-            .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+            .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
     Optional<VotingSession> sessionOpt = votingSessionService.getCurrentActiveSession(game);
 
@@ -132,7 +133,7 @@ public class VotingController {
     Game game =
         gameRepository
             .findById(gameId)
-            .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+            .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
     // Oddaj głos
     CastVoteResponse response =

@@ -112,7 +112,7 @@ const RegisterForm = () => {
             label={<MdPerson size={25} />}
             type="text"
             name="username"
-            placeholder="Your Username (3-20 characters)"
+            placeholder="Your Username"
             value={formData.username}
             onChange={handleChange}
             disabled={loading}
@@ -134,7 +134,7 @@ const RegisterForm = () => {
             label={<MdLock size={25} />}
             type="password"
             name="password"
-            placeholder="Password (min 8 chars, uppercase, lowercase, digit)"
+            placeholder="Password"
             value={formData.password}
             onChange={handleChange}
             disabled={loading}

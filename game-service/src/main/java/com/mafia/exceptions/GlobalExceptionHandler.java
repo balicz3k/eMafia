@@ -86,6 +86,30 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
+        @ExceptionHandler(GameNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleGameNotFoundException(GameNotFoundException ex,
+                        HttpServletRequest request) {
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.NOT_FOUND.value(),
+                                "Game Not Found",
+                                ex.getMessage(),
+                                request.getRequestURI());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
+        @ExceptionHandler(VotingSessionNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleVotingSessionNotFoundException(VotingSessionNotFoundException ex,
+                        HttpServletRequest request) {
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.NOT_FOUND.value(),
+                                "Voting Session Not Found",
+                                ex.getMessage(),
+                                request.getRequestURI());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
         @ExceptionHandler(UserAlreadyInRoomException.class)
         public ResponseEntity<ErrorResponse> handleUserAlreadyInRoomException(UserAlreadyInRoomException ex,
                         HttpServletRequest request) {

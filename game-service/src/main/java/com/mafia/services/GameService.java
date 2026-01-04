@@ -8,6 +8,7 @@ import com.mafia.enums.GamePhase;
 import com.mafia.enums.GameRole;
 import com.mafia.enums.GameRoomStatus;
 import com.mafia.enums.GameStatus;
+import com.mafia.exceptions.GameNotFoundException;
 import com.mafia.exceptions.GameRoomNotFoundException;
 import com.mafia.repositories.*;
 import com.mafia.services.voting.VotingSessionService;
@@ -152,7 +153,7 @@ public class GameService {
     Game game =
         gameRepository
             .findById(gameId)
-            .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+            .orElseThrow(() -> new GameNotFoundException("Game not found"));
     return toResponse(game);
   }
 
@@ -161,7 +162,7 @@ public class GameService {
     Game game =
         gameRepository
             .findById(gameId)
-            .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+            .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
     // Simple phase switch logic
     if (game.getCurrentPhase() == GamePhase.DAY_VOTE) {
@@ -180,7 +181,7 @@ public class GameService {
     Game game =
         gameRepository
             .findById(gameId)
-            .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+            .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
     game.setStatus(GameStatus.FINISHED);
     game.setEndedAt(LocalDateTime.now());
@@ -309,7 +310,7 @@ public class GameService {
     List<Game> activeGames = gameRepository.findByRoom_IdAndStatus(room.getId(), GameStatus.IN_PROGRESS);
     
     if (activeGames.isEmpty()) {
-      throw new IllegalStateException("No active game found for room: " + roomCode);
+      throw new GameNotFoundException("No active game found for room: " + roomCode);
     }
 
     Game game = activeGames.getFirst();
