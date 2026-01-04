@@ -321,7 +321,6 @@ const GameRoomView = () => {
           <div className={styles.qrText}>
             <div className={styles.qrLabel}>Scan to join</div>
             <div className={styles.qrHint}>{copied ? "Join link copied!" : "Click QR to copy join link"}</div>
-            <div className={styles.qrLink}>{joinUrl}</div>
           </div>
         </div>
 

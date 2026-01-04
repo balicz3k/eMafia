@@ -97,3 +97,6 @@ doc.tex
 *.out
 *.toc
 *.synctex.gz
+
+// work-in-progress files
+/wip

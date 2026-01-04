@@ -39,8 +39,8 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(MissingServletRequestParameterException.class)
         public ResponseEntity<ErrorResponse> handleMissingServletRequestParameter(
                         MissingServletRequestParameterException ex, HttpServletRequest request) {
-                String message = String.format("Required request parameter '%s' of type %s is not present.",
-                                ex.getParameterName(), ex.getParameterType());
+                String message = "Required request parameter '%s' of type %s is not present.".formatted(
+                    ex.getParameterName(), ex.getParameterType());
                 ErrorResponse errorResponse = new ErrorResponse(
                                 LocalDateTime.now(),
                                 HttpStatus.BAD_REQUEST.value(),
@@ -81,6 +81,30 @@ public class GlobalExceptionHandler {
                                 LocalDateTime.now(),
                                 HttpStatus.NOT_FOUND.value(),
                                 "Game Room Not Found",
+                                ex.getMessage(),
+                                request.getRequestURI());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
+        @ExceptionHandler(GameNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleGameNotFoundException(GameNotFoundException ex,
+                        HttpServletRequest request) {
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.NOT_FOUND.value(),
+                                "Game Not Found",
+                                ex.getMessage(),
+                                request.getRequestURI());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
+        @ExceptionHandler(VotingSessionNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleVotingSessionNotFoundException(VotingSessionNotFoundException ex,
+                        HttpServletRequest request) {
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.NOT_FOUND.value(),
+                                "Voting Session Not Found",
                                 ex.getMessage(),
                                 request.getRequestURI());
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);

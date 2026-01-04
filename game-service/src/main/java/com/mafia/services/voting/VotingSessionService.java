@@ -6,6 +6,7 @@ import com.mafia.enums.GamePhase;
 import com.mafia.enums.VotingStatus;
 import com.mafia.repositories.*;
 import com.mafia.services.GameEventPublisher;
+import com.mafia.exceptions.VotingSessionNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -95,10 +96,11 @@ public class VotingSessionService {
   public CastVoteResponse castVote(UUID sessionId, UUID voterId, UUID targetUserId) {
     log.info("Casting vote: session={}, voter={}, target={}", sessionId, voterId, targetUserId);
 
-    VotingSession session =
-        votingSessionRepository
-            .findById(sessionId)
-            .orElseThrow(() -> new IllegalArgumentException("Voting session not found"));
+    Optional<VotingSession> sessionOpt = votingSessionRepository.findById(sessionId);
+    if (sessionOpt.isEmpty()) {
+      return CastVoteResponse.error("Voting session not found");
+    }
+    VotingSession session = sessionOpt.get();
 
     // Walidacja statusu sesji
     if (session.getStatus() != VotingStatus.ACTIVE) {
@@ -475,7 +477,7 @@ public class VotingSessionService {
     VotingSession session =
         votingSessionRepository
             .findById(sessionId)
-            .orElseThrow(() -> new IllegalArgumentException("Voting session not found"));
+            .orElseThrow(() -> new VotingSessionNotFoundException("Voting session not found"));
 
     return toResultDtos(session);
   }

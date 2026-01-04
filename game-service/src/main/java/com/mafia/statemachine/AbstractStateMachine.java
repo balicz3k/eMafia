@@ -53,8 +53,7 @@ public abstract class AbstractStateMachine<S extends Enum<S>, E extends Enum<E>,
         Map<E, S> stateTransitions = transitions.get(currentState);
         
         if (stateTransitions == null || !stateTransitions.containsKey(event)) {
-            String errorMsg = String.format(
-                "[%s] Invalid transition: %s + %s (context: %s)",
+            String errorMsg = "[%s] Invalid transition: %s + %s (context: %s)".formatted(
                 getMachineName(), currentState, event, context);
             log.error(errorMsg);
             

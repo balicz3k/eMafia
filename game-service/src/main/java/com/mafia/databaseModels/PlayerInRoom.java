@@ -14,12 +14,8 @@ import org.hibernate.annotations.UuidGenerator;
     uniqueConstraints = {
       @UniqueConstraint(
           name = "uk_player_unique_in_room",
-          columnNames = {"user_id", "game_room_id"}),
-      @UniqueConstraint(
-          name = "uk_nick_unique_in_room",
-          columnNames = {"game_room_id", "game_nick"})
-    },
-    indexes = {@Index(name = "idx_room_alive", columnList = "game_room_id,is_alive")})
+          columnNames = {"user_id", "game_room_id"})
+    })
 @Getter
 @Setter
 public class PlayerInRoom {

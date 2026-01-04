@@ -71,7 +71,7 @@ public class GameEngineService {
                     "roomCode", roomCode,
                     "totalPlayers", totalPlayers,
                     "mafiaCount", mafiaCount,
-                    "message", String.format("Game started! %d players, %d mafia", totalPlayers, mafiaCount)
+                    "message", "Game started! %d players, %d mafia".formatted(totalPlayers, mafiaCount)
             ));
         } catch (Exception e) {
             // Log but don't fail if broadcast fails
@@ -147,7 +147,7 @@ public class GameEngineService {
         response.setVotesReceived(votesReceived);
         response.setTotalPlayersAlive(totalAlive);
         response.setVotingComplete(votingComplete);
-        response.setMessage(String.format("Vote received. %d/%d players have voted.", votesReceived, totalAlive));
+        response.setMessage("Vote received. %d/%d players have voted.".formatted(votesReceived, totalAlive));
 
         // If voting is complete, resolve and transition
         if (votingComplete) {
@@ -231,7 +231,7 @@ public class GameEngineService {
 
         if (topTargets.size() == 1) {
             // Clear winner
-            eliminatedId = topTargets.get(0);
+            eliminatedId = topTargets.getFirst();
         } else if (phase == GamePhase.NIGHT_VOTE) {
             // Night tie: random elimination from tied targets
             eliminatedId = topTargets.get(random.nextInt(topTargets.size()));
@@ -275,7 +275,7 @@ public class GameEngineService {
                     "dayNumber", dayNumber,
                     "votesReceived", votesReceived,
                     "totalAlive", totalAlive,
-                    "progress", String.format("%d/%d", votesReceived, totalAlive)
+                    "progress", "%d/%d".formatted(votesReceived, totalAlive)
             ));
         } catch (Exception ignored) {}
     }
@@ -289,7 +289,7 @@ public class GameEngineService {
                     "type", "phase_transition",
                     "newPhase", newPhase.name(),
                     "dayNumber", dayNumber,
-                    "message", String.format("Transitioning to %s (Day %d)", newPhase.name(), dayNumber)
+                    "message", "Transitioning to %s (Day %d)".formatted(newPhase.name(), dayNumber)
             ));
         } catch (Exception ignored) {}
     }
@@ -353,8 +353,8 @@ public class GameEngineService {
                 .toList();
 
         if (top.size() == 1) {
-            eliminate(roomCode, top.get(0));
-            return Optional.of(top.get(0));
+            eliminate(roomCode, top.getFirst());
+            return Optional.of(top.getFirst());
         }
         return Optional.empty();
     }
@@ -381,7 +381,7 @@ public class GameEngineService {
                 .map(Map.Entry::getKey)
                 .toList();
 
-        UUID victim = top.size() == 1 ? top.get(0) : top.get(random.nextInt(top.size()));
+        UUID victim = top.size() == 1 ? top.getFirst() : top.get(random.nextInt(top.size()));
         eliminate(roomCode, victim);
         return Optional.of(victim);
     }
